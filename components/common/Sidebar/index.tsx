@@ -1,8 +1,12 @@
 import React from 'react'
+import Content from '../Sidebar/Content'
 
 const Sidebar = () => {
+
   return (
-    <div>index</div>
+    <nav id="sidebar" className={` overflow-hidden`}>
+      <Content />
+    </nav>
   )
 }
 

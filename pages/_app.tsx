@@ -2,8 +2,7 @@ import { AppProps } from "next/app";
 import Head from "next/head";
 import Layout from "../components/common/Layout";
 import "../styles/globals.scss";
-// import dynamic from 'next/dynamic';
-// const Layout = dynamic(()=>import("components/common/Layout"))
+// import "../styles/main.css";
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>

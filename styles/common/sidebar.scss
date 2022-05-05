@@ -1,0 +1,17 @@
+#navbar {
+  @apply flex lg:hidden w-full h-[60px] bg-[#c609e7] fixed z-10 rounded-b-2xl cursor-pointer;
+  transition: background-color 500ms linear;
+  transition: height 500ms linear;
+}
+
+#navbar.default {
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.6) 0%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+
+#navbar.scrolling {
+  @apply bg-black h-[60px];
+}
