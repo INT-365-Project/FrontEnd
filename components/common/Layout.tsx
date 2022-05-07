@@ -1,17 +1,22 @@
-import React from 'react'
-import { Navbar } from './Navbar';
+import React, { createContext, useContext, useState } from 'react'
 import Sidebar from './Sidebar';
 interface Props {
   children: JSX.Element;
 }
+const NavContext = createContext(null);
+export function useNavContext(){
+  return useContext(NavContext)
+}
 const Layout: React.FC<Props> = ({ children }) => {
+  const [isOpen, setIsOpen] = useState<boolean>(true);
   return (
     <>
-     {/* <Navbar /> */}
+    <NavContext.Provider value={{isOpen,setIsOpen}}>
      <Sidebar/>
-     <div className='relative'>
+     <div onClick={()=>setIsOpen(true)} className='relative'>
         {children}
      </div>
+    </NavContext.Provider>
     </>
   )
 }

@@ -1,7 +1,9 @@
 import React from 'react'
 
-export const Navbar = () => {
+const Reports = () => {
   return (
     <div>index</div>
   )
 }
+
+export default Reports

@@ -1,17 +1,26 @@
 #navbar {
-  @apply flex lg:hidden w-full h-[60px] bg-[#c609e7] fixed z-10 rounded-b-2xl cursor-pointer;
-  transition: background-color 500ms linear;
-  transition: height 500ms linear;
+  @apply flex justify-between lg:hidden w-full h-[60px]  bg-[#c609e7] fixed z-10 rounded-b-2xl cursor-pointer;
+  transition: background-color 200ms linear;
+  transition: height 200ms linear ;
+  transition-delay:400ms ;
+}
+#navClick{
+  @apply flex justify-between lg:hidden w-full h-[0px] bg-[#c609e7] fixed z-10 rounded-b-2xl cursor-pointer;
+  transition: background-color 200ms linear;
+  transition: height 200ms linear;
+}
+#sidebar{
+  @apply lg:block transition-all duration-300 fixed z-10 left-0 min-h-screen overflow-hidden w-[0px] lg:w-[80px] hover:w-[280px] bg-[#c609e7] rounded-r-2xl ;
 }
 
-#navbar.default {
-  background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0.6) 0%,
-    rgba(0, 0, 0, 0) 100%
-  );
-}
+// #navbar.default {
+//   background: linear-gradient(
+//     180deg,
+//     rgba(0, 0, 0, 0.6) 0%,
+//     rgba(0, 0, 0, 0) 100%
+//   );
+// }
 
-#navbar.scrolling {
-  @apply bg-black h-[60px];
-}
+// #navbar.scrolling {
+//   @apply bg-black h-[60px];
+// }
