@@ -1,8 +1,10 @@
 import React from 'react'
-
+import { useForm } from "react-hook-form";
 const SignIn = () => {
   return (
-    <div>SignIn</div>
+    <div className='w-full'>
+        
+    </div>
   )
 }
 

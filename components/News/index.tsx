@@ -1,5 +1,6 @@
 import React from "react";
-
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faPenToSquare,faTrashCan} from '@fortawesome/free-solid-svg-icons'
 const data = [
   {
     cover:
@@ -66,7 +67,7 @@ const News = () => {
       {data.map((n, index) => {
         if (index <= 5) {
           return (
-            <div className="rounded-2xl drop-shadow-lg mt-[12px] bg-white w-full h-[110px] flex">
+            <div key={index} className="rounded-2xl drop-shadow-lg mt-[12px] bg-white w-full h-[110px] flex">
               <div className="w-[20%] rounded-l-2xl h-full bg-red-300">
                   <img src={n.cover} className="object-cover h-full rounded-l-2xl" alt="" />
               </div>
@@ -75,8 +76,14 @@ const News = () => {
                       <p className="text-[12px] text-warmGray-500">{n.short_subtitle}</p>
                   </div>
                   <div className="w-[10%] flex pl-[20px] text-[14px] my-auto space-x-2">
-                      <button className="border-[1.7px] px-[14px] transition-all duration-300 hover:bg-purple hover:text-white border-purple text-purple h-[50%] p-1 rounded-2xl">Edit</button>
-                      <button className="border-[1.7px] px-[14px] transition-all duration-300 hover:bg-purple hover:text-white border-purple text-purple h-[50%] p-1 rounded-2xl">Delete</button>
+                      <button className="flex space-x-1 border-[1.7px] px-[14px] transition-all duration-300 hover:bg-purple hover:text-white border-purple text-purple h-[50%] p-1 rounded-2xl">
+                      <FontAwesomeIcon icon={faPenToSquare} className="h-[16px] cursor-pointer"></FontAwesomeIcon>
+                        {/* <p className="lg:block hidden">Edit</p> */}
+                        </button>
+                      <button className="flex space-x-1 border-[1.7px] px-[14px] transition-all duration-300 hover:bg-purple hover:text-white border-purple text-purple h-[50%] p-1 rounded-2xl">
+                      <FontAwesomeIcon icon={faTrashCan} className="h-[16px] cursor-pointer"></FontAwesomeIcon>
+                        {/* <p className="lg:block hidden">Delete</p> */}
+                        </button>
                   </div>
             </div>
           );

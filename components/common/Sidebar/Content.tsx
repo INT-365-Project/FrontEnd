@@ -3,6 +3,7 @@ import { useState } from "react";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faCoffee, faMagnifyingGlass , faLockOpen,faLock ,faLightbulb , faAddressBook , faAlignJustify} from '@fortawesome/free-solid-svg-icons'
 import { useNavContext } from '../Layout';
+import Link from 'next/link';
 const menu = [
   {
     label: "Dashboard",
@@ -22,7 +23,7 @@ const content = () => {
   const [style, setStyle] = useState({display: 'none'});
   const [image,setImage] = useState({width:'100%'})
   const [isTop, setIsTop] = useState<boolean>(true);
-  console.log(isOpen)
+
   useEffect(()=>{
      if(isOpen===false){
       setStyle({display: 'block'});
@@ -88,14 +89,27 @@ const content = () => {
               {/* <FontAwesomeIcon icon={ faLock} className="text-[#fff] h-[16px]"></FontAwesomeIcon> */}
             </div>
             <div className='w-[80%] mx-auto mt-[40px] text-[#fff] font-medium space-y-4 '>
-              {menu.map((m)=>{
-                return <div className='flex px-[20px] items-center rounded-lg h-[50px] relative hover:bg-[#ee96fe]'>
+              {menu.map((m,index)=>{
+                if(m.label=="Dashboard"){
+                  return (
+                  <Link href="/dashboard">
+                  <div key={index} className='flex px-[20px] cursor-pointer items-center rounded-lg h-[50px] relative hover:bg-[#ee96fe]'>
+                  <FontAwesomeIcon icon={faAddressBook} className="text-[#fff] h-[16px]"></FontAwesomeIcon>
+                   <h1 className='text-[14px] pl-[20px]' style={style}>
+                     {m.label}
+                   </h1>
+                  </div>
+                  </Link>
+                  )
+                }else{
+                return <div key={index} className='flex px-[20px] cursor-pointer items-center rounded-lg h-[50px] relative hover:bg-[#ee96fe]'>
                 <FontAwesomeIcon icon={faAddressBook} className="text-[#fff] h-[16px]"></FontAwesomeIcon>
                  <h1 className='text-[14px] pl-[20px]' style={style}>
                    {m.label}
                  </h1>
-                 <span className='rotate-90 absolute right-4 text-[12px]' style={style}>^</span>
+                 <span className='rotate-90 absolute right-4 text-[12px] cursor-pointer' style={style}>^</span>
                 </div>
+                }
               })}
             </div>
         </div>
