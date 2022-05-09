@@ -6,7 +6,7 @@ import Reports from '../components/Reports'
 
 const Dashboard = () => {
   return (
-    <div className="container lg:pl-[100px] pt-[80px] lg:pt-[40px] lg:pr-[40px] w-full ">
+    <div className="container-content  lg:pl-[130px] pt-[80px] lg:pt-[40px] lg:pr-[50px] w-full ">
     <Head>
       <title>Dashboard</title>
       <meta name="Dashboard" content="Dashboard" />
@@ -22,24 +22,22 @@ const Dashboard = () => {
           <a>Home</a> | Dashboard
         </h2> 
         </div>
-        <div className='w-full bg-purple-300 min-h-screen flex'>
-          <div className='w-[50%] bg-green-300'>
-            <div className='h-[70%]'>
+        <div className='w-full pt-[30px]  min-h-screen flex flex-col lg:flex-row'>
+          <div className='w-full lg:w-[50%]'>
+            <div className='h-[64%]'>
                 <Logs/>
             </div>
-            <div className='h-[30%]'>
+            <div className='h-[36%]'>
                 <Reports/>
             </div>
           </div>
-          <div className='w-[50%] bg-red-300'>
+          <div className='block h-auto lg:hidden '>
           <News/>
           </div>
-        </div>  
-        {/* <div className='pt-[30px] flex justify-between'>
-        <div className='h-[50vh]'><Logs/></div>
-        <div className=''><News/></div>
-        </div>
-        <div className=''><Reports/></div> */}
+          <div className='hidden lg:block w-[50%] '>
+          <News/>
+          </div>
+        </div> 
       </div> 
     </main>
     </div>

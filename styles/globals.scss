@@ -3,6 +3,14 @@
 @import "tailwindcss/utilities";
 
 @import "./common/sidebar.scss";
+#news-card{
+  .short-sub-title {
+    @apply text-[14px] text-light-gray break-words overflow-hidden text-ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* number of lines to show */
+    -webkit-box-orient: vertical;
+  }
+}
 html,
 body {
   padding: 0;
@@ -32,7 +40,10 @@ a {
   color: #4e4e4e;
   font-weight: 400;
 }
-
+.subtitle{
+  font-size: 16px;
+  font-weight: 400;
+}
 .breadcrumb{
   font-size: 14px;
   color: #4e4e4e;
@@ -133,4 +144,19 @@ a {
     width: 100%;
     flex-direction: column;
   }
+}
+
+::-webkit-scrollbar{
+  width: .7vh;
+}
+
+::-webkit-scrollbar-track{
+  margin-block: .5vw;
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb{
+  /* border:.25em solid hsl(120 75% 50%/1); */
+  background: #CDDA;
+  border-radius: 20px;
 }

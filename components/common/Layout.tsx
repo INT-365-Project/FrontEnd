@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from 'react'
+import Footer from './Footer';
 import Sidebar from './Sidebar';
 interface Props {
   children: JSX.Element;
@@ -16,6 +17,7 @@ const Layout: React.FC<Props> = ({ children }) => {
      <div onClick={()=>setIsOpen(true)} className='relative'>
         {children}
      </div>
+     <Footer/>
     </NavContext.Provider>
     </>
   )

@@ -9,8 +9,8 @@ const menu = [
     href: "/dashboard",
   },
   {
-    label: "feature1",
-    href: "/feature1",
+    label: "Management",
+    href: "/news",
   },
   {
     label: "feature2",

@@ -8,6 +8,7 @@ module.exports = {
   theme: {
     colors: {
       ...colors,
+      purple: "#c609e7",
       orange: "#FF8A00",
       "orange-3": "#FFA133",
       "light-gray": "#ADADAD",
