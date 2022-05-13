@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import React, { createContext, useContext, useState } from 'react'
 import Footer from './Footer';
 import Sidebar from './Sidebar';
@@ -9,15 +10,16 @@ export function useNavContext(){
   return useContext(NavContext)
 }
 const Layout: React.FC<Props> = ({ children }) => {
+  const {pathname} = useRouter()
   const [isOpen, setIsOpen] = useState<boolean>(true);
   return (
     <>
     <NavContext.Provider value={{isOpen,setIsOpen}}>
-     <Sidebar/>
+     {pathname != "/signin" && <Sidebar/>}
      <div onClick={()=>setIsOpen(true)} className='relative'>
         {children}
      </div>
-     <Footer/>
+     {pathname != "/signin" &&  <Footer/>}
     </NavContext.Provider>
     </>
   )

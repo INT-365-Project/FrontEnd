@@ -68,22 +68,22 @@ const News = () => {
         if (index <= 5) {
           return (
             <div key={index} className="rounded-2xl drop-shadow-lg mt-[12px] bg-white w-full h-[110px] flex">
-              <div className="w-[20%] rounded-l-2xl h-full bg-red-300">
+              <div className="w-[200px]  rounded-l-2xl h-full bg-red-300">
                   <img src={n.cover} className="object-cover h-full rounded-l-2xl" alt="" />
               </div>
-              <div className="short-sub-title  w-[50%] pl-[40px] my-auto">
+              <div className="w-full flex lg:flex-row flex-col">
+              <div className=" lg:w-[50%] pl-[10px] lg:pl-[40px] lg:my-auto lg:pt-0 pt-[10px]">
                       <p className="text-[14px] text-purple">{n.title}</p>
-                      <p className="text-[12px] text-warmGray-500">{n.short_subtitle}</p>
+                      <p className="text-[12px] text-warmGray-500 short-sub-title">{n.short_subtitle}</p>
                   </div>
-                  <div className="w-[10%] flex pl-[20px] text-[14px] my-auto space-x-2">
-                      <button className="flex space-x-1 border-[1.7px] px-[14px] transition-all duration-300 hover:bg-purple hover:text-white border-purple text-purple h-[50%] p-1 rounded-2xl">
+                  <div className="lg:w-[10%] flex pl-[20px] text-[14px] my-auto space-x-2 ">
+                      <button className="flex space-x-1 border-[1.7px] px-[14px] py-[10px] transition-all duration-300 hover:bg-purple hover:text-white border-purple text-purple h-[90%] lg:h-[50%] p-1 rounded-2xl">
                       <FontAwesomeIcon icon={faPenToSquare} className="h-[16px] cursor-pointer"></FontAwesomeIcon>
-                        {/* <p className="lg:block hidden">Edit</p> */}
                         </button>
-                      <button className="flex space-x-1 border-[1.7px] px-[14px] transition-all duration-300 hover:bg-purple hover:text-white border-purple text-purple h-[50%] p-1 rounded-2xl">
-                      <FontAwesomeIcon icon={faTrashCan} className="h-[16px] cursor-pointer"></FontAwesomeIcon>
-                        {/* <p className="lg:block hidden">Delete</p> */}
+                      <button className="flex space-x-1 border-[1.7px] px-[14px] py-[10px] transition-all duration-300 hover:bg-purple hover:text-white border-purple text-purple h-[90%] lg:h-[50%] p-1 rounded-2xl">
+                      <FontAwesomeIcon icon={faTrashCan} className="h-[16px] relative top-0 cursor-pointer"></FontAwesomeIcon>
                         </button>
+                  </div>
                   </div>
             </div>
           );

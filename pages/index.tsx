@@ -1,8 +1,22 @@
 import Head from 'next/head'
 import Image from 'next/image'
+import Router from 'next/router'
+import { useEffect, useState } from 'react'
 import styles from '../styles/Home.module.css'
 
 export default function Home() {
+  const [loaded,setLoaded] = useState(false)
+  useEffect(()=>{
+    const {pathname} = Router
+    if(pathname == '/'){
+      Router.push('/dashboard')
+    }else{
+      setLoaded(true)
+    }
+  },[])
+  if(!loaded){
+    return <div ></div>
+  }
   return (
     <div className={styles.container}>
       <Head>

@@ -4,6 +4,8 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faCoffee, faMagnifyingGlass , faLockOpen,faLock ,faLightbulb , faAddressBook , faAlignJustify} from '@fortawesome/free-solid-svg-icons'
 import { useNavContext } from '../Layout';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+
 const menu = [
   {
     label: "Dashboard",
@@ -14,11 +16,12 @@ const menu = [
     href: "/news",
   },
   {
-    label: "feature2",
-    href: "/feature2",
+    label: "Chat",
+    href: "/chat",
   },
 ];
 const content = () => {
+  const {route} = useRouter()
   const {isOpen,setIsOpen} = useNavContext();
   const [style, setStyle] = useState({display: 'none'});
   const [image,setImage] = useState({width:'100%'})
@@ -102,13 +105,15 @@ const content = () => {
                   </Link>
                   )
                 }else{
-                return <div key={index} className='flex px-[20px] cursor-pointer items-center rounded-lg h-[50px] relative hover:bg-[#ee96fe]'>
+                return <Link href={m.href}>
+                <div key={index} className={` flex px-[20px] cursor-pointer items-center rounded-lg h-[50px] relative hover:bg-[#ee96fe]`}>
                 <FontAwesomeIcon icon={faAddressBook} className="text-[#fff] h-[16px]"></FontAwesomeIcon>
                  <h1 className='text-[14px] pl-[20px]' style={style}>
                    {m.label}
                  </h1>
-                 <span className='rotate-90 absolute right-4 text-[12px] cursor-pointer' style={style}>^</span>
+                 {/* <span className='rotate-90 absolute right-4 text-[12px] cursor-pointer' style={style}>^</span> */}
                 </div>
+                </Link>
                 }
               })}
             </div>
