@@ -12,7 +12,7 @@ const menu = [
     href: "/dashboard",
   },
   {
-    label: "Management",
+    label: "News",
     href: "/news",
   },
   {
