@@ -1,6 +1,7 @@
 import React from "react";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faPenToSquare,faTrashCan} from '@fortawesome/free-solid-svg-icons'
+import Link from "next/link";
 const data = [
   {
     cover:
@@ -63,7 +64,12 @@ const data = [
 const News = () => {
   return (
     <div id="news-card" className="w-[95%] lg:w-full mt-[30px] lg:mt-0">
-      <div className="flex justify-between"><div className="text-purple subtitle">News</div><div className="transition-all duration-300 px-[20px] border-[1.7px] border-purple rounded-2xl hover:bg-purple text-purple hover:text-white cursor-pointer">See All</div></div>
+      <div className="flex justify-between"><div className="text-purple subtitle">News</div>
+      <Link href="/news">
+      <div className="transition-all duration-300 px-[20px] border-[1.7px] border-purple rounded-2xl 
+      hover:bg-purple text-purple hover:text-white cursor-pointer">See All</div>
+      </Link>
+      </div>
       {data.map((n, index) => {
         if (index <= 5) {
           return (
