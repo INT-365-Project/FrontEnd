@@ -2,7 +2,8 @@ import Head from "next/head";
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrashCan } from "@fortawesome/free-solid-svg-icons";
-import PopupForm from "../components/News/PopupForm";
+import PopupForm from "../../components/News/PopupForm";
+import Link from "next/link";
 const data = [
   {
     id:1,
@@ -134,14 +135,16 @@ const News = () => {
               return (
                 <div
                   key={index}
-                  className="rounded-2xl drop-shadow-lg mt-[10px] bg-white w-full h-[260px] flex"
+                  className="rounded-2xl drop-shadow-lg mt-[10px] bg-white w-full h-[260px] flex "
                 >
                   <div className="w-[300px] lg:w-[60%]  rounded-l-2xl h-full ">
+                  <Link href={{pathname:`/news/${encodeURIComponent(n.id)}`}}>
                     <img
                       src={n.cover}
-                      className="object-cover h-full rounded-l-2xl"
+                      className="object-cover h-full rounded-l-2xl cursor-pointer"
                       alt=""
                     />
+                    </Link>
                   </div>
                   <div className="w-full flex lg:flex-row flex-col">
                     <div className=" lg:w-[50%] pl-[10px] lg:pl-[40px] lg:my-auto lg:pt-0 pt-[10px]">
