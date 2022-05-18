@@ -6,7 +6,7 @@ import Reports from '../components/Reports'
 
 const Dashboard = () => {
   return (
-    <div className="container-content  lg:pl-[130px] pt-[80px] lg:pt-[40px] lg:pr-[50px] w-full ">
+    <div className="pl-[30px]  lg:pl-[130px] pt-[80px] lg:pt-[40px] lg:pr-[50px] w-full ">
     <Head>
       <title>Dashboard</title>
       <meta name="Dashboard" content="Dashboard" />
