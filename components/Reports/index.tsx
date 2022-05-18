@@ -42,7 +42,6 @@ const Reports = () => {
     
     </Slider>
       </div>  
-   
     
     </div>  
   )

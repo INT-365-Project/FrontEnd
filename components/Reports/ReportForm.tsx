@@ -1,54 +1,83 @@
 import Router from 'next/router';
-import React from 'react'
+import React, { useState } from 'react'
 import { useForm } from "react-hook-form";
+import Swal from 'sweetalert2';
+
 type FormData = {
   message: string;
-  suggestMessage: string;
+  topic: string;
 };
+
+
 const ReportForm = () => {
+  const [isSuccess,setIsSuccess] = useState(false)
   const {
     register,
     handleSubmit,
-    watch,
+    reset ,
     formState: { errors },
   } = useForm<FormData>();
+
   const onSubmit = (data:FormData)=>{
     console.log(data)
-    // Router.push('/dashboard')
+    successAlert();
   }
+  // console.log('error = ' , errors)
+  const successAlert = () => {
+  
+    Swal.fire({  
+        title: 'Thank you!',  
+        text: 'you clicked the button for continue or back to home page',
+        icon: 'success',
+        showCancelButton:true,
+        confirmButtonText: 'Back to home page',
+        cancelButtonText: `Report other problem`,
+      }).then((result)=>{
+        if(result.isConfirmed){
+          Router.push('/dashboard')
+        }else if(result.isDismissed){
+          resetData();
+        }
+      }); 
+}
+
+const resetData = () =>{
+  reset({topic:"",message:""})
+}
   return (
     <div className=' lg:pl-[130px] md:pt-[80px] lg:pt-[40px] lg:pr-[50px] w-full min-h-screen '>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-[30px]">
-        <div className='bg-white rounded-lg h-screen md:h-[60vh] px-[30px] pt-[140px] md:pt-[30px] md:mt-[80px]'>
-          <div className='flex justify-center font-bold tracking-wider text-[24px] mb-[20px] pb-[10px]'><h1>New Report Message</h1></div>
+      {!isSuccess&& <form onSubmit={handleSubmit(onSubmit)} className="space-y-[30px]">
+        <div className='bg-white rounded-lg h-screen md:h-[70vh] px-[30px] pt-[140px] md:pt-[30px] md:mt-[80px]'>
+          <div className='flex justify-center font-bold tracking-wider text-[24px] mb-[20px] pb-[10px]'><h1>Report Problem</h1></div>
         <div className='pb-[20px]'>
             <label className="text-body font-bold tracking-wider">
-                  SUGGEST
+                  Topic
                 </label>
                 <input
                   className="text-body mt-[10px] shadow appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   type="text"
-                  placeholder="Your Suggestion ..."
-                  {...register("suggestMessage", { required: true })}
+                  placeholder="Your topic ..."
+                  {...register("topic", { required: "Topic is Required" })}
                 />
+                {errors.topic && (<small className='text-red-500'>{errors.topic.message}</small>)}
                 </div>
                 <div className='pb-[20px]'>
              <label className="text-body font-bold tracking-wider">
-                MESSAGE
+                Message
               </label>
               <textarea
                 className="text-body mt-[10px]  shadow appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline "
                 rows={4}
                 placeholder="Type your message here..."
-                {...register("message", { required: true })}
+                {...register("message", { required: "Message is Required" })}
               />
+              {errors.message && (<small className='text-red-500'>{errors.message.message}</small>)}
               </div>
-               
                 <button type="submit" className="w-full  shadow rounded py-3 px-3 bg-purple text-white tracking-wider uppercase font-semibold">
-              SEND
+              Send
             </button>
             </div>
-            </form>
+            </form>}
     </div>
   )
 }

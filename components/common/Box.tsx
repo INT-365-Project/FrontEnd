@@ -10,7 +10,7 @@ const Box = ({ children, styles, className }) => {
   };
   return (
     <div
-      className={`relative bg-white lg:w-[70%] w-full  ${className}`}
+      className={`relative bg-white lg:w-[70%] w-[90%]  ${className}`}
       style={{
         ...styles,
         transition: "2s",

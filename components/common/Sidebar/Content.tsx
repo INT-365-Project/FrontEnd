@@ -19,6 +19,10 @@ const menu = [
     label: "Chat",
     href: "/chat",
   },
+  {
+    label: "Report",
+    href:"/report"
+  }
 ];
 const content = () => {
   const {route} = useRouter()
