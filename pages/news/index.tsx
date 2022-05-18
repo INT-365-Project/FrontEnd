@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import PopupForm from "../../components/News/PopupForm";
 import Link from "next/link";
+import Swal from 'sweetalert2';
 const data = [
   {
     id:1,
@@ -88,18 +89,33 @@ const News = () => {
     }
   }, [isOpen]);
 
-  const editNews =(item)=>{
-    console.log(isOpen)
-    console.log('hi',item)
+  const editNews =(item:any)=>{
     setEditData(item)
     setIsOpen(true)
     setIsEdit(true)
-    console.log(isOpen)
   };
-  const removeNews =(id)=>{
-    console.log('hi',id)
+  const removeNews =(id:any)=>{
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log('hi',id)
+        Swal.fire(
+          'Deleted!',
+          'Your news has been deleted.',
+          'success'
+        )
+      }
+    })
   }
 
+  
   return (
     <>
     {isOpen && <PopupForm setIsOpen={setIsOpen} isOpen={isOpen}  editData={editData} setIsEdit={setIsEdit} isEdit={isEdit}/>}

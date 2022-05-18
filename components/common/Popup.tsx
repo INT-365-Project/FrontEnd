@@ -3,7 +3,7 @@ import Box from './Box'
 
 const Popup = ({children,className}) => {
   return (
-    <div className={` absolute z-[200] ${className} left-0 h-full w-full drop-shadow-lg bg-black/[.15] flex items-center justify-center`}>
+    <div className={` absolute z-[200] ${className}   left-0 h-full w-full drop-shadow-lg bg-black/[.15] flex items-center justify-center`}>
       <Box styles={{
           borderRadius: 50,
           paddingY: "3%",
