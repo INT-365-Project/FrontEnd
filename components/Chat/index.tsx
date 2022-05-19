@@ -74,16 +74,21 @@ const Chat = () => {
       <div className=' min-h-[80vh] mt-[35px] flex flex-col lg:flex-row'>
           <div className='lg:w-[30%] lg:h-auto'>
            <div className='w-[93%] lg:h-full bg-white rounded-3xl drop-shadow-md'>
-                      <div className='flex justify-between px-[30px] pb-[20px] h-[80px]'>
-                        <button onClick={()=>setButtonClick(true)} className={`${buttonClick ? 'border-t-4 text-purple'  : '' } border-purple w-[50%] `}>Message</button>
-                       <button onClick={()=>setButtonClick(false)} className={`${!buttonClick ? 'border-t-4 text-purple' : '' }  border-purple  w-[50%] `}>Contact</button>
+                      <div className='flex justify-center px-[30px] pb-[20px] h-[80px]'>
+                        <button onClick={()=>setButtonClick(true)} className={`${'border-t-4 text-purple'  } border-purple w-full `}>Message</button>
+                       {/* <button onClick={()=>setButtonClick(false)} className={`${!buttonClick ? 'border-t-4 text-purple' : '' }  border-purple  w-[50%] `}>Contact</button> */}
                        </div>
-                       {!isOpen ? <div className='pt-[30px] space-y-[32px] flex flex-col overflow-y-scroll h-[500px]'>
+                       <div className=' hidden pt-[30px] space-y-[32px] lg:flex flex-col overflow-y-scroll h-[500px]'>
+                            {mockUsers.map(u=>{
+                              return <button key={u.uid} className="p-[10px] w-[50%] mx-auto">{u.user}</button>
+                            })}
+                       </div>
+                       {!isOpen ? <div className='lg:hidden pt-[30px] space-y-[32px] flex flex-col overflow-y-scroll h-[500px]'>
                             {mockUsers.map(u=>{
                               return <button key={u.uid} className="p-[10px] w-[50%] mx-auto" onClick={()=>{setIsOpen(true)}}>{u.user}</button>
                             })}
                        </div>:
-                       <div className='pt-[30px] space-y-[32px] flex flex-col overflow-y-scroll h-[500px] pl-[30px] pb-[20px]'>
+                       <div className='pt-[30px] lg:hidden space-y-[32px] flex flex-col overflow-y-scroll h-[500px] pl-[30px] pb-[20px]'>
                        <p>Blaine Cottrell</p>
                         <p>Blaine Cottrell</p>
                         <p>Blaine Cottrell</p>
