@@ -27,10 +27,10 @@ const menu = [
     label: "Chat",
     href: "/chat",
   },
-  {
-    label: "Report",
-    href:"/report"
-  }
+  // {
+  //   label: "Report",
+  //   href:"/report"
+  // }
 ];
 const Content = ({isOpen,setIsOpen,style,image}) => {
   const [isTop, setIsTop] = useState<boolean>(true);
