@@ -40,9 +40,9 @@ export default function Home() {
         </div>
         <div className='w-full pt-[30px]  min-h-screen flex flex-col lg:flex-row'>
           <div className='w-full lg:w-[50%]'>
-            {/* <div className='h-[64%]'>
+            <div className='h-[64%]'>
                 <Logs/>
-            </div> */}
+            </div>
             <div className='h-[36%]'>
                 <Reports/>
             </div>
