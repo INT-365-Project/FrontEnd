@@ -14,10 +14,10 @@ const data = [
 ];
 
 const Logs = () => {
-  const formatDate  = (value:any) =>{
-    const publishedAt = new Date(value);
-    return <p>{dateFormat(publishedAt,"dd mmm yy")}</p>
-  }
+  // const formatDate  = (value:any) =>{
+  //   const publishedAt = new Date(value);
+  //   return <p>{dateFormat(publishedAt,"dd mmm yy")}</p>
+  // }
   return (
     <div className="w-[95%]">
       <div className="text-purple subtitle">Logs</div>
@@ -28,7 +28,7 @@ const Logs = () => {
             return (
               <div key={index} className="flex justify-between pt-[20px] py-[5px] h-[55px]">
                 <p>{l.title}</p>
-                {formatDate(l.published_at)}
+                {l.published_at}
                 {/* <p>{dateFormat(publishedAt, "dd mmm yy")}</p> */}
               </div>
             );
