@@ -20,11 +20,11 @@ const Logs = () => {
       <div className="rounded-xl drop-shadow-lg bg-white mt-[10px] mx-auto h-[400px] overflow-hidden ">
         <div className="pl-[30px] pr-[20px] overflow-y-auto h-[330px] w-[90%] mt-[30px] mx-auto text-warmGray-500 ">
           {data.map((l,index) => {
-            const publishedAt = new Date(l.published_at);
+            // const publishedAt = new Date(l.published_at);
             return (
               <div key={index} className="flex justify-between pt-[20px] py-[5px] h-[55px]">
                 <p>{l.title}</p>
-                <p>{dateFormat(publishedAt, "dd mmm yy")}</p>
+                {/* <p>{dateFormat(publishedAt, "dd mmm yy")}</p> */}
               </div>
             );
           })}
