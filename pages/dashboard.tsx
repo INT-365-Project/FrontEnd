@@ -22,7 +22,7 @@ const Dashboard = () => {
           <a>Home</a> | Dashboard
         </h2> 
         </div>
-        <div className='w-full pt-[30px]  min-h-screen flex flex-col lg:flex-row'>
+        {/* <div className='w-full pt-[30px]  min-h-screen flex flex-col lg:flex-row'>
           <div className='w-full lg:w-[50%]'>
             <div className='h-[64%]'>
                 <Logs/>
@@ -37,7 +37,7 @@ const Dashboard = () => {
           <div className='hidden lg:block w-[50%] '>
           <News/>
           </div>
-        </div> 
+        </div>  */}
       </div> 
     </main>
     </div>
