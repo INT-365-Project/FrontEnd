@@ -4,8 +4,9 @@ import Head from 'next/head'
 // import { useEffect, useState } from 'react'
 import Logs from '../components/Logs'
 import Reports from '../components/Reports'
+import News from '../components/News'
 // import styles from '../styles/Home.module.css'
-import News from './news'
+
 
 export default function Home() {
   // const [loaded,setLoaded] = useState(false)
@@ -38,14 +39,14 @@ export default function Home() {
         </h2> 
         </div>
         <div className='w-full pt-[30px]  min-h-screen flex flex-col lg:flex-row'>
-          <div className='w-full lg:w-[50%]'>
+          {/* <div className='w-full lg:w-[50%]'>
             <div className='h-[64%]'>
                 <Logs/>
             </div>
             <div className='h-[36%]'>
                 <Reports/>
             </div>
-          </div>
+          </div> */}
           <div className='block h-auto lg:hidden '>
           <News/>
           </div>
