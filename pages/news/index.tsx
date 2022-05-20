@@ -5,6 +5,7 @@ import { faPenToSquare, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import PopupForm from "../../components/News/PopupForm";
 import Link from "next/link";
 import Swal from 'sweetalert2';
+import Image from "next/image";
 const data = [
   {
     id:1,
@@ -154,7 +155,7 @@ const News = () => {
                   className="rounded-2xl drop-shadow-lg mt-[10px] bg-white w-full h-[260px] flex "
                 >
                   <div className="w-[300px] lg:w-[60%]  rounded-l-2xl h-full ">
-                  <Link href={{pathname:`/news/${encodeURIComponent(n.id)}`}}>
+                  <Link href={{pathname:`/news/${encodeURIComponent(n.id)}`}} passHref>
                     <img
                       src={n.cover}
                       className="object-cover h-full rounded-l-2xl cursor-pointer"

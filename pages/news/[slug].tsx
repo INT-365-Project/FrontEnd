@@ -25,7 +25,7 @@ const Detail = () => {
     console.log(data);
   };
   return (
-    <div className="min-h-screen pl-[30px] lg:pl-[130px] pr-[20px] pt-[80px] lg:pt-[40px] lg:pr-[50px] w-full">
+    <div className="min-h-screen  pl-[30px] lg:pl-[130px] pr-[20px] pt-[80px] lg:pt-[40px] lg:pr-[50px] w-full">
       <Head>
         <title>News-Detail</title>
         <meta name="Detail" content="Detail" />
@@ -48,7 +48,7 @@ const Detail = () => {
               />
             </div>
             <div className="h-[50%] w-full px-[20px] pt-[40px] text-[13px] lg:text-[16px]">
-              <div className="pt-[20px]">{data.title}</div>
+              <div className="pt-[20px] text-purple">{data.title}</div>
               <div className="pt-[20px] pb-[60px]">{data.description}</div>
             </div>
           </div>

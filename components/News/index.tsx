@@ -72,7 +72,7 @@ const News = () => {
   return (
     <div id="news-card" className="w-[95%] lg:w-full mt-[30px] lg:mt-0">
       <div className="flex justify-between"><div className="text-purple subtitle">News</div>
-      <Link href="/news">
+      <Link href="/news" passHref>
       <div className="transition-all duration-300 px-[20px] border-[1.7px] border-purple rounded-2xl 
       hover:bg-purple text-purple hover:text-white cursor-pointer">See All</div>
       </Link>
@@ -82,7 +82,7 @@ const News = () => {
           return (
             <div key={index} className="rounded-2xl drop-shadow-lg mt-[12px] bg-white w-full h-[110px] flex">
               <div className="w-[200px]  rounded-l-2xl h-full bg-red-300">
-                <Link href={{pathname:`/news/${encodeURIComponent(n.id)}`}}>
+                <Link href={{pathname:`/news/${encodeURIComponent(n.id)}`}} passHref>
                   <img src={n.cover} className="object-cover h-full rounded-l-2xl" alt="" />
                   </Link>
               </div>

@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faCoffee, faMagnifyingGlass , faLockOpen,faLock ,faLightbulb , faAddressBook , faAlignJustify} from '@fortawesome/free-solid-svg-icons'
 import { useNavContext } from '../Layout';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import Image from 'next/image';
 
 const menu = [
   {
@@ -24,8 +24,7 @@ const menu = [
     href:"/report"
   }
 ];
-const content = () => {
-  const {route} = useRouter()
+const Content = () => {
   const {isOpen,setIsOpen} = useNavContext();
   const [style, setStyle] = useState({display: 'none'});
   const [image,setImage] = useState({width:'100%'})
@@ -86,7 +85,7 @@ const content = () => {
             </h1>
           </div>
           <div className='text-center flex flex-col justify-center w-[40%] mx-auto mt-[30px] py-[10px] hover:bg-[#ee96fe] rounded-xl cursor-pointer'>
-              <img src="/images/mock-user.jpg" alt="mock-user" className=' mx-auto rounded-full' style={image} />
+              {/* <img src="/images/mock-user.jpg" alt="mock-user" className=' mx-auto rounded-full' style={image} /> */}
               <p className='text-[14px] font-medium text-[#fff]' style={style}>Lisa Jackson</p>
             </div>
             <div className='flex space-x-4 justify-center items-center mt-[10px] py-[10px]  h-[60px]'>
@@ -99,7 +98,7 @@ const content = () => {
               {menu.map((m,index)=>{
                 if(m.label=="Dashboard"){
                   return (
-                  <Link href="/dashboard">
+                  <Link href="/dashboard" passHref>
                   <div key={index} className='flex px-[20px] cursor-pointer items-center rounded-lg h-[50px] relative hover:bg-[#ee96fe]'>
                   <FontAwesomeIcon icon={faAddressBook} className="text-[#fff] h-[16px]"></FontAwesomeIcon>
                    <h1 className='text-[14px] pl-[20px]' style={style}>
@@ -109,7 +108,7 @@ const content = () => {
                   </Link>
                   )
                 }else{
-                return <Link href={m.href}>
+                return <Link href={m.href} passHref>
                 <div key={index} className={` flex px-[20px] cursor-pointer items-center rounded-lg h-[50px] relative hover:bg-[#ee96fe]`}>
                 <FontAwesomeIcon icon={faAddressBook} className="text-[#fff] h-[16px]"></FontAwesomeIcon>
                  <h1 className='text-[14px] pl-[20px]' style={style}>
@@ -126,5 +125,5 @@ const content = () => {
   )
 }
 
-export default content
+export default Content
 
