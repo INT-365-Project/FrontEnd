@@ -37,7 +37,7 @@ const LogIn = () => {
       <div className='w-full h-full pt-[70px] md:pt-0 bg-white rounded-r-lg tracking-wider'>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className='lg:px-[80px] px-[20px] py-[40px]'>
-        <h1 className='text-purple text-[40px] font-semibold'>Login</h1>
+        <h1 className='text-purple text-[40px] font-semibold'>Login (for admin) </h1>
         <p className='text-warmGray-500 '>
           Welcome to login to get SIT CHAT-BOT
         </p>

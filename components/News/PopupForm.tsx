@@ -89,7 +89,7 @@ const PopupForm = ({ setIsOpen, isOpen ,editData, setIsEdit , isEdit}) => {
 
 
   return (
-    <Popup className="top-[-33%]">
+    <Popup>
       <div className="w-full h-[80vh]  drop-shadow-lg overflow-y-auto">
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>

@@ -5,6 +5,7 @@ import { faPenToSquare, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import PopupForm from "../../components/News/PopupForm";
 import Link from "next/link";
 import Swal from 'sweetalert2';
+import Image from "next/image";
 const data = [
   {
     id:1,
@@ -121,7 +122,7 @@ const News = () => {
     {isOpen && <PopupForm setIsOpen={setIsOpen} isOpen={isOpen}  editData={editData} setIsEdit={setIsEdit} isEdit={isEdit}/>}
       <div
         id="news-card"
-        className="min-h-screen lg:pl-[130px] pt-[80px] md:pt-[80px] lg:pt-[40px] lg:pr-[50px] w-full overflow-hidden"
+        className="min-h-screen pr-[20px] pl-[30px] lg:pl-[130px] pt-[80px] md:pt-[80px] lg:pt-[40px] lg:pr-[50px] w-full overflow-hidden"
       >
         <Head>
           <title>News</title>
@@ -154,7 +155,7 @@ const News = () => {
                   className="rounded-2xl drop-shadow-lg mt-[10px] bg-white w-full h-[260px] flex "
                 >
                   <div className="w-[300px] lg:w-[60%]  rounded-l-2xl h-full ">
-                  <Link href={{pathname:`/news/${encodeURIComponent(n.id)}`}}>
+                  <Link href={{pathname:`/news/${encodeURIComponent(n.id)}`}} passHref>
                     <img
                       src={n.cover}
                       className="object-cover h-full rounded-l-2xl cursor-pointer"
@@ -169,7 +170,7 @@ const News = () => {
                         {n.description}
                       </p>
                     </div>
-                    <div className=" lg:w-[50%] flex items-center lg:mx-auto lg:pl-[80px]  text-[14px] my-auto space-x-2 ">
+                    <div className=" lg:w-[50%] flex items-center lg:mx-auto lg:pl-[80px] pl-[10px]  text-[14px] my-auto space-x-2 ">
                       <button onClick={()=>editNews(n)} className="flex space-x-1 border-[1.7px] px-[14px] py-[10px] transition-all duration-300 hover:bg-purple hover:text-white border-purple text-purple h-[90%] lg:h-[50%] p-1 rounded-2xl">
                         <FontAwesomeIcon
                           icon={faPenToSquare}
