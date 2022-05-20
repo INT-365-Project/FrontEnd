@@ -122,7 +122,7 @@ const News = () => {
     {isOpen && <PopupForm setIsOpen={setIsOpen} isOpen={isOpen}  editData={editData} setIsEdit={setIsEdit} isEdit={isEdit}/>}
       <div
         id="news-card"
-        className="min-h-screen pr-[20px] pl-[30px] lg:pl-[130px] pt-[80px] md:pt-[80px] lg:pt-[40px] lg:pr-[50px] w-full overflow-hidden"
+        className="min-h-screen px-[10px] lg:px-0 lg:pl-[130px] pt-[80px] md:pt-[80px] lg:pt-[40px] lg:pr-[50px] w-full overflow-hidden"
       >
         <Head>
           <title>News</title>

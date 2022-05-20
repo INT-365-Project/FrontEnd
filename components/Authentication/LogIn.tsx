@@ -60,12 +60,12 @@ const LogIn = () => {
          <button type="submit" className="w-full mt-[18px] shadow rounded py-3 px-3 bg-purple text-white tracking-wider uppercase font-semibold">
               Login
             </button>
-            <div className='flex justify-between w-full text-[14px] mt-[60px]'>
+            {/* <div className='flex justify-between w-full text-[14px] mt-[60px]'>
             <div className='text-warmGray-500'>New Users? <span className='text-purple'>Sign up</span></div>
             <div>
               forget your password ?
             </div>
-        </div>
+        </div> */}
         </div>
         </form>
        

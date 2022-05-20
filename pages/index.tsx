@@ -1,28 +1,12 @@
 import Head from 'next/head'
-// import Image from 'next/image'
-// import Router from 'next/router'
-// import { useEffect, useState } from 'react'
 import Logs from '../components/Logs'
 import Reports from '../components/Reports'
 import News from '../components/News'
-// import styles from '../styles/Home.module.css'
 
 
 export default function Home() {
-  // const [loaded,setLoaded] = useState(false)
-  // useEffect(()=>{
-  //   const {pathname} = Router
-  //   if(pathname == '/'){
-  //     Router.push('/dashboard')
-  //   }else{
-  //     setLoaded(true)
-  //   }
-  // },[])
-  // if(!loaded){
-  //   return <div ></div>
-  // }
   return (
-    <div className="pl-[30px]  lg:pl-[130px] pt-[80px] lg:pt-[40px] lg:pr-[50px] w-full ">
+    <div className="px-[10px] lg:px-0 lg:pl-[130px] pt-[80px] lg:pt-[40px] lg:pr-[50px] w-full ">
     <Head>
       <title>Dashboard</title>
       <meta name="Dashboard" content="Dashboard" />
