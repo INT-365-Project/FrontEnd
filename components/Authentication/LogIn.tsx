@@ -14,7 +14,7 @@ const LogIn = () => {
   } = useForm<FormData>();
   const onSubmit = (data:FormData)=>{
     console.log(data)
-    Router.push('/dashboard')
+    Router.push('/')
   }
   return (
     <div className='w-full h-screen   lg:px-[120px] pb-[100px] drop-shadow-lg '>
