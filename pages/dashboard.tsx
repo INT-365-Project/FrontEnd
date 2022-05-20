@@ -27,9 +27,9 @@ const Dashboard = () => {
             <div className='h-[64%]'>
                 <Logs/>
             </div>
-            {/* <div className='h-[36%]'>
+            <div className='h-[36%]'>
                 <Reports/>
-            </div> */}
+            </div>
           </div>
           <div className='block h-auto lg:hidden '>
           <News/>
