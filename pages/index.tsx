@@ -39,14 +39,14 @@ export default function Home() {
         </h2> 
         </div>
         <div className='w-full pt-[30px]  min-h-screen flex flex-col lg:flex-row'>
-          {/* <div className='w-full lg:w-[50%]'>
-            <div className='h-[64%]'>
+          <div className='w-full lg:w-[50%]'>
+            {/* <div className='h-[64%]'>
                 <Logs/>
-            </div>
+            </div> */}
             <div className='h-[36%]'>
                 <Reports/>
             </div>
-          </div> */}
+          </div>
           <div className='block h-auto lg:hidden '>
           <News/>
           </div>
