@@ -1,7 +1,7 @@
 import React from 'react'
 import Box from './Box'
 
-const Popup = ({children,className}) => {
+const Popup = ({children}) => {
   return (
     <div className={` absolute z-[200] top-[-33%]   left-0 h-full w-full drop-shadow-lg bg-black/[.15] flex items-center justify-center`}>
       <Box styles={{
