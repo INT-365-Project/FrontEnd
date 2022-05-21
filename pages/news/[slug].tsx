@@ -25,7 +25,7 @@ const Detail = () => {
     console.log(data);
   };
   return (
-    <div className="min-h-screen  pl-[30px] lg:pl-[130px] pr-[20px] pt-[80px] lg:pt-[40px] lg:pr-[50px] w-full">
+    <div className="min-h-screen  px-[10px] lg:px-0 lg:pl-[130px] pt-[80px] lg:pt-[40px] lg:pr-[50px] w-full">
       <Head>
         <title>News-Detail</title>
         <meta name="Detail" content="Detail" />

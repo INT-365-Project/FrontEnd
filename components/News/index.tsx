@@ -70,7 +70,7 @@ const data = [
 
 const News = () => {
   return (
-    <div id="news-card" className="w-[95%] lg:w-full mt-[30px] lg:mt-0">
+    <div id="news-card" className="w-full mt-[30px] lg:mt-0 ">
       <div className="flex justify-between"><div className="text-purple subtitle">News</div>
       <Link href="/news" passHref>
       <div className="transition-all duration-300 px-[20px] border-[1.7px] border-purple rounded-2xl 

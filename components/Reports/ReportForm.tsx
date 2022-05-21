@@ -34,7 +34,7 @@ const ReportForm = () => {
         cancelButtonText: `Report other problem`,
       }).then((result)=>{
         if(result.isConfirmed){
-          Router.push('/dashboard')
+          Router.push('/')
         }else if(result.isDismissed){
           resetData();
         }
@@ -47,7 +47,7 @@ const resetData = () =>{
   return (
     <div className=' lg:pl-[220px] md:pt-[80px] lg:pt-[40px] lg:pr-[170px] w-full min-h-screen '>
       {!isSuccess&& <form onSubmit={handleSubmit(onSubmit)} className="space-y-[30px]">
-        <div className='bg-white rounded-lg h-screen md:h-[70vh] px-[30px] pt-[140px] md:pt-[30px] md:mt-[80px]'>
+        <div className='bg-white rounded-lg h-screen md:h-[70vh] px-[30px] pt-[60px] md:pt-[30px] md:mt-[80px]'>
           <div className='flex justify-center font-bold tracking-wider text-[24px] mb-[20px] pb-[10px]'><h1>Report Problem</h1></div>
         <div className='pb-[20px]'>
             <label className="text-body font-bold tracking-wider">
