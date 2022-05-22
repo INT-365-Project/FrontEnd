@@ -1,20 +1,43 @@
 import Router from 'next/router';
-import React from 'react'
-import { useForm } from "react-hook-form";
-type FormData = {
-  name: string;
-  password: string;
-};
+import React, { useState } from 'react'
+import Swal from 'sweetalert2';
+import { api } from '../../config';
+// import LoginServices from '../../services/login';
 const LogIn = () => {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm<FormData>();
-  const onSubmit = (data:FormData)=>{
-    console.log(data)
-    Router.push('/')
+  const [username, setUserName] = useState("");
+  const [password, setPassword] = useState("");
+
+  async function loginUser(credentials:any) {
+    return fetch(`${api}/authenticate`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(credentials)
+    })
+      .then(data => data.json())
+   }
+   const handleSubmit = async (e:any) => {
+    e.preventDefault();
+    const response = await loginUser({
+      username,
+      password
+    });
+    console.log(response)
+    if ('token' in response) {
+      Swal.fire({  
+        title: 'Thank you!',  
+        text: 'you clicked the button ',
+        icon: 'success',
+      })
+      .then((value) => {
+        localStorage.setItem('accessToken', response['token']);
+        localStorage.setItem('user', JSON.stringify(response['userModelDetail']));
+        Router.push("/")
+      });
+    } else {
+      Swal.fire("Failed", response.error, "error");
+    }
   }
   return (
     <div className='w-full h-screen   lg:px-[120px] pb-[100px] drop-shadow-lg '>
@@ -35,7 +58,7 @@ const LogIn = () => {
         </p>
       </div>
       <div className='w-full h-full pt-[70px] md:pt-0 bg-white rounded-r-lg tracking-wider'>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit}>
         <div className='lg:px-[80px] px-[20px] py-[40px]'>
         <h1 className='text-purple text-[40px] font-semibold'>Login (for admin) </h1>
         <p className='text-warmGray-500 '>
@@ -46,7 +69,7 @@ const LogIn = () => {
           <input
                   className="text-body mt-[6px] shadow appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   type="text"
-                  {...register("name", { required: true })}
+                  onChange={e => setUserName(e.target.value)}
                 />
         </div>
         <div className='pb-[20px]'>
@@ -54,7 +77,7 @@ const LogIn = () => {
           <input
                   className="text-body shadow mt-[6px] appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   type="password"
-                  {...register("password", { required: true })}
+                  onChange={e => setPassword(e.target.value)}
                 />
         </div>
          <button type="submit" className="w-full mt-[18px] shadow rounded py-3 px-3 bg-purple text-white tracking-wider uppercase font-semibold">

@@ -2,11 +2,14 @@ import Head from 'next/head'
 import Logs from '../components/Logs'
 import Reports from '../components/Reports'
 import News from '../components/News'
+import { useAppContext } from './_app'
 
 
 export default function Home() {
+  const {adminUser} = useAppContext()
   return (
-    <div className="px-[10px] lg:px-0 lg:pl-[130px] pt-[80px] lg:pt-[40px] lg:pr-[50px] w-full ">
+    <>
+    {adminUser&&<div className="px-[10px] lg:px-0 lg:pl-[130px] pt-[80px] lg:pt-[40px] lg:pr-[50px] w-full ">
     <Head>
       <title>Dashboard</title>
       <meta name="Dashboard" content="Dashboard" />
@@ -40,6 +43,7 @@ export default function Home() {
         </div> 
       </div> 
     </main>
-    </div>
+    </div>}
+    </>
   )
 }

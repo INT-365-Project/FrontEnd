@@ -13,7 +13,7 @@
   .sub-title {
     @apply text-[16px] text-light-gray break-words overflow-hidden text-ellipsis;
     display: -webkit-box;
-    -webkit-line-clamp: 6; /* number of lines to show */
+    -webkit-line-clamp: 3; /* number of lines to show */
     -webkit-box-orient: vertical;
   }
 }

@@ -9,32 +9,51 @@ import {
   faLightbulb,
   faAddressBook,
   faAlignJustify,
+  faRightFromBracket
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavContext } from "../Layout";
 import Link from "next/link";
 import Image from "next/image";
+import { useAppContext } from "../../../pages/_app";
+import { useRouter } from "next/router";
 
-const menu = [
-  {
-    label: "Dashboard",
-    href: "/",
-  },
-  {
-    label: "News",
-    href: "/news",
-  },
-  {
-    label: "Chat",
-    href: "/chat",
-  },
-  // {
-  //   label: "Report",
-  //   href:"/report"
-  // }
-];
-const Content = ({isOpen,setIsOpen,style,image}) => {
+const Content = ({ isOpen, setIsOpen, style, image }) => {
   const [isTop, setIsTop] = useState<boolean>(true);
-
+  const { adminUser, isLogin, setIsLogin } = useAppContext();
+  const router = useRouter();
+  const menu = isLogin
+    ? [
+        {
+          label: "Dashboard",
+          href: "/",
+        },
+        {
+          label: "News",
+          href: "/news",
+        },
+        {
+          label: "Chat",
+          href: "/chat",
+        },
+        {
+          label: "Report",
+          href: "/report",
+        },
+      ]
+    : [
+        {
+          label: "News",
+          href: "/news",
+        },
+        {
+          label: "Chat",
+          href: "/chat",
+        },
+        {
+          label: "Report",
+          href: "/report",
+        },
+      ];
   useEffect(() => {
     let listener = () => {
       let scrolled = document?.scrollingElement?.scrollTop;
@@ -50,6 +69,13 @@ const Content = ({isOpen,setIsOpen,style,image}) => {
       document.removeEventListener("scroll", listener);
     };
   }, []);
+
+  const handleLogOff = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("user");
+    setIsLogin(false);
+    window.location.href = "/";
+  };
 
   return (
     <>
@@ -92,7 +118,7 @@ const Content = ({isOpen,setIsOpen,style,image}) => {
         id={`${isOpen ? "sidebar" : "sidebarMobile"}`}
         className={`${!isOpen ? "block" : "hidden"}'`}
       >
-        <div className="text-center flex justify-center pt-[30px] items-center ">
+        <div onClick={()=>router.push("/news")} className="text-center flex justify-center pt-[30px] items-center ">
           <FontAwesomeIcon
             icon={faCoffee}
             className="text-[#fff] h-[30px]"
@@ -104,11 +130,21 @@ const Content = ({isOpen,setIsOpen,style,image}) => {
             SIT-ChatBot
           </h1>
         </div>
-        <div className="text-center flex flex-col justify-center w-[40%] mx-auto mt-[30px] py-[10px] hover:bg-[#ee96fe] rounded-xl cursor-pointer">
-          {/* <img src="/images/mock-user.jpg" alt="mock-user" className=' mx-auto rounded-full' style={image} /> */}
-          <p className="text-[14px] font-medium text-[#fff]" style={style}>
-            Lisa Jackson
-          </p>
+        <div
+          onClick={() => router.push("signin")}
+          className="text-center flex flex-col justify-center w-[50%] mx-auto mt-[30px] py-[10px] hover:bg-[#ee96fe] rounded-xl cursor-pointer"
+        >
+          <img
+            src="/images/default.png"
+            alt="mock-user"
+            className="bg-white mx-auto rounded-full"
+            style={image}
+          />
+          {adminUser && (
+            <p className="text-[14px] font-medium text-[#fff]" style={style}>
+              {adminUser.fullName}
+            </p>
+          )}
         </div>
         <div className="flex space-x-4 justify-center items-center mt-[10px] py-[10px]  h-[60px]">
           <FontAwesomeIcon
@@ -167,6 +203,22 @@ const Content = ({isOpen,setIsOpen,style,image}) => {
               );
             }
           })}
+          <div>
+            {isLogin && (
+              <div
+                onClick={() => handleLogOff()}
+                className="flex px-[20px] cursor-pointer items-center rounded-lg h-[50px] relative bg-[#78068c] hover:bg-red-600"
+              >
+                <FontAwesomeIcon
+                  icon={faRightFromBracket}
+                  className="text-[#fff] h-[16px]"
+                ></FontAwesomeIcon>
+                <h1 className="text-[14px] pl-[20px]" style={style}>
+                  Log out
+                </h1>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </>
