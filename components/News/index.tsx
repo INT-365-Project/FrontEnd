@@ -1,10 +1,11 @@
-import React from "react";
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faPenToSquare,faTrashCan} from '@fortawesome/free-solid-svg-icons'
+import React, { useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPenToSquare, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
+import NewsServices from "../../services/news";
 const data = [
   {
-    id:"1",
+    newId: "1",
     cover:
       "https://static.thairath.co.th/media/Dtbezn3nNUxytg04abimjqxZ8XkWCVrbGC2grXxRzlGwpg.jpg",
     title: "Seminar Red-hat company",
@@ -13,7 +14,7 @@ const data = [
     publish_at: "12-12-2021",
   },
   {
-    id:"2",
+    newId: "2",
     cover:
       "https://static.thairath.co.th/media/Dtbezn3nNUxytg04abimjqxZ8XkWCVrbGC2grXxRzlGwpg.jpg",
     title: "Seminar Red-hat company",
@@ -22,7 +23,7 @@ const data = [
     publish_at: "12-12-2021",
   },
   {
-    id:"3",
+    newId: "3",
     cover:
       "https://static.thairath.co.th/media/Dtbezn3nNUxytg04abimjqxZ8XkWCVrbGC2grXxRzlGwpg.jpg",
     title: "Seminar Red-hat company",
@@ -31,7 +32,7 @@ const data = [
     publish_at: "12-12-2021",
   },
   {
-    id:"4",
+    newId: "4",
     cover:
       "https://static.thairath.co.th/media/Dtbezn3nNUxytg04abimjqxZ8XkWCVrbGC2grXxRzlGwpg.jpg",
     title: "Seminar Red-hat company",
@@ -40,7 +41,7 @@ const data = [
     publish_at: "12-12-2021",
   },
   {
-    id:"5",
+    newId: "5",
     cover:
       "https://static.thairath.co.th/media/Dtbezn3nNUxytg04abimjqxZ8XkWCVrbGC2grXxRzlGwpg.jpg",
     title: "Seminar Red-hat company",
@@ -49,7 +50,7 @@ const data = [
     publish_at: "12-12-2021",
   },
   {
-    id:"6",
+    newId: "6",
     cover:
       "https://static.thairath.co.th/media/Dtbezn3nNUxytg04abimjqxZ8XkWCVrbGC2grXxRzlGwpg.jpg",
     title: "Seminar Red-hat company",
@@ -58,7 +59,7 @@ const data = [
     publish_at: "12-12-2021",
   },
   {
-    id:"7",
+    newId: "7",
     cover:
       "https://static.thairath.co.th/media/Dtbezn3nNUxytg04abimjqxZ8XkWCVrbGC2grXxRzlGwpg.jpg",
     title: "Seminar Red-hat company",
@@ -69,41 +70,70 @@ const data = [
 ];
 
 const News = () => {
+  const [newsData, setNewsData] = useState([]);
+  useEffect(() => {
+    NewsServices.getNews()
+      .then((res) => {
+        setNewsData(res.data.responseData);
+      })
+      .catch((err) => {
+        console.log(err.response);
+      });
+  }, []);
   return (
     <div id="news-card" className="w-full mt-[30px] lg:mt-0 ">
-      <div className="flex justify-between"><div className="text-purple subtitle">News</div>
-      <Link href="/news" passHref>
-      <div className="transition-all duration-300 px-[20px] border-[1.7px] border-purple rounded-2xl 
-      hover:bg-purple text-purple hover:text-white cursor-pointer">See All</div>
-      </Link>
+      <div className="flex justify-between">
+        <div className="text-purple subtitle">News</div>
+        <Link href="/news" passHref>
+          <div
+            className="transition-all duration-300 px-[20px] border-[1.7px] border-purple rounded-2xl 
+      hover:bg-purple text-purple hover:text-white cursor-pointer"
+          >
+            See All
+          </div>
+        </Link>
       </div>
-      {data.map((n, index) => {
-        if (index <= 5) {
-          return (
-            <div key={index} className="rounded-2xl drop-shadow-lg mt-[12px] bg-white w-full h-[110px] flex">
-              <div className="w-[200px]  rounded-l-2xl h-full bg-red-300">
-                <Link href={{pathname:`/news/${encodeURIComponent(n.id)}`}} passHref>
-                  <img src={n.cover} className="object-cover h-full rounded-l-2xl" alt="" />
+      {newsData &&
+        newsData.map((n: any, index: any) => {
+          if (index <= 5) {
+            return (
+              <div
+                key={index}
+                className="rounded-2xl drop-shadow-lg mt-[12px] bg-white w-full h-[110px] flex"
+              >
+                <div className="w-[200px]  rounded-l-2xl h-full bg-red-300">
+                  <Link
+                    href={{ pathname: `/news/${encodeURIComponent(n.newId)}` }}
+                    passHref
+                  >
+                    <img
+                      src={n.cover}
+                      className="object-cover h-full rounded-l-2xl"
+                      alt=""
+                    />
                   </Link>
+                </div>
+                <div className="w-full flex lg:flex-row flex-col">
+                  <div className=" lg:w-[80%] pl-[10px] lg:pl-[40px] my-auto lg:pt-0 pt-[10px]">
+                    <Link
+                      href={{
+                        pathname: `/news/${encodeURIComponent(n.newId)}`,
+                      }}
+                      passHref
+                    >
+                      <p className="text-[14px] text-purple hover:text-fuchsia-300 cursor-pointer">
+                        {n.title}
+                      </p>
+                    </Link>
+                    <p className="text-[12px] text-warmGray-500 short-sub-title">
+                      {n.short_subtitle}
+                    </p>
+                  </div>
+                </div>
               </div>
-              <div className="w-full flex lg:flex-row flex-col">
-              <div className=" lg:w-[80%] pl-[10px] lg:pl-[40px] my-auto lg:pt-0 pt-[10px]">
-                      <p className="text-[14px] text-purple">{n.title}</p>
-                      <p className="text-[12px] text-warmGray-500 short-sub-title">{n.short_subtitle}</p>
-                  </div>
-                  {/* <div className="lg:w-[10%] flex pl-[20px] text-[14px] my-auto space-x-2 ">
-                      <button className="flex space-x-1 border-[1.7px] px-[14px] py-[10px] transition-all duration-300 hover:bg-purple hover:text-white border-purple text-purple h-[90%] lg:h-[50%] p-1 rounded-2xl">
-                      <FontAwesomeIcon icon={faPenToSquare} className="h-[16px] cursor-pointer"></FontAwesomeIcon>
-                        </button>
-                      <button className="flex space-x-1 border-[1.7px] px-[14px] py-[10px] transition-all duration-300 hover:bg-purple hover:text-white border-purple text-purple h-[90%] lg:h-[50%] p-1 rounded-2xl">
-                      <FontAwesomeIcon icon={faTrashCan} className="h-[16px] relative top-0 cursor-pointer"></FontAwesomeIcon>
-                        </button>
-                  </div> */}
-                  </div>
-            </div>
-          );
-        }
-      })}
+            );
+          }
+        })}
     </div>
   );
 };

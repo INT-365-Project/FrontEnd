@@ -28,11 +28,19 @@ const Layout: React.FC<Props> = ({ children }) => {
       return false;
     }
   }, [router]);
+  
+  let isChat = useMemo(() => {
+    if (router.pathname === "/chat") {
+      return true;
+    } else {
+      return false;
+    }
+  }, [router]);
 
   return (
     <>
     <NavContext.Provider value={{isOpen,setIsOpen}}>
-     {isSignin || !isReport && <Sidebar/>}
+     { !isReport && <Sidebar/>}
      <div onClick={()=>setIsOpen(true)} className='relative'>
         {children}
      </div>

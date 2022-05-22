@@ -73,10 +73,9 @@ const Chat = () => {
       </div>
       <div className=' min-h-[80vh] mt-[35px] flex flex-col lg:flex-row'>
           <div className='lg:w-[30%] lg:h-auto'>
-           <div className='w-full lg:w-[93%] lg:h-full bg-white rounded-3xl drop-shadow-md'>
+           <div id="desktop" className='w-full lg:w-[93%] lg:h-full bg-white rounded-3xl drop-shadow-md'>
                       <div className='flex justify-center px-[30px] pb-[20px] h-[80px]'>
                         <button onClick={()=>setButtonClick(true)} className={`${'border-t-4 text-purple'  } border-purple w-full `}>Message</button>
-                       {/* <button onClick={()=>setButtonClick(false)} className={`${!buttonClick ? 'border-t-4 text-purple' : '' }  border-purple  w-[50%] `}>Contact</button> */}
                        </div>
                        <div className=' hidden pt-[30px] space-y-[32px] lg:flex flex-col overflow-y-scroll h-[520px]'>
                             {mockUsers.map(u=>{
@@ -90,21 +89,6 @@ const Chat = () => {
                        </div>:
                        <div className='pt-[30px] lg:hidden space-y-[32px] flex flex-col overflow-y-scroll h-[360px] pl-[30px] pb-[20px]'>
                        <p>Blaine Cottrell</p>
-                        <p>Blaine Cottrell</p>
-                        <p>Blaine Cottrell</p>
-                        <p>Blaine Cottrell</p>
-                        <p>Blaine Cottrell</p>
-                        <p>Blaine Cottrell</p>
-                        <p>Blaine Cottrell</p>
-                        <p>Blaine Cottrell</p>
-                        <p>Blaine Cottrell</p>
-                        <p>Blaine Cottrell</p>
-                        <p>Blaine Cottrell</p>
-                        <p>Blaine Cottrell</p>
-                        <p>Blaine Cottrell</p>
-                        <p>Blaine Cottrell</p>
-                        <p>Blaine Cottrell</p>
-                        <p>Blaine Cottrell</p>
                         <p>Blaine Cottrell</p>
                         <p>Blaine Cottrell</p>
                         <p>Blaine Cottrell</p>
@@ -127,30 +111,13 @@ const Chat = () => {
                        </button>
                         </div>
           </div>
-          <div className='hidden lg:w-[70%] lg:block '>
+          <div id="mobile" className='hidden lg:w-[70%] lg:block '>
             <div className=' h-[85%] '>
                 <div className='h-[95%] bg-white rounded-3xl drop-shadow-md  px-[20px]'>
                       <div className='h-[15%] w-[90%] mx-auto border-b-[1.5px] px-[20px] flex items-center'>
                           Blaine Cottrell
                       </div>
                       <div className='overflow-y-scroll h-[400px]'>
-                        <p>Blaine Cottrell</p>
-                        <p>Blaine Cottrell</p>
-                        <p>Blaine Cottrell</p>
-                        <p>Blaine Cottrell</p>
-                        <p>Blaine Cottrell</p>
-                        <p>Blaine Cottrell</p>
-                        <p>Blaine Cottrell</p>
-                        <p>Blaine Cottrell</p>
-                        <p>Blaine Cottrell</p>
-                        <p>Blaine Cottrell</p>
-                        <p>Blaine Cottrell</p>
-                        <p>Blaine Cottrell</p>
-                        <p>Blaine Cottrell</p>
-                        <p>Blaine Cottrell</p>
-                        <p>Blaine Cottrell</p>
-                        <p>Blaine Cottrell</p>
-                        <p>Blaine Cottrell</p>
                         <p>Blaine Cottrell</p>
                         <p>Blaine Cottrell</p>
                         <p>Blaine Cottrell</p>

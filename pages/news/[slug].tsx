@@ -1,6 +1,15 @@
 import Head from "next/head";
-import React from "react";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import NewsServices from "../../services/news";
+interface NewsDatas{
+  title:string;
+  detail:string;
+  createBy:string;
+  updateDate:string;
+}
 type FormData = {
   comments: string;
 };
@@ -15,12 +24,36 @@ const data = {
 };
 
 const Detail = () => {
+  const router = useRouter();
+  const {query} = router;
+  const [newsData,setNewsData] = useState<NewsDatas>(null);
+  const [pageId,setPageId] = useState(null);
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
   } = useForm<FormData>();
+  if(query.slug!=undefined){
+    localStorage.setItem('pId',query.slug.toString())
+  }
+  useEffect(()=>{
+    const pId = JSON.parse(localStorage.getItem("pId"))
+    if(pId){
+      setPageId(pId)
+    }
+  },[])
+  useEffect(()=>{
+    if(pageId){
+    NewsServices.getNewsById(pageId).then((res) => {
+       console.log(res.data);
+       setNewsData(res.data.responseData)
+    })
+    .catch((err) => {
+      console.log(err.response);
+    })};
+  },[pageId])
+  // console.log(newsData.detail)
   const onSubmit = (data: FormData) => {
     console.log(data);
   };
@@ -33,11 +66,18 @@ const Detail = () => {
       </Head>
       <main className="min-h-screen relative w-full">
         <div className="w-full ">
+          <div className="flex justify-between items-center">
           <div className="mb-[20px]">
             <h1 className="title">News-Detail</h1>
             <h2 className="breadcrumb">
               <a>Home</a> | News-Detail
             </h2>
+          </div>
+          <div>
+            <Link href="/news" passHref>
+            <button className="transition-all duration-300 p-2 border-[1.6px] border-purple  hover:bg-purple rounded hover:text-white text-purple text-[18px] ">Back</button>
+            </Link>
+          </div>
           </div>
           <div className="bg-white min-h-[400px] rounded-lg drop-shadow-md">
             <div className="h-[400px] w-full">
@@ -48,8 +88,10 @@ const Detail = () => {
               />
             </div>
             <div className="h-[50%] w-full px-[20px] pt-[40px] text-[13px] lg:text-[16px]">
-              <div className="pt-[20px] text-purple">{data.title}</div>
-              <div className="pt-[20px] pb-[60px]">{data.description}</div>
+              <div className="pt-[20px] text-purple">{newsData && newsData.title}</div>
+              <div className="pt-[20px] pb-[50px]">{newsData && newsData.detail}</div>
+              <div className="pt-[10px] text-warmGray-600">update date {newsData && newsData.updateDate.slice(0, 10)}</div>
+              <div className="pt-[10px] pb-[30px] text-warmGray-500 text-[12px] lg:text-[13px] text-right">create by {newsData && newsData.createBy}</div>
             </div>
           </div>
 

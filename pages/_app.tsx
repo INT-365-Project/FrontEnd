@@ -4,17 +4,51 @@ import { AppProps } from "next/app";
 import Head from "next/head";
 import Layout from "../components/common/Layout";
 import "../styles/globals.scss";
+import LogIn from "../components/Authentication/LogIn";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import  Router ,{ useRouter } from "next/router";
+
+const AppContext = createContext(null);
+export function useAppContext(){
+  return useContext(AppContext)
+}
 function MyApp({ Component, pageProps }: AppProps) {
+  const [adminUser,setAdminUser] = useState(null);
+  const [isLogin,setIsLogin] = useState(false);
+  const router = useRouter();
+
+  useEffect(()=>{
+    const user = JSON.parse(localStorage.getItem("user"))
+    if(user){
+      setAdminUser(user)
+      setIsLogin(true)
+    }
+  },[router])
+
+  useEffect(()=>{
+    if(router.pathname=='/'){
+      if(!isLogin){
+        Router.push('/signin')
+      }else{
+        Router.push('/')
+      }
+      
+    }
+  },[isLogin])
+
   return (
-    <>
+      <>
+      <AppContext.Provider  value={{adminUser,isLogin,setIsLogin}}>
       <Head>
         <link rel="icon" href="/favicon.ico" />
         <title>SIT-CHATBOT</title>
       </Head>
       <Layout>
-        <Component {...pageProps} />
+        <Component {...pageProps}/>
       </Layout>
-    </>
+      </AppContext.Provider>
+      </>
+  
   );
 }
 
