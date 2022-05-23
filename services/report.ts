@@ -13,7 +13,7 @@ const ReportServices = {
   getReport:()=> ReportService.get("/reports"),
   getReportById:(slug:any)=> ReportService.get(`/reports/`,{params:{reportId:slug}}),
   storeReport:(data:{topic:string;description:string})=>
-  ReportService.post("/reports/createReport",data,{headers:{Authorization:token}})
+  ReportService.post("/reports/createReport",data)
 }
 
 export default ReportServices;
