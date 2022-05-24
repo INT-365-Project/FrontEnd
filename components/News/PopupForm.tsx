@@ -50,7 +50,6 @@ const PopupForm = ({ setIsOpen, isOpen ,editData, setIsEdit , isEdit }) => {
       }).then((result) => {
         if (result.isConfirmed) {
           NewsServices.storeNews(data).then((res) => {
-            console.log(res.data);
           })
           .catch((err) => {
             console.log(err.response);
@@ -62,7 +61,6 @@ const PopupForm = ({ setIsOpen, isOpen ,editData, setIsEdit , isEdit }) => {
           )
           cancelForm();
         }else if(result.isDismissed){
-          console.log('hi')
           cancelForm();
         }
       })
@@ -84,7 +82,7 @@ const PopupForm = ({ setIsOpen, isOpen ,editData, setIsEdit , isEdit }) => {
     setIsEdit(false)
     setIsOpen(false)
     setSelectedImage(false);
-    location.reload()
+    window.location.reload()
   }
 
   const resetData = () =>{
@@ -97,6 +95,7 @@ const PopupForm = ({ setIsOpen, isOpen ,editData, setIsEdit , isEdit }) => {
         text: 'you clicked the button ',
         icon: 'success',
       })
+      window.location.reload()
   }
 
 

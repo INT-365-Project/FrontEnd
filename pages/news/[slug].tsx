@@ -46,7 +46,6 @@ const Detail = () => {
   useEffect(()=>{
     if(pageId){
     NewsServices.getNewsById(pageId).then((res) => {
-       console.log(res.data);
        setNewsData(res.data.responseData)
     })
     .catch((err) => {

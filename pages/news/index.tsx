@@ -127,14 +127,12 @@ const News = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         NewsServices.removeNewsById(id).then((res) => {
-          console.log(res.data);
           setNewsData(res.data.responseData)
        }).catch((err) => {
         console.log(err.response);
       })
-        console.log("hi", id);
         Swal.fire("Deleted!", "Your news has been deleted.", "success");
-        location.reload();
+        window.location.reload()
       }
     });
   };
@@ -160,7 +158,6 @@ const News = () => {
           <link rel="icon" href="/favicon.ico" />
         </Head>
         <div className="w-full">
-          <img src="" alt="" />
           <div className="flex justify-between items-center ">
             <div>
               <h1 className="title">News</h1>
@@ -188,7 +185,7 @@ const News = () => {
                     key={index}
                     className="rounded-2xl  drop-shadow-lg mt-[10px] bg-white w-full h-[400px] lg:h-[260px] flex lg:flex-row flex-col "
                   >
-                    <div className="w-full lg:w-[60%] bg-red-200  rounded-t-2xl lg:rounded-l-2xl h-full ">
+                    <div className="w-full lg:w-[60%] bg-red-200  rounded-t-2xl lg:rounded-t-none  lg:rounded-l-2xl   h-full ">
                       <Link
                         href={{
                           pathname: `/news/${encodeURIComponent(n.newId)}`,
@@ -199,7 +196,7 @@ const News = () => {
                         <img
                           src={n.thumbnailPath}
                           className="object-cover h-full rounded-l-2xl cursor-pointer"
-                          alt=""
+                          alt="thumbnail"
                         />
                       </Link>
                     </div>
@@ -228,7 +225,7 @@ const News = () => {
                         <p className="text-[12px] text-warmGray-500 sub-title pt-[20px]">
                           update by {n.updateDate.slice(0,10)}
                         </p>
-                        <p className="text-[12px] text-warmGray-500 sub-title pt-[4px]">
+                        <p className="text-[12px] text-warmGray-500 sub-title pt-[4px] pb-[20px]">
                           create by {n.createBy}
                         </p>
                         

@@ -9,7 +9,10 @@ import {
   faLightbulb,
   faAddressBook,
   faAlignJustify,
-  faRightFromBracket
+  faRightFromBracket,
+  faComment,
+  faNewspaper,
+  faFlag
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavContext } from "../Layout";
 import Link from "next/link";
@@ -26,32 +29,39 @@ const Content = ({ isOpen, setIsOpen, style, image }) => {
         {
           label: "Dashboard",
           href: "/",
+          icon:faAddressBook,
         },
         {
           label: "News",
           href: "/news",
+          icon:faNewspaper
         },
         {
           label: "Chat",
           href: "/chat",
+          icon:faComment
         },
         {
           label: "Report",
           href: "/report",
+          icon:faFlag
         },
       ]
     : [
         {
           label: "News",
           href: "/news",
+          icon:faNewspaper
         },
         {
           label: "Chat",
           href: "/chat",
+          icon:faComment
         },
         {
           label: "Report",
           href: "/report",
+          icon:faFlag
         },
       ];
   useEffect(() => {
@@ -174,7 +184,7 @@ const Content = ({ isOpen, setIsOpen, style, image }) => {
                     className="flex px-[20px] cursor-pointer items-center rounded-lg h-[50px] relative hover:bg-[#ee96fe]"
                   >
                     <FontAwesomeIcon
-                      icon={faAddressBook}
+                      icon={m.icon}
                       className="text-[#fff] h-[16px]"
                     ></FontAwesomeIcon>
                     <h1 className="text-[14px] pl-[20px]" style={style}>
@@ -191,7 +201,7 @@ const Content = ({ isOpen, setIsOpen, style, image }) => {
                     className={` flex px-[20px] cursor-pointer items-center rounded-lg h-[50px] relative hover:bg-[#ee96fe]`}
                   >
                     <FontAwesomeIcon
-                      icon={faAddressBook}
+                      icon={m.icon}
                       className="text-[#fff] h-[16px]"
                     ></FontAwesomeIcon>
                     <h1 className="text-[14px] pl-[20px]" style={style}>
