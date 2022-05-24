@@ -67,7 +67,7 @@ const Chat = () => {
   // }, [userData]);
   useEffect(()=>{
     liff.init({
-      liffId:"1657152057-aAzG7EPQ"
+      liffId:"1657152057-RQXLqEVZ"
     }).then(()=>{
       if(liff.isLoggedIn()){
         liff.getProfile().then(profile=>{
