@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { over } from "stompjs";
 import SockJS from "sockjs-client";
+import liff from "@line/liff/dist/lib";
+import { profile } from "console";
 
 var stompClient = null;
 const mockUsers = [
@@ -63,7 +65,19 @@ const Chat = () => {
   // useEffect(() => {
   //   console.log(userData);
   // }, [userData]);
-
+  useEffect(()=>{
+    liff.init({
+      liffId:"1657152057-aAzG7EPQ"
+    }).then(()=>{
+      if(liff.isLoggedIn()){
+        liff.getProfile().then(profile=>{
+          console.log(profile)
+        })
+      }else{
+        liff.login();
+      }
+    })
+  },[])
   const connect = () => {
     let Sock = new SockJS("http://localhost:8080/chat");
     stompClient = over(Sock);
