@@ -44,7 +44,7 @@ const Layout: React.FC<Props> = ({ children }) => {
      <div onClick={()=>setIsOpen(true)} className='relative'>
         {children}
      </div>
-     {isSignin || !isReport &&  "/signin" &&  <Footer/>}
+     {isSignin || !isReport  || isChat&&  "/signin" &&  <Footer/>}
     </NavContext.Provider>
     </>
   )

@@ -171,14 +171,14 @@ const Chat = () => {
 
   return (
 
-    <div className="px-[10px] lg:px-0  lg:pl-[130px] pt-[80px] lg:pt-[40px] lg:pr-[50px] w-full">
+    <div className="px-[10px] lg:px-0  lg:pl-[130px] pt-[80px] lg:pt-[0] lg:pr-[50px] w-full">
       <Head>
         <title>Chat</title>
         <meta name="Chat" content="Chat" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       {userData.connected ? (
-        <main className="lg:min-h-screen relative w-full">
+        <main className="lg:min-h-screen relative w-full pt-[30px]">
           <div className="w-full">
             <div>
               <h1 className="title">Chat</h1>
@@ -205,7 +205,7 @@ const Chat = () => {
                 id="desktop"
                 className="w-full lg:w-[93%] lg:h-full bg-white rounded-3xl drop-shadow-md"
               >
-                <div className="flex justify-center px-[30px] pb-[10px] h-[80px] ">
+                <div className="lg:flex hidden justify-center px-[30px] pb-[10px] h-[40px] ">
                   <button
                     onClick={() => setButtonClick(true)}
                     className={`${"border-t-4 text-purple"} border-purple w-full `}
@@ -213,6 +213,17 @@ const Chat = () => {
                     Message
                   </button>
                 </div>
+                {!isOpen && <div className="flex lg:hidden justify-center px-[30px] pb-[10px] h-[40px] ">
+                  <button
+                    onClick={() => setButtonClick(true)}
+                    className={`${"border-t-4 text-purple"} border-purple w-full `}
+                  >
+                    Message
+                  </button>
+                </div>}
+                {isOpen&&<div className="flex lg:hidden items-center px-[30px] pt-[20px] h-[40px] ">
+                {tab && tab}
+                </div>}
                 <div className=" hidden space-y-[20px] lg:flex flex-col overflow-y-scroll h-[520px]">
                   <ul>
                     <li
@@ -271,7 +282,7 @@ const Chat = () => {
                 ) : (
                   <>
                     {tab == "CHATROOM" && (
-                      <div className="pt-[30px] lg:hidden space-y-[10px] flex flex-col h-[360px]   pb-[20px]">
+                      <div className="pt-[30px] lg:hidden space-y-[10px] flex flex-col h-[400px]   pb-[20px]">
                         <div className="border-[1px] overflow-y-scroll h-full border-black mx-[4px]">
                           {publicChats.map((chat, index) => (
                             <li
