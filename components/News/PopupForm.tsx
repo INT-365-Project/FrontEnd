@@ -54,11 +54,7 @@ const PopupForm = ({ setIsOpen, isOpen ,editData, setIsEdit , isEdit }) => {
     console.log(err.response);
   })};
  },[isEdit])
-//  if(editData){
-//   console.log(editData)
-//  }
   const onSubmit = (data: FormData) => {
-    // console.log(data)
     setIsOpen(false)
     if(isEdit){
       Swal.fire({
@@ -78,7 +74,6 @@ const PopupForm = ({ setIsOpen, isOpen ,editData, setIsEdit , isEdit }) => {
               thumbnailFile:'',
               thumbnailFileName:''
             }
-            console.log(oldImage)
             NewsServices.storeNews(oldImage).then((res) => {
             })
             .catch((err) => {
@@ -89,7 +84,6 @@ const PopupForm = ({ setIsOpen, isOpen ,editData, setIsEdit , isEdit }) => {
             ...data,
             thumbnailPath:editData.thumbnailPath,
           }
-          console.log(editImg)
           NewsServices.storeNews(editImg).then((res) => {
           })
           .catch((err) => {
@@ -102,28 +96,28 @@ const PopupForm = ({ setIsOpen, isOpen ,editData, setIsEdit , isEdit }) => {
             'success'
           )
           cancelForm();
+          location.reload()
         }else if(result.isDismissed){
           cancelForm();
         }
       })
     }else{
       NewsServices.storeNews(data).then((res) => {
-        console.log(res.data);
         successAlert();
       })
       .catch((err) => {
         console.log(err.response);
       });
-      // console.log(data)
-      // successAlert();
     }
     
   };
+  
   const cancelForm = () =>{
     setIsUpload(false)
     setIsEdit(false)
     setIsOpen(false)
     setSelectedImage(false);
+    
   }
 
   const resetData = () =>{
@@ -192,7 +186,6 @@ const PopupForm = ({ setIsOpen, isOpen ,editData, setIsEdit , isEdit }) => {
                 </div>
               )}
               <input
-                onClick={()=>console.log('hi')}
                 className="mt-[20px]"
                 id="inputFileToLoad"
                 required={isEdit ? false : true}

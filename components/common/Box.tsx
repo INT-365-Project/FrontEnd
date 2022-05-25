@@ -14,7 +14,6 @@ const Box = ({ children, styles, className }) => {
       style={{
         ...styles,
         transition: "2s",
-        borderRadius: stylesProps.borderRadius,
         width: stylesProps.width,
         padding: `${stylesProps.paddingY} ${stylesProps.paddingX}`,
       }}

@@ -85,10 +85,10 @@ const News = () => {
                   >
                     
                     <img
-                      src={n.source}
-                      className="object-contain sm:object-cover h-full rounded-l-2xl"
-                      alt=""
-                    />
+                          src={n.source}
+                          className="object-contain w-full relative lg:object-contain rounded-t-2xl lg:rounded-t-none h-full  lg:rounded-l-2xl cursor-pointer"
+                          alt="thumbnail"
+                        />
                   </Link>
                 </div>
                 <div className="w-full flex lg:flex-row flex-col">

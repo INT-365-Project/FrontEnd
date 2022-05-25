@@ -165,9 +165,9 @@ const News = () => {
                 return (
                   <div
                     key={index}
-                    className="rounded-2xl  drop-shadow-lg mt-[10px] bg-white w-full h-[400px] lg:h-[260px] flex lg:flex-row flex-col "
+                    className="rounded-2xl  drop-shadow-lg mt-[10px] bg-white w-full h-[400px] lg:h-[300px] flex lg:flex-row flex-col "
                   >
-                    <div className="w-full h-[200px] lg:w-[60%]  flex justify-center items-center rounded-t-2xl lg:rounded-t-none  lg:rounded-l-2xl  lg:h-full ">
+                    <div className="w-full h-[200px] lg:w-[60%] relative  flex justify-center items-center rounded-t-2xl lg:rounded-t-none  lg:rounded-l-2xl  lg:h-full ">
                       <Link
                         href={{
                           pathname: `/news/${encodeURIComponent(n.newId)}`,
@@ -177,7 +177,7 @@ const News = () => {
                       >
                         <img
                           src={n.source}
-                          className="object-contain lg:object-cover rounded-t-2xl lg:rounded-t-none h-full w-full lg:rounded-l-2xl cursor-pointer"
+                          className="object-contain w-full relative lg:object-contain rounded-t-2xl lg:rounded-t-none h-full  lg:rounded-l-2xl cursor-pointer"
                           alt="thumbnail"
                         />
                       </Link>
