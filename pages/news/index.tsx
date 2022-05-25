@@ -1,99 +1,98 @@
 import Head from "next/head";
-import React, { useEffect, useState } from "react";
+import React, { ReactElement, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import PopupForm from "../../components/News/PopupForm";
 import Link from "next/link";
 import Swal from "sweetalert2";
 import NewsServices from "../../services/news";
-import ReportServices from "../../services/report";
 import { useAppContext } from "../_app";
-const data = [
-  {
-    newId: 1,
-    thumbnailPath:
-      "https://static.thairath.co.th/media/Dtbezn3nNUxytg04abimjqxZ8XkWCVrbGC2grXxRzlGwpg.jpg",
-    title: "Seminar Red-hat company",
-    detail:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    publish_at: "12-12-2021",
-  },
-  {
-    newId: 2,
-    thumbnailPath:
-      "https://static.thairath.co.th/media/Dtbezn3nNUxytg04abimjqxZ8XkWCVrbGC2grXxRzlGwpg.jpg",
-    title: "Seminar Red-hat company",
-    detail:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    publish_at: "12-12-2021",
-  },
-  {
-    newId: 3,
-    thumbnailPath:
-      "https://static.thairath.co.th/media/Dtbezn3nNUxytg04abimjqxZ8XkWCVrbGC2grXxRzlGwpg.jpg",
-    title: "Seminar Red-hat company",
-    detail:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    publish_at: "12-12-2021",
-  },
-  {
-    newId: 4,
-    thumbnailPath:
-      "https://static.thairath.co.th/media/Dtbezn3nNUxytg04abimjqxZ8XkWCVrbGC2grXxRzlGwpg.jpg",
-    title: "Seminar Red-hat company",
-    detail:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    publish_at: "12-12-2021",
-  },
-  {
-    newId: 5,
-    thumbnailPath:
-      "https://static.thairath.co.th/media/Dtbezn3nNUxytg04abimjqxZ8XkWCVrbGC2grXxRzlGwpg.jpg",
-    title: "Seminar Red-hat company",
-    detail:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    publish_at: "12-12-2021",
-  },
-  {
-    newId: 6,
-    thumbnailPath:
-      "https://static.thairath.co.th/media/Dtbezn3nNUxytg04abimjqxZ8XkWCVrbGC2grXxRzlGwpg.jpg",
-    title: "Seminar Red-hat company",
-    detail:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    publish_at: "12-12-2021",
-  },
-  {
-    newId: 7,
-    thumbnailPath:
-      "https://static.thairath.co.th/media/Dtbezn3nNUxytg04abimjqxZ8XkWCVrbGC2grXxRzlGwpg.jpg",
-    title: "Seminar Red-hat company",
-    detail:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    publish_at: "12-12-2021",
-  },
-];
+
+type FormData = {
+  filePath: string;
+};
+
 const News = () => {
   const { adminUser } = useAppContext();
   const [isOpen, setIsOpen] = useState(false);
   const [editData, setEditData] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
   const [newsData, setNewsData] = useState([]);
+  const [imgSrc, setImgSrc] = useState([]);
+  const [isFinish, setIsFinish] = useState(false);
+  const [isConvert, setIsConvert] = useState(false);
+  const [isRender, setIsRender] = useState(false);
+  const [temp,setTemp] = useState([]);
+
   useEffect(() => {
-    // ReportServices.getReportById(1).then((res) => {
-    //   console.log(res.data);
-    // })
-    // .catch((err) => {
-    //   console.log(err.response);
-    // });
-    NewsServices.getNews()
-      .then((res) => {
-        setNewsData(res.data.responseData);
-      })
-      .catch((err) => {
-        console.log(err.response);
-      });
+    let timer1 = setTimeout(() => {
+      NewsServices.getNews() 
+        .then((res) => {
+          setIsFinish(true);
+          setNewsData(res.data.responseData);
+        })
+        .catch((err) => {
+          console.log(err.response);
+        });
+    }, 500);
+    return () => {
+      clearTimeout(timer1);
+      setIsConvert(false);
+    };
   }, []);
+  useEffect(() => {
+    if (newsData) {
+      let temp = [];
+      for (const n of newsData) {
+        NewsServices.sendPathImage({ filePath: n.thumbnailPath })
+          .then((res) => {
+            var byteCharacters = atob(res.data.responseData.base64);
+            var byteNumbers = new Array(byteCharacters.length);
+            for (var i = 0; i < byteCharacters.length; i++) {
+              byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            var byteArray = new Uint8Array(byteNumbers);
+            var file = new Blob([byteArray], { type: "image/png;base64" });
+            var fileURL = URL.createObjectURL(file);
+            setIsConvert(true);
+            temp.push(fileURL);
+          })
+          .catch((err) => {
+            console.log(err.response);
+          });
+      }
+      setImgSrc(temp);
+    }
+    return () =>{
+      setIsConvert(false);
+    }
+  }, [isFinish]);
+
+
+  const sendPathRequest = (n: any) => {
+    if (isFinish) {
+      NewsServices.sendPathImage({ filePath: n.thumbnailPath })
+      .then((res) => {
+        var byteCharacters = atob(res.data.responseData.base64);
+        var byteNumbers = new Array(byteCharacters.length);
+        for (var i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        var byteArray = new Uint8Array(byteNumbers);
+        var file = new Blob([byteArray], { type: "image/png;base64" });
+        var fileURL = URL.createObjectURL(file);
+        setIsConvert(true)
+        // imgSrc.push({newId:n.newId,source:fileURL})
+        temp.push(fileURL)
+      })
+       return (
+        <h1 className="hidden"></h1>
+       )
+    }
+  };
+
+  
+
 
   const goToTop = () => {
     window.scrollTo({
@@ -126,13 +125,15 @@ const News = () => {
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        NewsServices.removeNewsById(id).then((res) => {
-          setNewsData(res.data.responseData)
-       }).catch((err) => {
-        console.log(err.response);
-      })
+        NewsServices.removeNewsById(id)
+          .then((res) => {
+            setNewsData(res.data.responseData);
+          })
+          .catch((err) => {
+            console.log(err.response);
+          });
         Swal.fire("Deleted!", "Your news has been deleted.", "success");
-        window.location.reload()
+        window.location.reload();
       }
     });
   };
@@ -179,23 +180,26 @@ const News = () => {
           </div>
           <div className="pt-[40px] pb-[40px] space-y-[30px]">
             {newsData &&
-              newsData.map((n, index) => {
+              imgSrc &&
+              isConvert &&
+              newsData.map((n:any, index:any) => {
                 return (
                   <div
                     key={index}
                     className="rounded-2xl  drop-shadow-lg mt-[10px] bg-white w-full h-[400px] lg:h-[260px] flex lg:flex-row flex-col "
                   >
-                    <div className="w-full lg:w-[60%] bg-red-200  rounded-t-2xl lg:rounded-t-none  lg:rounded-l-2xl   h-full ">
+                    <div className="w-full h-[200px] lg:w-[60%]  flex justify-center items-center rounded-t-2xl lg:rounded-t-none  lg:rounded-l-2xl  lg:h-full ">
                       <Link
                         href={{
                           pathname: `/news/${encodeURIComponent(n.newId)}`,
-                          query:{query:n.newId}
+                          query: { query: n.newId },
                         }}
                         passHref
                       >
+                          {/* {sendPathRequest(n)} */}
                         <img
-                          src={n.thumbnailPath}
-                          className="object-cover h-full rounded-l-2xl cursor-pointer"
+                          src={imgSrc[index]}
+                          className="object-cover rounded-t-2xl lg:rounded-t-none h-full w-full lg:rounded-l-2xl cursor-pointer"
                           alt="thumbnail"
                         />
                       </Link>
@@ -220,15 +224,13 @@ const News = () => {
                         </Link>
                         <p className="text-[12px] text-warmGray-500 sub-title pt-[16px] ">
                           {n.detail}
-                          {/* {data[4].detail} */}
                         </p>
                         <p className="text-[12px] text-warmGray-500 sub-title pt-[20px]">
-                          update by {n.updateDate.slice(0,10)}
+                          update by {n.updateDate.slice(0, 10)}
                         </p>
                         <p className="text-[12px] text-warmGray-500 sub-title pt-[4px] pb-[20px]">
                           create by {n.createBy}
                         </p>
-                        
                       </div>
                       {adminUser && (
                         <div
@@ -268,3 +270,4 @@ const News = () => {
 };
 
 export default News;
+

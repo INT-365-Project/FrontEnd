@@ -9,6 +9,7 @@ interface NewsDatas{
   detail:string;
   createBy:string;
   updateDate:string;
+  thumbnailPath:string;
 }
 type FormData = {
   comments: string;
@@ -28,6 +29,7 @@ const Detail = () => {
   const {query} = router;
   const [newsData,setNewsData] = useState<NewsDatas>(null);
   const [pageId,setPageId] = useState(null);
+  const [imgSrc,setImgSrc] = useState(null);
   const {
     register,
     handleSubmit,
@@ -52,6 +54,26 @@ const Detail = () => {
       console.log(err.response);
     })};
   },[pageId])
+
+  
+  if(newsData){
+    NewsServices.sendPathImage({ filePath: newsData.thumbnailPath })
+  .then((res) => {
+    var byteCharacters = atob(res.data.responseData.base64);
+    var byteNumbers = new Array(byteCharacters.length);
+    for (var i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    var byteArray = new Uint8Array(byteNumbers);
+    var file = new Blob([byteArray], { type: "image/png;base64" });
+    var fileURL = URL.createObjectURL(file);
+    setImgSrc(fileURL);
+  })
+  .catch((err) => {
+    console.log(err.response);
+  });
+  }
+
   // console.log(newsData.detail)
   const onSubmit = (data: FormData) => {
     console.log(data);
@@ -81,7 +103,7 @@ const Detail = () => {
           <div className="bg-white min-h-[400px] rounded-lg drop-shadow-md">
             <div className="h-[400px] w-full">
               <img
-                src={data.cover}
+                src={imgSrc}
                 className="h-full w-full object-cover rounded-lg"
                 alt=""
               />

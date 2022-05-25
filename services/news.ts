@@ -10,7 +10,11 @@ const NewsService = axios.create({
   baseURL:`${api}`
 })
 
+
+
 const NewsServices = {
+  sendPathImage:(filePath:any)=>
+  NewsService.post("/viewFileByPath",filePath,{headers:{Authorization:token}}),
   getNews:()=> NewsService.get("/news"),
   getNewsById:(slug:any)=> NewsService.get(`/news/`,{params:{newsId:slug}}),
   removeNewsById:(slug:any)=> NewsService.delete('/news/deleteNews/',{
@@ -21,7 +25,7 @@ const NewsServices = {
       newsId:slug
     }
   }),
-  storeNews: (data:{title:string;detail:string;thumbnailFile:string})=>
+  storeNews: (data:{title:string;detail:string;thumbnailFile:string;thumbnailFileName:string})=>
    NewsService.post("/news/createOrUpdateNews",data,{headers:{Authorization:token}})
 }
 

@@ -1,4 +1,3 @@
-import Router from "next/router";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Popup from "../common/Popup";
@@ -9,6 +8,7 @@ type FormData = {
   title: string;
   detail: string;
   thumbnailFile: string;
+  thumbnailFileName: string;
 };
 const PopupForm = ({ setIsOpen, isOpen ,editData, setIsEdit , isEdit }) => {
   const [base64img,setBase64img] = useState(null);
@@ -21,22 +21,43 @@ const PopupForm = ({ setIsOpen, isOpen ,editData, setIsEdit , isEdit }) => {
   } = useForm<FormData>();
 
   const [selectedImage, setSelectedImage] = useState(false);
-  
+  const [imgSrc,setImgSrc] = useState(null);
   const uploadProfile = (e:any) => {
     let file = e.target.files[0];
     let reader = new FileReader();
     let endCode64 = null;
     reader.onloadend = function() {
       endCode64 = reader.result
+      console.log(endCode64)
       setSelectedImage(true);
       setBase64img(endCode64)
-      register("thumbnailFile",{value:endCode64})
+      register("thumbnailFile",{value:endCode64.slice(endCode64.indexOf(',')+1,endCode64.length-1)})
+      register("thumbnailFileName",{value:file.name})
     }
     reader.readAsDataURL(file);
   }
 
-  
+ useEffect(()=>{
+   if(isEdit){
+  NewsServices.sendPathImage({ filePath: editData.thumbnailPath })
+  .then((res) => {
+    var byteCharacters = atob(res.data.responseData.base64);
+    var byteNumbers = new Array(byteCharacters.length);
+    for (var i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    var byteArray = new Uint8Array(byteNumbers);
+    var file = new Blob([byteArray], { type: "image/png;base64" });
+    var fileURL = URL.createObjectURL(file);
+    setImgSrc(fileURL);
+  })
+  .catch((err) => {
+    console.log(err.response);
+  })};
+ },[isEdit])
+
   const onSubmit = (data: FormData) => {
+    console.log(data)
     setIsOpen(false)
     if(isEdit){
       Swal.fire({
@@ -82,7 +103,6 @@ const PopupForm = ({ setIsOpen, isOpen ,editData, setIsEdit , isEdit }) => {
     setIsEdit(false)
     setIsOpen(false)
     setSelectedImage(false);
-    window.location.reload()
   }
 
   const resetData = () =>{
@@ -144,7 +164,7 @@ const PopupForm = ({ setIsOpen, isOpen ,editData, setIsEdit , isEdit }) => {
               {!selectedImage && (
                 <div>
                   <img
-                    src={`${isEdit ? editData.thumbnailFile : 'images/unknown.png'}`}
+                    src={`${isEdit ? imgSrc : 'images/unknown.png'}`}
                     alt="Thumb"
                     className="w-[100%] max-h-[280px]"
                   />

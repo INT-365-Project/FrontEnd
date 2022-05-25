@@ -71,15 +71,50 @@ const data = [
 
 const News = () => {
   const [newsData, setNewsData] = useState([]);
+  const [isFinish , setIsFinish] = useState(false);
+  const [isConvert , setIsConvert] = useState(false);
+  const [imgSrc,setImgSrc] = useState([])
   useEffect(() => {
-    NewsServices.getNews()
+    let timer1 = setTimeout(() => {
+      NewsServices.getNews()
       .then((res) => {
+        setIsFinish(true);
         setNewsData(res.data.responseData);
       })
       .catch((err) => {
         console.log(err.response);
       });
+    },1000)
+    return () => {
+      clearTimeout(timer1);
+    };
   }, []);
+  
+  useEffect(()=>{
+    if (newsData) {
+      let temp = [];
+      for (const n of newsData) {
+        NewsServices.sendPathImage({ filePath: n.thumbnailPath })
+          .then((res) => {
+            var byteCharacters = atob(res.data.responseData.base64);
+            var byteNumbers = new Array(byteCharacters.length);
+            for (var i = 0; i < byteCharacters.length; i++) {
+              byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            var byteArray = new Uint8Array(byteNumbers);
+            var file = new Blob([byteArray], { type: "image/png;base64" });
+            var fileURL = URL.createObjectURL(file);
+            setIsConvert(true)
+            temp.push(fileURL)
+          })
+          .catch((err) => {
+            console.log(err.response);
+          });
+      }
+      setImgSrc(temp);
+    }
+  },[isFinish])
+
   return (
     <div id="news-card" className="w-full mt-[30px] lg:mt-0 ">
       <div className="flex justify-between">
@@ -93,8 +128,7 @@ const News = () => {
           </div>
         </Link>
       </div>
-      {newsData &&
-        newsData.map((n: any, index: any) => {
+      {newsData && imgSrc && isConvert && newsData.map((n: any, index: any) => {
           if (index <= 5) {
             return (
               <div
@@ -107,7 +141,7 @@ const News = () => {
                     passHref
                   >
                     <img
-                      src={n.cover}
+                      src={imgSrc[index]}
                       className="object-cover h-full rounded-l-2xl"
                       alt=""
                     />
@@ -126,7 +160,7 @@ const News = () => {
                       </p>
                     </Link>
                     <p className="text-[12px] text-warmGray-500 short-sub-title">
-                      {n.short_subtitle}
+                      {n.detail}
                     </p>
                   </div>
                 </div>
