@@ -76,6 +76,7 @@ const Chat = () => {
   // useEffect(()=>{
   //   initLine();
   // },[])
+
   const connect = () => {
     let Sock = new SockJS("http://localhost:8080/chat");
     stompClient = over(Sock);
@@ -142,6 +143,7 @@ const Chat = () => {
       var chatMessage = {
         senderName: userData.username,
         message: userData.message,
+        date: new Date(),
         status: "MESSAGE",
       };
       console.log(chatMessage);
@@ -156,6 +158,7 @@ const Chat = () => {
         senderName: userData.username,
         receiverName: tab,
         message: userData.message,
+        date: new Date(),
         status: "MESSAGE",
       };
 
