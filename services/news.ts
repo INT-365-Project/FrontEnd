@@ -25,7 +25,7 @@ const NewsServices = {
       newsId:slug
     }
   }),
-  storeNews: (data:{title:string;detail:string;thumbnailFile:string;thumbnailFileName:string})=>
+  storeNews: (data:{title:string;detail:string; thumbnailPath:string ; thumbnailFile:string;  thumbnailFileName:string})=>
    NewsService.post("/news/createOrUpdateNews",data,{headers:{Authorization:token}})
 }
 

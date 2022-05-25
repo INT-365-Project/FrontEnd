@@ -7,8 +7,17 @@ import Link from "next/link";
 import Swal from "sweetalert2";
 import NewsServices from "../../services/news";
 import { useAppContext } from "../_app";
+import axios from "axios";
+import { api } from "../../config";
+import Image from "next/image";
 
-type FormData = {
+let getToken = null
+if (typeof window !== 'undefined'){
+  getToken = localStorage.getItem('accessToken') 
+}
+let token = 'Bearer '+ getToken
+type data = {
+  newId: number;
   filePath: string;
 };
 
@@ -17,16 +26,13 @@ const News = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [editData, setEditData] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
-  const [newsData, setNewsData] = useState([]);
-  const [imgSrc, setImgSrc] = useState([]);
+  let [newsData, setNewsData] = useState([]);
   const [isFinish, setIsFinish] = useState(false);
   const [isConvert, setIsConvert] = useState(false);
-  const [isRender, setIsRender] = useState(false);
-  const [temp,setTemp] = useState([]);
-
+  const [useData, setUsedata] = useState([]);
   useEffect(() => {
     let timer1 = setTimeout(() => {
-      NewsServices.getNews() 
+      NewsServices.getNews()
         .then((res) => {
           setIsFinish(true);
           setNewsData(res.data.responseData);
@@ -40,59 +46,33 @@ const News = () => {
       setIsConvert(false);
     };
   }, []);
-  useEffect(() => {
-    if (newsData) {
-      let temp = [];
-      for (const n of newsData) {
-        NewsServices.sendPathImage({ filePath: n.thumbnailPath })
-          .then((res) => {
-            var byteCharacters = atob(res.data.responseData.base64);
-            var byteNumbers = new Array(byteCharacters.length);
-            for (var i = 0; i < byteCharacters.length; i++) {
-              byteNumbers[i] = byteCharacters.charCodeAt(i);
-            }
-            var byteArray = new Uint8Array(byteNumbers);
-            var file = new Blob([byteArray], { type: "image/png;base64" });
-            var fileURL = URL.createObjectURL(file);
-            setIsConvert(true);
-            temp.push(fileURL);
-          })
-          .catch((err) => {
-            console.log(err.response);
-          });
+
+  const getImage = async () => {
+    for (let n of newsData) {
+      const res = await axios.post(`${api}/viewFileByPath`,{filePath:n.thumbnailPath},{headers:{Authorization:token}})
+      var byteCharacters = atob(res.data.responseData.base64);
+      var byteNumbers = new Array(byteCharacters.length);
+      for (var i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
       }
-      setImgSrc(temp);
-    }
-    return () =>{
-      setIsConvert(false);
-    }
-  }, [isFinish]);
-
-
-  const sendPathRequest = (n: any) => {
-    if (isFinish) {
-      NewsServices.sendPathImage({ filePath: n.thumbnailPath })
-      .then((res) => {
-        var byteCharacters = atob(res.data.responseData.base64);
-        var byteNumbers = new Array(byteCharacters.length);
-        for (var i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        var byteArray = new Uint8Array(byteNumbers);
-        var file = new Blob([byteArray], { type: "image/png;base64" });
-        var fileURL = URL.createObjectURL(file);
-        setIsConvert(true)
-        // imgSrc.push({newId:n.newId,source:fileURL})
-        temp.push(fileURL)
-      })
-       return (
-        <h1 className="hidden"></h1>
-       )
+      var byteArray = new Uint8Array(byteNumbers);
+      var file = new Blob([byteArray], { type: "image/png;base64" });
+      var fileURL = URL.createObjectURL(file);
+      let p = {
+        ...n,
+        source: fileURL,
+      };
+      setUsedata((oldData) => [...oldData, p]);
+      setIsConvert(true);
     }
   };
 
-  
-
+  useEffect(() => {
+    getImage()
+    return () => {
+      setIsConvert(false);
+    };
+  }, [isFinish]);
 
   const goToTop = () => {
     window.scrollTo({
@@ -179,10 +159,9 @@ const News = () => {
             )}
           </div>
           <div className="pt-[40px] pb-[40px] space-y-[30px]">
-            {newsData &&
-              imgSrc &&
+            {useData &&
               isConvert &&
-              newsData.map((n:any, index:any) => {
+              useData.map((n: any, index: any) => {
                 return (
                   <div
                     key={index}
@@ -196,10 +175,9 @@ const News = () => {
                         }}
                         passHref
                       >
-                          {/* {sendPathRequest(n)} */}
                         <img
-                          src={imgSrc[index]}
-                          className="object-cover rounded-t-2xl lg:rounded-t-none h-full w-full lg:rounded-l-2xl cursor-pointer"
+                          src={n.source}
+                          className="object-contain lg:object-cover rounded-t-2xl lg:rounded-t-none h-full w-full lg:rounded-l-2xl cursor-pointer"
                           alt="thumbnail"
                         />
                       </Link>
@@ -270,4 +248,3 @@ const News = () => {
 };
 
 export default News;
-

@@ -3,77 +3,21 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import NewsServices from "../../services/news";
-const data = [
-  {
-    newId: "1",
-    cover:
-      "https://static.thairath.co.th/media/Dtbezn3nNUxytg04abimjqxZ8XkWCVrbGC2grXxRzlGwpg.jpg",
-    title: "Seminar Red-hat company",
-    short_subtitle:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    publish_at: "12-12-2021",
-  },
-  {
-    newId: "2",
-    cover:
-      "https://static.thairath.co.th/media/Dtbezn3nNUxytg04abimjqxZ8XkWCVrbGC2grXxRzlGwpg.jpg",
-    title: "Seminar Red-hat company",
-    short_subtitle:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    publish_at: "12-12-2021",
-  },
-  {
-    newId: "3",
-    cover:
-      "https://static.thairath.co.th/media/Dtbezn3nNUxytg04abimjqxZ8XkWCVrbGC2grXxRzlGwpg.jpg",
-    title: "Seminar Red-hat company",
-    short_subtitle:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    publish_at: "12-12-2021",
-  },
-  {
-    newId: "4",
-    cover:
-      "https://static.thairath.co.th/media/Dtbezn3nNUxytg04abimjqxZ8XkWCVrbGC2grXxRzlGwpg.jpg",
-    title: "Seminar Red-hat company",
-    short_subtitle:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    publish_at: "12-12-2021",
-  },
-  {
-    newId: "5",
-    cover:
-      "https://static.thairath.co.th/media/Dtbezn3nNUxytg04abimjqxZ8XkWCVrbGC2grXxRzlGwpg.jpg",
-    title: "Seminar Red-hat company",
-    short_subtitle:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    publish_at: "12-12-2021",
-  },
-  {
-    newId: "6",
-    cover:
-      "https://static.thairath.co.th/media/Dtbezn3nNUxytg04abimjqxZ8XkWCVrbGC2grXxRzlGwpg.jpg",
-    title: "Seminar Red-hat company",
-    short_subtitle:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    publish_at: "12-12-2021",
-  },
-  {
-    newId: "7",
-    cover:
-      "https://static.thairath.co.th/media/Dtbezn3nNUxytg04abimjqxZ8XkWCVrbGC2grXxRzlGwpg.jpg",
-    title: "Seminar Red-hat company",
-    short_subtitle:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    publish_at: "12-12-2021",
-  },
-];
+import axios from "axios";
+import { api } from "../../config";
+
+let getToken = null
+if (typeof window !== 'undefined'){
+  getToken = localStorage.getItem('accessToken') 
+}
+let token = 'Bearer '+ getToken
 
 const News = () => {
   const [newsData, setNewsData] = useState([]);
+  const [useData, setUsedata] = useState([]);
   const [isFinish , setIsFinish] = useState(false);
   const [isConvert , setIsConvert] = useState(false);
-  const [imgSrc,setImgSrc] = useState([])
+  
   useEffect(() => {
     let timer1 = setTimeout(() => {
       NewsServices.getNews()
@@ -84,35 +28,34 @@ const News = () => {
       .catch((err) => {
         console.log(err.response);
       });
-    },1000)
+    },200)
     return () => {
       clearTimeout(timer1);
     };
   }, []);
-  
-  useEffect(()=>{
-    if (newsData) {
-      let temp = [];
-      for (const n of newsData) {
-        NewsServices.sendPathImage({ filePath: n.thumbnailPath })
-          .then((res) => {
-            var byteCharacters = atob(res.data.responseData.base64);
-            var byteNumbers = new Array(byteCharacters.length);
-            for (var i = 0; i < byteCharacters.length; i++) {
-              byteNumbers[i] = byteCharacters.charCodeAt(i);
-            }
-            var byteArray = new Uint8Array(byteNumbers);
-            var file = new Blob([byteArray], { type: "image/png;base64" });
-            var fileURL = URL.createObjectURL(file);
-            setIsConvert(true)
-            temp.push(fileURL)
-          })
-          .catch((err) => {
-            console.log(err.response);
-          });
+
+  const getImage = async () => {
+    for (let n of newsData) {
+      const res = await axios.post(`${api}/viewFileByPath`,{filePath:n.thumbnailPath},{headers:{Authorization:token}})
+      var byteCharacters = atob(res.data.responseData.base64);
+      var byteNumbers = new Array(byteCharacters.length);
+      for (var i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
       }
-      setImgSrc(temp);
+      var byteArray = new Uint8Array(byteNumbers);
+      var file = new Blob([byteArray], { type: "image/png;base64" });
+      var fileURL = URL.createObjectURL(file);
+      let p = {
+        ...n,
+        source: fileURL,
+      };
+      setUsedata((oldData) => [...oldData, p]);
+      setIsConvert(true);
     }
+  };
+
+  useEffect(()=>{
+    getImage()
   },[isFinish])
 
   return (
@@ -128,21 +71,22 @@ const News = () => {
           </div>
         </Link>
       </div>
-      {newsData && imgSrc && isConvert && newsData.map((n: any, index: any) => {
+      {useData && isConvert && useData.map((n: any, index: any) => {
           if (index <= 5) {
             return (
               <div
                 key={index}
                 className="rounded-2xl drop-shadow-lg mt-[12px] bg-white w-full h-[110px] flex"
               >
-                <div className="w-[200px]  rounded-l-2xl h-full bg-red-300">
+                <div className="w-[200px]  rounded-l-2xl h-full flex just justify-center items-center">
                   <Link
                     href={{ pathname: `/news/${encodeURIComponent(n.newId)}` }}
                     passHref
                   >
+                    
                     <img
-                      src={imgSrc[index]}
-                      className="object-cover h-full rounded-l-2xl"
+                      src={n.source}
+                      className="object-contain sm:object-cover h-full rounded-l-2xl"
                       alt=""
                     />
                   </Link>

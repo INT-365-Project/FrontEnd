@@ -9,6 +9,7 @@ type FormData = {
   detail: string;
   thumbnailFile: string;
   thumbnailFileName: string;
+  thumbnailPath: string;
 };
 const PopupForm = ({ setIsOpen, isOpen ,editData, setIsEdit , isEdit }) => {
   const [base64img,setBase64img] = useState(null);
@@ -19,7 +20,6 @@ const PopupForm = ({ setIsOpen, isOpen ,editData, setIsEdit , isEdit }) => {
     reset,
     formState: { errors },
   } = useForm<FormData>();
-
   const [selectedImage, setSelectedImage] = useState(false);
   const [imgSrc,setImgSrc] = useState(null);
   const uploadProfile = (e:any) => {
@@ -28,7 +28,6 @@ const PopupForm = ({ setIsOpen, isOpen ,editData, setIsEdit , isEdit }) => {
     let endCode64 = null;
     reader.onloadend = function() {
       endCode64 = reader.result
-      console.log(endCode64)
       setSelectedImage(true);
       setBase64img(endCode64)
       register("thumbnailFile",{value:endCode64.slice(endCode64.indexOf(',')+1,endCode64.length-1)})
@@ -55,9 +54,11 @@ const PopupForm = ({ setIsOpen, isOpen ,editData, setIsEdit , isEdit }) => {
     console.log(err.response);
   })};
  },[isEdit])
-
+//  if(editData){
+//   console.log(editData)
+//  }
   const onSubmit = (data: FormData) => {
-    console.log(data)
+    // console.log(data)
     setIsOpen(false)
     if(isEdit){
       Swal.fire({
@@ -70,11 +71,31 @@ const PopupForm = ({ setIsOpen, isOpen ,editData, setIsEdit , isEdit }) => {
         confirmButtonText: 'Yes, Edited it!'
       }).then((result) => {
         if (result.isConfirmed) {
-          NewsServices.storeNews(data).then((res) => {
+          if(!selectedImage){
+            const oldImage = {
+              ...data,
+              thumbnailPath:editData.thumbnailPath,
+              thumbnailFile:'',
+              thumbnailFileName:''
+            }
+            console.log(oldImage)
+            NewsServices.storeNews(oldImage).then((res) => {
+            })
+            .catch((err) => {
+              console.log(err.response);
+            });
+        }else{
+          const editImg= {
+            ...data,
+            thumbnailPath:editData.thumbnailPath,
+          }
+          console.log(editImg)
+          NewsServices.storeNews(editImg).then((res) => {
           })
           .catch((err) => {
             console.log(err.response);
           });
+        }
           Swal.fire(
             'Edited!',
             'Your news has been Edited.',
