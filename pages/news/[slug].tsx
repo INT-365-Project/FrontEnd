@@ -14,15 +14,6 @@ interface NewsDatas{
 type FormData = {
   comments: string;
 };
-const data = {
-  id: 1,
-  cover:
-    "https://static.thairath.co.th/media/Dtbezn3nNUxytg04abimjqxZ8XkWCVrbGC2grXxRzlGwpg.jpg",
-  title: "Seminar Red-hat company",
-  description:
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. ",
-  publish_at: "12-12-2021",
-};
 
 const Detail = () => {
   const router = useRouter();
@@ -74,7 +65,6 @@ const Detail = () => {
   });
   }
 
-  // console.log(newsData.detail)
   const onSubmit = (data: FormData) => {
     console.log(data);
   };
@@ -101,7 +91,7 @@ const Detail = () => {
           </div>
           </div>
           <div className="bg-white min-h-[400px] rounded-lg drop-shadow-md">
-            <div className="h-[400px] w-full">
+            <div className="h-[500px] w-full">
               <img
                 src={imgSrc}
                 className="h-full w-full object-cover rounded-lg"
@@ -121,20 +111,7 @@ const Detail = () => {
             <div className="bg-white h-[230px] rounded-lg relative overflow-y-auto drop-shadow-md text-[13px] lg:text-[16px]">
               <div className="px-[20px] pt-[20px]">
                 <div className="pb-[20px]">
-                  <div className="pb-[10px]">Nice Job!</div>
-                  <div className="border-[1.5px]  border-transparent border-b-warmGray-300"></div>
-                </div>
-                <div className="pb-[20px]">
-                  <div className="pb-[10px]">Nice Job!</div>
-                  <div className="border-[1.5px]  border-transparent border-b-warmGray-300"></div>
-                </div>
-                <div className="pb-[20px]">
-                  <div className="pb-[10px]">Nice Job!</div>
-                  <div className="border-[1.5px]  border-transparent border-b-warmGray-300"></div>
-                </div>
-                <div className="pb-[20px]">
-                  <div className="pb-[10px]">Nice Job!</div>
-                  {/* <div className="border-[1.5px]  border-transparent border-b-warmGray-300"></div> */}
+                 
                 </div>
               </div>
             </div>
