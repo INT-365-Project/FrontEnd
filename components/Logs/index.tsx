@@ -2,18 +2,6 @@ import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 import ReportServices from '../../services/report';
-const data = [
-  { title: "ค่าเทอมลดมั้ยครับช่วงโควิดแล้วลดกี่เปอเซ็นหรอครับจริงครับๆ", published_at: "2021-9-10" },
-  { title: "ค่าเทอมลดมั้ยครับช่วงโควิด", published_at: "2021-11-10" },
-  { title: "ค่าเทอมลดมั้ยครับช่วงโควิด", published_at: "2021-12-10" },
-  { title: "ค่าเทอมลดมั้ยครับช่วงโควิด", published_at: "2021-1-10" },
-  { title: "ค่าเทอมลดมั้ยครับช่วงโควิด", published_at: "2021-2-10" },
-  { title: "ค่าเทอมลดมั้ยครับช่วงโควิด", published_at: "2021-3-10" },
-  { title: "ค่าเทอมลดมั้ยครับช่วงโควิด", published_at: "2021-4-10" },
-  { title: "ค่าเทอมลดมั้ยครับช่วงโควิด", published_at: "2021-5-10" },
-  { title: "ค่าเทอมลดมั้ยครับช่วงโควิด", published_at: "2021-6-10" },
-  { title: "ค่าเทอมลดมั้ยครับช่วงโควิด", published_at: "2021-7-10" },
-];
 const Logs = () => {
   const [logs,setLogs] = useState([]);
   useEffect(()=>{

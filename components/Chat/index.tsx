@@ -6,36 +6,6 @@ import SockJS from "sockjs-client";
 import liff from "@line/liff/dist/lib";
 
 var stompClient = null;
-const mockUsers = [
-  {
-    uid: "1",
-    user: "Blaine Cottrell",
-  },
-  {
-    uid: "2",
-    user: "Zlaine Cottrell",
-  },
-  {
-    uid: "3",
-    user: "Dlaine Cottrell",
-  },
-  {
-    uid: "4",
-    user: "Rlaine Cottrell",
-  },
-  {
-    uid: "5",
-    user: "Olaine Cottrell",
-  },
-  {
-    uid: "6",
-    user: "Olaine Cottrell",
-  },
-  {
-    uid: "7",
-    user: "Olaine Cottrell",
-  },
-];
 
 type FormData = {
   message: string;

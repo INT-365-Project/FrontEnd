@@ -29,7 +29,6 @@ const ReportForm = () => {
     });
     console.log(data)
   }
-  // console.log('error = ' , errors)
   const successAlert = () => {
   
     Swal.fire({  
@@ -37,11 +36,11 @@ const ReportForm = () => {
         text: 'you clicked the button for continue or back to home page',
         icon: 'success',
         showCancelButton:true,
-        confirmButtonText: 'Back to chat room',
+        confirmButtonText: 'Back to News',
         cancelButtonText: `Report other problem`,
       }).then((result)=>{
         if(result.isConfirmed){
-          Router.push('/')
+          Router.push('/news')
         }else if(result.isDismissed){
           resetData();
         }
