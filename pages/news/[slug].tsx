@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import NewsServices from "../../services/news";
+import { useAppContext } from "../_app";
 interface NewsDatas{
   title:string;
   detail:string;
@@ -16,6 +17,7 @@ type FormData = {
 };
 
 const Detail = () => {
+  const { adminUser } = useAppContext();
   const router = useRouter();
   const {query} = router;
   const [newsData,setNewsData] = useState<NewsDatas>(null);
@@ -69,7 +71,7 @@ const Detail = () => {
     console.log(data);
   };
   return (
-    <div className="min-h-screen  px-[10px] lg:px-0 lg:pl-[130px] pt-[80px] lg:pt-[40px] lg:pr-[50px] w-full">
+    <div className={`min-h-screen  px-[10px] lg:px-0 ${adminUser ? 'lg:pl-[130px] pt-[80px]' : 'lg:pl-[80px] pt-[30px]'} lg:pt-[40px] lg:pr-[50px] w-full`}>
       <Head>
         <title>News-Detail</title>
         <meta name="Detail" content="Detail" />

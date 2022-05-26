@@ -5,6 +5,7 @@ import Link from "next/link";
 import NewsServices from "../../services/news";
 import axios from "axios";
 import { api } from "../../config";
+import { useAppContext } from "../../pages/_app";
 
 let getToken = null
 if (typeof window !== 'undefined'){
@@ -13,6 +14,7 @@ if (typeof window !== 'undefined'){
 let token = 'Bearer '+ getToken
 
 const News = () => {
+  const { adminUser, isLogin, setIsLogin } = useAppContext();
   const [newsData, setNewsData] = useState([]);
   const [useData, setUsedata] = useState([]);
   const [isFinish , setIsFinish] = useState(false);
@@ -36,7 +38,7 @@ const News = () => {
 
   const getImage = async () => {
     for (let n of newsData) {
-      const res = await axios.post(`${api}/viewFileByPath`,{filePath:n.thumbnailPath},{headers:{Authorization:token}})
+      const res = await axios.post(`${api}/viewFileByPath`,{filePath:n.thumbnailPath})
       var byteCharacters = atob(res.data.responseData.base64);
       var byteNumbers = new Array(byteCharacters.length);
       for (var i = 0; i < byteCharacters.length; i++) {

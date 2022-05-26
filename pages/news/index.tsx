@@ -131,8 +131,8 @@ const News = () => {
       )}
       <div
         id="news-card"
-        className="min-h-screen px-[10px] lg:px-0 lg:pl-[130px] pt-[80px] md:pt-[80px] lg:pt-[40px] lg:pr-[50px] w-full overflow-hidden"
-      >
+        className={`min-h-screen px-[10px] lg:px-0 ${adminUser ? 'lg:pl-[130px] pt-[80px]' : 'lg:pl-[80px] pt-[30px]'}  md:pt-[80px] lg:pt-[40px] lg:pr-[50px] w-full overflow-hidden`}
+      > 
         <Head>
           <title>News</title>
           <meta name="Chat" content="Chat" />

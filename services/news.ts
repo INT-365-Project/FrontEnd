@@ -14,7 +14,7 @@ const NewsService = axios.create({
 
 const NewsServices = {
   sendPathImage:(filePath:any)=>
-  NewsService.post("/viewFileByPath",filePath,{headers:{Authorization:token}}),
+  NewsService.post("/viewFileByPath",filePath),
   getNews:()=> NewsService.get("/news"),
   getNewsById:(slug:any)=> NewsService.get(`/news/`,{params:{newsId:slug}}),
   removeNewsById:(slug:any)=> NewsService.delete('/news/deleteNews/',{
