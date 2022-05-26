@@ -24,7 +24,7 @@ RUN mkdir /app
 COPY ./nginx.conf /etc/nginx/nginx.conf
 
 # Copy from the stage 1
-COPY --from=build-stage /app/dist /app
+COPY --from=build-stage /app/.next /app
 
 EXPOSE 8080
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
