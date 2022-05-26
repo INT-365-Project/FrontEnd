@@ -47,9 +47,9 @@ const Chat = () => {
   // useEffect(()=>{
   //   initLine();
   // },[])
-
-  let Sock = new SockJS(`${api}/chat`);
+  
   const connect = () => {
+    let Sock = new SockJS(`${api}/chat`);
     stompClient = over(Sock);
     stompClient.connect({}, onConnected, onError);
   };
