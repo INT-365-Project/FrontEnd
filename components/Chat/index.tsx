@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { over } from "stompjs";
 import SockJS from "sockjs-client";
 import liff from "@line/liff/dist/lib";
+import { api } from "../../config";
 
 var stompClient = null;
 
@@ -47,8 +48,8 @@ const Chat = () => {
   //   initLine();
   // },[])
 
+  let Sock = new SockJS(`${api}/chat`);
   const connect = () => {
-    let Sock = new SockJS("http://localhost:8080/chat");
     stompClient = over(Sock);
     stompClient.connect({}, onConnected, onError);
   };
