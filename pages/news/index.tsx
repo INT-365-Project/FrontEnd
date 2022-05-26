@@ -165,7 +165,7 @@ const News = () => {
                 return (
                   <div
                     key={index}
-                    className="rounded-2xl  drop-shadow-lg mt-[10px] bg-white w-full h-[400px] lg:h-[300px] flex lg:flex-row flex-col "
+                    className="rounded-2xl  drop-shadow-lg mt-[10px] bg-white w-full min-h-[400px] lg:h-[300px] flex lg:flex-row flex-col "
                   >
                     <div className="w-full h-[200px] lg:w-[60%] relative  flex justify-center items-center rounded-t-2xl lg:rounded-t-none  lg:rounded-l-2xl  lg:h-full ">
                       <Link
