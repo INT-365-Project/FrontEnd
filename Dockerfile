@@ -31,4 +31,5 @@ COPY --from=build-stage /app/node_modules ./node_modules
 COPY --from=build-stage /app/package.json ./package.json
 
 EXPOSE 80
-ENTRYPOINT ["nginx", "-g", "daemon off;"]
+# ENTRYPOINT ["nginx", "-g", "daemon off;"]
+ENTRYPOINT ["npm", "run", "start"]
