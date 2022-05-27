@@ -15,8 +15,8 @@ COPY . .
 RUN npm run build
 
 
-# Stage 2 NGINX
-FROM nginx as production-stage
+# # Stage 2 NGINX
+# FROM nginx as production-stage
 
 RUN mkdir /app
 
