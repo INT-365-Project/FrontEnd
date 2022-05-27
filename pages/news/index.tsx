@@ -30,6 +30,7 @@ const News = () => {
   const [isFinish, setIsFinish] = useState(false);
   const [isConvert, setIsConvert] = useState(false);
   const [useData, setUsedata] = useState([]);
+
   useEffect(() => {
     let timer1 = setTimeout(() => {
       NewsServices.getNews()
@@ -46,6 +47,7 @@ const News = () => {
       setIsConvert(false);
     };
   }, []);
+  
 
   const getImage = async () => {
     for (let n of newsData) {
@@ -56,7 +58,7 @@ const News = () => {
         byteNumbers[i] = byteCharacters.charCodeAt(i);
       }
       var byteArray = new Uint8Array(byteNumbers);
-      var file = new Blob([byteArray], { type: "image/png;base64" });
+      var file = new Blob([byteArray], { type: `image/${n.thumbnailFileName.slice(n.thumbnailFileName.length-3,n.thumbnailFileName.length)};base64` });
       var fileURL = URL.createObjectURL(file);
       let p = {
         ...n,

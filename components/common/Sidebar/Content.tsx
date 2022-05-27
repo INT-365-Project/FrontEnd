@@ -64,21 +64,22 @@ const Content = ({ isOpen, setIsOpen, style, image }) => {
           icon:faFlag
         },
       ];
-  useEffect(() => {
-    let listener = () => {
-      let scrolled = document?.scrollingElement?.scrollTop;
-      if (scrolled && scrolled >= 100) {
-        setIsTop(false);
-      } else {
-        setIsTop(true);
-      }
-    };
-    window.addEventListener("scroll", listener);
-    listener();
-    return () => {
-      document.removeEventListener("scroll", listener);
-    };
-  }, []);
+      
+  // useEffect(() => {
+  //   let listener = () => {
+  //     let scrolled = document?.scrollingElement?.scrollTop;
+  //     if (scrolled && scrolled >= 100) {
+  //       setIsTop(false);
+  //     } else {
+  //       setIsTop(true);
+  //     }
+  //   };
+  //   window.addEventListener("scroll", listener);
+  //   listener();
+  //   return () => {
+  //     document.removeEventListener("scroll", listener);
+  //   };
+  // }, []);
 
   const handleLogOff = () => {
     localStorage.removeItem("accessToken");
