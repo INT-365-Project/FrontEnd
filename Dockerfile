@@ -12,7 +12,7 @@ RUN npm install
 COPY . .
 
 # Building the project
-RUN npm run build
+RUN npm build
 
 
 # Stage 2 NGINX
