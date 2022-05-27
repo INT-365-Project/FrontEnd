@@ -28,7 +28,7 @@ COPY ./nginx.conf /etc/nginx/nginx.conf
 RUN rm -rf /usr/share/nginx/html/*
 
 # Copy from the stage 1
-COPY --from=build-stage /nextjs-ui/.next /usr/share/nginx/html
+COPY --from=build-stage /nextjs-ui/out /usr/share/nginx/html
 # COPY --from=build-stage /app/next.config.js ./
 # COPY --from=build-stage /app/.next ./usr/share/nginx/html
 # COPY --from=build-stage /app/public ./public
