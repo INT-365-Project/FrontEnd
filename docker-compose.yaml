@@ -1,0 +1,16 @@
+version: "3"
+services:
+  frontend:
+    image: ghcr.io/int-365-project/frontend:latest
+    container_name: frontend
+    ports:
+        - 80:80
+    networks:
+       int365:
+          ipv4_address: 172.99.99.1
+networks:
+  default:
+    external:
+       name: int365
+  int365:
+    external: true
