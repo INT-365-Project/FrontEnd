@@ -24,10 +24,10 @@ RUN mkdir /app
 COPY ./nginx.conf /etc/nginx/nginx.conf
 
 # Copy from the stage 1
-COPY --from=build-stage /app/.next /app
-COPY --from=build-stage /app/public /public
-COPY --from=build-stage /app/node_modules /node_modules
-COPY --from=build-stage /app/package.json /package.json
+COPY --from=build-stage /app/.next ./.next
+COPY --from=build-stage /app/public ./public
+COPY --from=build-stage /app/node_modules ./node_modules
+COPY --from=build-stage /app/package.json ./package.json
 
 EXPOSE 80
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
