@@ -2,7 +2,7 @@
 FROM node:lts-alpine as build-stage
 
 # Setting up working directory
-WORKDIR /app
+WORKDIR /nextjs-ui
 
 # Copy the package.json and install dependencies
 COPY package*.json ./
