@@ -18,7 +18,7 @@ RUN npm run build
 # # Stage 2 NGINX
 # FROM nginx as production-stage
 
-RUN mkdir /app
+# RUN mkdir /app
 
 # Copy nginx.conf file
 COPY ./nginx.conf /etc/nginx/nginx.conf
