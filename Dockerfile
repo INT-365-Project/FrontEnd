@@ -4,7 +4,7 @@ FROM node:lts-alpine as build-stage
 # Setting up working directory
 
 # Copy the package.json and install dependencies
-COPY package*.json ./
+COPY package.json package-lock.json ./
 # RUN npm install
 RUN npm install && mkdir /nextjs-ui && mv ./node_modules ./nextjs-ui
 
