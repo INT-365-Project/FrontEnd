@@ -27,4 +27,5 @@ COPY ./nginx.conf /etc/nginx/nginx.conf
 COPY --from=build-stage /app/.next /app
 
 EXPOSE 8080
-ENTRYPOINT ["nginx", "-g", "daemon off;"]
+# ENTRYPOINT ["nginx", "-g", "daemon off;"]
+CMD "npm" "run" "dev"
