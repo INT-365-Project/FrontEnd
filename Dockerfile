@@ -15,6 +15,7 @@ COPY . .
 
 # Building the project
 RUN npm run build
+RUN npm run export
 
 
 # # Stage 2 NGINX
