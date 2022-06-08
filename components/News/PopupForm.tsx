@@ -28,6 +28,7 @@ const PopupForm = ({ setIsOpen, isOpen ,editData, setIsEdit , isEdit }) => {
     let endCode64 = null;
     reader.onloadend = function() {
       endCode64 = reader.result
+      // console.log(file.name.slice(file.name.length-3,file.name.length))
       setSelectedImage(true);
       setBase64img(endCode64)
       register("thumbnailFile",{value:endCode64.slice(endCode64.indexOf(',')+1,endCode64.length-1)})
@@ -46,7 +47,7 @@ const PopupForm = ({ setIsOpen, isOpen ,editData, setIsEdit , isEdit }) => {
       byteNumbers[i] = byteCharacters.charCodeAt(i);
     }
     var byteArray = new Uint8Array(byteNumbers);
-    var file = new Blob([byteArray], { type: "image/png;base64" });
+    var file = new Blob([byteArray], { type: `image/${editData.thumbnailFileName.slice(editData.thumbnailFileName.length-3,editData.thumbnailFileName.length)};base64` });
     var fileURL = URL.createObjectURL(file);
     setImgSrc(fileURL);
   })
@@ -72,7 +73,7 @@ const PopupForm = ({ setIsOpen, isOpen ,editData, setIsEdit , isEdit }) => {
               ...data,
               thumbnailPath:editData.thumbnailPath,
               thumbnailFile:'',
-              thumbnailFileName:''
+              thumbnailFileName:editData.thumbnailFileName
             }
             NewsServices.storeNews(oldImage).then((res) => {
             })
@@ -82,8 +83,9 @@ const PopupForm = ({ setIsOpen, isOpen ,editData, setIsEdit , isEdit }) => {
         }else{
           const editImg= {
             ...data,
-            thumbnailPath:editData.thumbnailPath,
+            thumbnailPath:editData.thumbnailPath
           }
+          // console.log(editImg)
           NewsServices.storeNews(editImg).then((res) => {
           })
           .catch((err) => {

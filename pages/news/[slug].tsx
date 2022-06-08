@@ -11,6 +11,7 @@ interface NewsDatas{
   createBy:string;
   updateDate:string;
   thumbnailPath:string;
+  thumbnailFileName:string;
 }
 type FormData = {
   comments: string;
@@ -58,7 +59,7 @@ const Detail = () => {
       byteNumbers[i] = byteCharacters.charCodeAt(i);
     }
     var byteArray = new Uint8Array(byteNumbers);
-    var file = new Blob([byteArray], { type: "image/png;base64" });
+    var file = new Blob([byteArray], { type: `image/${newsData.thumbnailFileName.slice(newsData.thumbnailFileName.length-3,newsData.thumbnailFileName.length)};base64` });
     var fileURL = URL.createObjectURL(file);
     setImgSrc(fileURL);
   })

@@ -45,7 +45,7 @@ const News = () => {
         byteNumbers[i] = byteCharacters.charCodeAt(i);
       }
       var byteArray = new Uint8Array(byteNumbers);
-      var file = new Blob([byteArray], { type: "image/png;base64" });
+      var file = new Blob([byteArray], { type: `image/${n.thumbnailFileName.slice(n.thumbnailFileName.length-3,n.thumbnailFileName.length)};base64` });
       var fileURL = URL.createObjectURL(file);
       let p = {
         ...n,
