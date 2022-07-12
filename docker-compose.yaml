@@ -8,6 +8,24 @@ services:
     networks:
        int365:
           ipv4_address: 172.99.99.1
+  reverse-proxy: 
+    image: ghcr.io/int-365-project/frontend:latest
+    container_name: reverse_proxy
+    restart: on-failure
+    volumes:
+      - ./nextjs-ui/out:/usr/share/nginx/html:rw
+      - ./nginx/config/nginx.conf:/etc/nginx/nginx.conf/:rw
+      - ./nginx/config/conf.d/default.conf:/etc/nginx/conf.d/default.conf:rw
+      - ./nginx/logs:/var/log/nginx/:rw
+      - ./nginx/ssl:/ssl/:rw
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - frontend
+    networks:
+      int365:
+        ipv4_address: 172.99.99.6
 networks:
   default:
     external:
