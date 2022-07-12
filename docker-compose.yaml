@@ -4,7 +4,7 @@ services:
     image: ghcr.io/int-365-project/frontend:latest
     container_name: frontend
     ports:
-        - 80:80
+        - 8080:8080
     networks:
        int365:
           ipv4_address: 172.99.99.1
