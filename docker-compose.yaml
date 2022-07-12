@@ -24,8 +24,8 @@ services:
     depends_on:
       - frontend
     networks:
-      int365:
-        ipv4_address: 172.99.99.6
+       int365:
+          ipv4_address: 172.99.99.6
 networks:
   default:
     external:
