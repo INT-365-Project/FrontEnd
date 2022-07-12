@@ -4,7 +4,7 @@ services:
     image: ghcr.io/int-365-project/frontend:latest
     container_name: frontend
     ports:
-        - 8080:8080
+        - 3000:3000
     networks:
        int365:
           ipv4_address: 172.99.99.1
@@ -19,7 +19,7 @@ services:
       - ./nginx/logs:/var/log/nginx/:rw
       - ./nginx/ssl:/ssl/:rw
     ports:
-      - "80:80"
+      - "3000:80"
       - "443:443"
     depends_on:
       - frontend
