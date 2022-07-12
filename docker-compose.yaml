@@ -9,7 +9,7 @@ services:
        int365:
           ipv4_address: 172.99.99.1
   reverse-proxy: 
-    image: ghcr.io/int-365-project/frontend:latest
+    image: nginx:latest
     container_name: reverse_proxy
     restart: on-failure
     volumes:
