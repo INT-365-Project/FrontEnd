@@ -8,7 +8,7 @@ const LogIn = () => {
   const [password, setPassword] = useState("");
 
   async function loginUser(credentials:any) {
-    return fetch(`${api}/authenticate`, {
+    return fetch(`${api}/api/authenticate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
