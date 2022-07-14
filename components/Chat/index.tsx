@@ -49,7 +49,7 @@ const Chat = () => {
   // },[])
   
   const connect = () => {
-    let Sock = new SockJS(`${api}/chat`);
+    let Sock = new SockJS(`${api}/api/chat`);
     stompClient = over(Sock);
     stompClient.connect({}, onConnected, onError);
   };
