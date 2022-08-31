@@ -2,7 +2,7 @@ import Head from "next/head";
 import React, { ReactElement, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrashCan } from "@fortawesome/free-solid-svg-icons";
-import PopupForm from "../../components/News/PopupForm";
+import PopupForm from "../../components/InsiderNews/PopupForm";
 import Link from "next/link";
 import Swal from "sweetalert2";
 import NewsServices from "../../services/news";
@@ -10,12 +10,16 @@ import { useAppContext } from "../_app";
 import axios from "axios";
 import { api } from "../../config";
 import Image from "next/image";
+import CreateEdit from "../../components/InsiderNews/CreateEdit";
+import PopupNews from "./PopupNews";
+import NewsAdminLayout from "../../components/InsiderNews/NewsAdminLayout";
+import UsersLayout from "../../components/InsiderNews/UsersLayout";
 
-let getToken = null
-if (typeof window !== 'undefined'){
-  getToken = localStorage.getItem('accessToken') 
+let getToken = null;
+if (typeof window !== "undefined") {
+  getToken = localStorage.getItem("accessToken");
 }
-let token = 'Bearer '+ getToken
+let token = "Bearer " + getToken;
 type data = {
   newId: number;
   filePath: string;
@@ -30,7 +34,12 @@ const News = () => {
   const [isFinish, setIsFinish] = useState(false);
   const [isConvert, setIsConvert] = useState(false);
   const [useData, setUsedata] = useState([]);
-
+  const [isPreview, setIsPreview] = useState(false);
+  const [data, setData] = useState(null);
+  const [filteredData, setFilteredData] = useState([]);
+  const [temp,setTemp] = useState([])
+  const [filters, setFilter] = useState({ s: "", sort: "" ,page:1});
+  const perPage = 9 ;
   useEffect(() => {
     let timer1 = setTimeout(() => {
       NewsServices.getNews()
@@ -47,34 +56,94 @@ const News = () => {
       setIsConvert(false);
     };
   }, []);
-  
 
   const getImage = async () => {
     for (let n of newsData) {
-      const res = await axios.post(`${api}/api/viewFileByPath`,{filePath:n.thumbnailPath})
+      const res = await axios.post(`${api}/api/viewFileByPath`, {
+        filePath: n.thumbnailPath,
+      });
       var byteCharacters = atob(res.data.responseData.base64);
       var byteNumbers = new Array(byteCharacters.length);
       for (var i = 0; i < byteCharacters.length; i++) {
         byteNumbers[i] = byteCharacters.charCodeAt(i);
       }
       var byteArray = new Uint8Array(byteNumbers);
-      var file = new Blob([byteArray], { type: `image/${n.thumbnailFileName.slice(n.thumbnailFileName.length-3,n.thumbnailFileName.length)};base64` });
+      var file = new Blob([byteArray], {
+        type: `image/${n.thumbnailFileName.slice(
+          n.thumbnailFileName.length - 3,
+          n.thumbnailFileName.length
+        )};base64`,
+      });
       var fileURL = URL.createObjectURL(file);
       let p = {
         ...n,
         source: fileURL,
       };
       setUsedata((oldData) => [...oldData, p]);
+      setTemp((oldData) => [...oldData, p])
       setIsConvert(true);
     }
   };
 
+  const getData = () =>{
+    setFilteredData(useData)
+  }
+
   useEffect(() => {
-    getImage()
+    getImage();
+    getData();
     return () => {
       setIsConvert(false);
     };
   }, [isFinish]);
+
+  useEffect(() => {
+    let filterData = useData.filter(
+      (p) =>
+        p.title.toLowerCase().indexOf(filters.s.toLowerCase()) >= 0 ||
+        p.createDate
+          .slice(0, 10)
+          .toLowerCase()
+          .indexOf(filters.s.toLowerCase()) >= 0
+    );
+    if(filters.sort=='asc' || filters.sort=='desc' ){
+      console.log('hi')
+      useData.sort((a,b)=>{
+        new Date(a.createDate).getTime() - new Date(b.createDate).getTime()
+        const diff = new Date(a.createDate).getTime() - new Date(b.createDate).getTime()
+        if(diff===0) return 0;
+        const sign = Math.abs(diff) / diff
+        return filters.sort === 'asc' ? sign : -sign
+      })
+    }
+    setUsedata(filterData);
+  if(filters.s === ""){
+    setUsedata(temp)
+  }
+  }, [filters]);
+
+  const search = (s: any) => {
+    console.log(s);
+    setFilter({
+      s,
+      sort: "",
+      page:1
+    });
+  };
+  const sort = (sort:any) => {
+    setFilter({
+      s: "",
+      sort,
+      page:1
+    });
+  };
+  const loadMore = () => {
+    setFilter({
+      s: "",
+      sort:"",
+      page:filters.page+1
+    });
+  };
 
   const goToTop = () => {
     window.scrollTo({
@@ -82,14 +151,19 @@ const News = () => {
       behavior: "smooth",
     });
   };
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-      goToTop();
-    } else {
-      document.body.style.overflow = "unset";
-    }
-  }, [isOpen]);
+
+  const eyesDetail = (p: any) => {
+    setData(p);
+    setIsPreview(true);
+  };
+  // useEffect(() => {
+  //   if (isOpen) {
+  //     document.body.style.overflow = "hidden";
+  //     goToTop();
+  //   } else {
+  //     document.body.style.overflow = "unset";
+  //   }
+  // }, [isOpen]);
 
   const editNews = (item: any) => {
     setEditData(item);
@@ -122,129 +196,48 @@ const News = () => {
 
   return (
     <>
-      {isOpen && (
-        <PopupForm
+      {isOpen ? (
+        <CreateEdit
           setIsOpen={setIsOpen}
           isOpen={isOpen}
           editData={editData}
           setIsEdit={setIsEdit}
           isEdit={isEdit}
         />
-      )}
-      <div
-        id="news-card"
-        className={`min-h-screen px-[10px] lg:px-0 ${adminUser ? 'lg:pl-[130px] pt-[80px]' : 'lg:pl-[80px] pt-[30px]'}  md:pt-[80px] lg:pt-[40px] lg:pr-[50px] w-full overflow-hidden`}
-      > 
-        <Head>
-          <title>News</title>
-          <meta name="Chat" content="Chat" />
-          <link rel="icon" href="/favicon.ico" />
-        </Head>
-        <div className="w-full">
-          <div className="flex justify-between items-center ">
-            <div>
-              <h1 className="title">News</h1>
-              <h2 className="breadcrumb">
-                <a>Home</a> | news
-              </h2>
-            </div>
-            {adminUser && (
-              <div>
-                <button
-                  onClick={() => setIsOpen(true)}
-                  className="border-[1.7px] px-[14px] py-[10px] transition-all duration-300 hover:bg-purple hover:text-white 
-        border-purple text-purple h-[90%] lg:h-[50%] p-1 rounded-2xl"
-                >
-                  Add News
-                </button>
-              </div>
-            )}
-          </div>
-          <div className="pt-[40px] pb-[40px] space-y-[30px]">
-            {useData &&
-              isConvert &&
-              useData.map((n: any, index: any) => {
-                return (
-                  <div
-                    key={index}
-                    className="rounded-2xl  drop-shadow-lg mt-[10px] bg-white w-full min-h-[400px] lg:h-[300px] flex lg:flex-row flex-col "
-                  >
-                    <div className="w-full h-[200px] lg:w-[60%] relative  flex justify-center items-center rounded-t-2xl lg:rounded-t-none  lg:rounded-l-2xl  lg:h-full ">
-                      <Link
-                        href={{
-                          pathname: `/news/${encodeURIComponent(n.newId)}`,
-                          query: { query: n.newId },
-                        }}
-                        passHref
-                      >
-                        <img
-                          src={n.source}
-                          className="object-contain w-full relative lg:object-contain rounded-t-2xl lg:rounded-t-none h-full  lg:rounded-l-2xl cursor-pointer"
-                          alt="thumbnail"
-                        />
-                      </Link>
-                    </div>
-                    <div className="w-full flex lg:flex-row flex-col">
-                      <div
-                        className={`${
-                          adminUser
-                            ? "lg:w-[50%] pt-[10px]"
-                            : "lg:w-[80%] pt-[30px]"
-                        } pl-[10px] lg:pl-[40px] lg:my-auto lg:pt-0 `}
-                      >
-                        <Link
-                          href={{
-                            pathname: `/news/${encodeURIComponent(n.newId)}`,
-                          }}
-                          passHref
-                        >
-                          <p className="text-[14px]  short-sub-title text-purple hover:text-fuchsia-300 cursor-pointer">
-                            {n.title}
-                          </p>
-                        </Link>
-                        <p className="text-[12px] text-warmGray-500 sub-title pt-[16px] ">
-                          {n.detail}
-                        </p>
-                        <p className="text-[12px] text-warmGray-500 sub-title pt-[20px]">
-                          update by {n.updateDate.slice(0, 10)}
-                        </p>
-                        <p className="text-[12px] text-warmGray-500 sub-title pt-[4px] pb-[20px]">
-                          create by {n.createBy}
-                        </p>
-                      </div>
-                      {adminUser && (
-                        <div
-                          className={`lg:w-[50%] flex items-center lg:mx-auto lg:pl-[80px] pl-[10px] pb-[20px] pt-[10px]  text-[14px] my-auto space-x-2 `}
-                        >
-                          <button
-                            onClick={() => editNews(n)}
-                            className="flex space-x-1 border-[1.7px] px-[14px] py-[10px] transition-all duration-300 hover:bg-purple hover:text-white border-purple text-purple h-[90%] lg:h-[50%] p-1 rounded-2xl"
-                          >
-                            <FontAwesomeIcon
-                              icon={faPenToSquare}
-                              className="h-[16px] cursor-pointer"
-                            ></FontAwesomeIcon>
-                            <span className="lg:block hidden">Edit</span>
-                          </button>
-                          <button
-                            onClick={() => removeNews(n.newId)}
-                            className="flex space-x-1 border-[1.7px] px-[14px] py-[10px] transition-all duration-300 hover:bg-purple hover:text-white border-purple text-purple h-[90%] lg:h-[50%] p-1 rounded-2xl"
-                          >
-                            <FontAwesomeIcon
-                              icon={faTrashCan}
-                              className="h-[16px] relative top-0 cursor-pointer"
-                            ></FontAwesomeIcon>
-                            <span className="lg:block hidden">Delete</span>
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-          </div>
+      ) : (
+        <div
+          id="news-card"
+          className={`min-h-screen bg-[#F8F8F8] px-[10px] lg:px-0 ${
+            adminUser ? "lg:pl-[130px] pt-[80px]" : "lg:pl-[80px] pt-[30px]"
+          }  md:pt-[80px] lg:pt-[40px] lg:pr-[50px] w-full `}
+        >
+          <Head>
+            <title>News</title>
+            <meta name="Chat" content="Chat" />
+            <link rel="icon" href="/favicon.ico" />
+          </Head>
+          {isPreview && <PopupNews data={data} setIsPreview={setIsPreview} />}
+          {adminUser?<NewsAdminLayout
+            search={search}
+            adminUser={adminUser}
+            setIsOpen={setIsOpen}
+            sort={sort}
+            useData={useData}
+            isConvert={isConvert}
+            eyesDetail={eyesDetail}
+            removeNews={removeNews}
+            editNews={editNews}
+          />
+            :
+            <UsersLayout
+            search={search}
+            sort={sort}
+            useData={useData}
+            isConvert={isConvert}
+              />
+          }
         </div>
-      </div>
+      )}
     </>
   );
 };

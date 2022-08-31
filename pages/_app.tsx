@@ -4,7 +4,6 @@ import { AppProps } from "next/app";
 import Head from "next/head";
 import Layout from "../components/common/Layout";
 import "../styles/globals.scss";
-import LogIn from "../components/Authentication/LogIn";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import  Router ,{ useRouter } from "next/router";
 

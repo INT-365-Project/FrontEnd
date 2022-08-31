@@ -3,9 +3,13 @@
 @import "tailwindcss/utilities";
 
 @import "./common/sidebar.scss";
+
+.iconic path{
+  fill : #919191
+}
 #news-card{
   .short-sub-title {
-    @apply text-[14px] text-light-gray break-words overflow-hidden text-ellipsis;
+    @apply text-[14px] text-black break-words overflow-hidden text-ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 1; /* number of lines to show */
     -webkit-box-orient: vertical;
@@ -22,13 +26,39 @@ body {
   padding: 0;
   margin: 0;
   font-family: "Montserrat";
-  background: #ededed;
+  background: #336699;
 }
 a {
   color: inherit;
   text-decoration: none;
 }
-
+.icon1 {
+  height:2rem;
+  width: 2rem;
+  padding: 4px;
+  position: absolute;
+  box-sizing:border-box;
+  top:49%;
+  left:14px;
+}
+.icon2 {
+  height: 2rem;
+  width: 2rem;
+  padding: 4px;
+  position: absolute;
+  box-sizing:border-box;
+  top:38%;
+  left:14px;
+}
+.icon3 {
+  height: 2rem;
+  width: 2rem;
+  padding: 4px;
+  position: absolute;
+  box-sizing:border-box;
+  top:8%;
+  left:14px;
+}
 * {
   box-sizing: border-box;
 }
@@ -234,7 +264,7 @@ ul {
   box-shadow: 0 8px 8px -4px lightblue;
 }
 .member.active{
-  background: blueviolet;
+  background: #336699;
   color:#fff;
 }
 .member:hover{
@@ -243,14 +273,14 @@ ul {
 }
 
 .avatar{
-  background-color: cornflowerblue;
+  background-color: #EBEBEB;
   padding: 3px 5px;
   border-radius: 5px;
-  color:#fff;
+  color:#000;
 }
 .avatar.self{
-  color:#000;
-  background-color: greenyellow;
+  color:#fff;
+  background-color: #3398CC;
 }
 .message{
   padding:5px;
@@ -266,3 +296,4 @@ ul {
 .message.self{
   justify-content: end;
 }
+
