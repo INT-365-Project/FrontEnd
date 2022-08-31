@@ -103,7 +103,7 @@ const NewsAdminLayout = ({
           isConvert &&
           paginateNews.map((n: any, index: any) => {
             return (
-              <div className="bg-white h-[100px] md:h-[50px] rounded-[10px] border-b-[2px] px-[40px] flex shadow-lg">
+              <div key={index} className=" bg-white h-[100px] md:h-[50px] rounded-[10px] border-b-[2px] px-[40px] flex shadow-lg">
                 <img
                   src={n.source}
                   className="object-contain my-auto  w-[42px] h-[42px] relative lg:object-contain rounded-t-2xl lg:rounded-t-none  lg:rounded-l-2xl cursor-pointer"

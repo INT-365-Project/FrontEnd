@@ -51,7 +51,7 @@ const UsersLayout = ({ search, sort, useData,isConvert}) => {
         isConvert &&
         paginateNews.map((n: any, index: any) => {
           return (
-            <Link
+            <Link key={n.newId} 
             href={{
               pathname: `/news/${n.newId}`,
               query: { query: n.newId },

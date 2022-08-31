@@ -8,7 +8,7 @@ const LogsLayout = ({logs,setData,setOpenEyes}) => {
   return (
     <div> {logs.map((p: any, index: any) => {
       return (
-        <div className="bg-white h-[120px] md:h-[50px] rounded-[10px] border-b-[2px] pl-[15px] md:px-[40px] flex shadow-lg">
+        <div key={index} className="bg-white h-[120px] md:h-[50px] rounded-[10px] border-b-[2px] pl-[15px] md:px-[40px] flex shadow-lg">
           <p className="w-[32%] my-auto md:pl-[5px]">{p.topic}</p>
           <p className="w-[32%] my-auto md:pr-[20px]">
             {p.createDate.slice(0, 10)}

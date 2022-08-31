@@ -1,12 +1,10 @@
-import { Head } from "next/document";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import ReportServices from "../../services/report";
-
-const problemDetail = () => {
+const ProblemDetail = () => {
   const router = useRouter();
-  const { query } = router;
+const { query } = router;
   const [pageRid,setPageRid] = useState("");
   const [reportData,setReportData] = useState(null)
   if (query.slug != undefined) {
@@ -108,4 +106,4 @@ const problemDetail = () => {
   );
 };
 
-export default problemDetail;
+export default ProblemDetail;

@@ -196,7 +196,7 @@ const CreateEdit = ({ setIsOpen, isOpen, editData, setIsEdit, isEdit }) => {
               />
             </div>
             <label htmlFor="inputFileToLoad" className="text-[12px] text-[#919191] flex justify-center pt-[10px] cursor-pointer">
-              คลิก "เลือกรูปภาพ" เพื่ออัพโหลดรูปภาพ
+              คลิก เลือกรูปภาพ เพื่ออัพโหลดรูปภาพ
             </label>
             {errors.thumbnailFile && (<small className='text-red-500'>{errors.thumbnailFile.message}</small>)}
           </div>

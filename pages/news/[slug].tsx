@@ -158,22 +158,18 @@ const Detail = () => {
                 </div>
                 {adminUser && (
                   <div className="flex space-x-[20px]">
-                    {/* <Link href="/news" passHref> */}
                     <button
                       onClick={() => removeNews(newsData.newId)}
                       className="transition-all duration-300 p-2 border-[1.6px] bg-white border-black  hover:bg-black rounded hover:text-white text-black text-[18px] "
                     >
                       ลบข่าว
                     </button>
-                    {/* </Link> */}
-                    {/* <Link href="/news" passHref> */}
                     <button
                       onClick={() => editNews(newsData)}
                       className="transition-all duration-300 p-2 border-[1.6px] bg-[#336699]  hover:border-black hover:bg-white rounded hover:text-black text-white text-[18px] "
                     >
                       แก้ไขข่าว
                     </button>
-                    {/* </Link> */}
                   </div>
                 )}
               </div>

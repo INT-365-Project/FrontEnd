@@ -107,7 +107,7 @@ const Content = ({ isOpen, setIsOpen }) => {
         <div className="w-[80%] mx-auto mt-[40px] text-black text-[16px] font-normal space-y-[40px] ">
           {menu.map((m, index) => {
             return (
-              <Link href={m.href} passHref>
+              <Link key={index} href={m.href} passHref>
                 <div
                   className={
                     router.pathname == m.href
