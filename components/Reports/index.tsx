@@ -2,12 +2,9 @@ import React from 'react'
 import Slider from "react-slick";
 
 const ReportTypes = [
-  {title:"Late Answer"},
-  {title:"Unknown News"},
-  {title:"Technical Problems"},
-  {title:"Comunitcate Problems"},
-  {title:"Technical Problems"},
-  {title:"Technical Problems"},
+  {title:"ข่าว" , icon:"inew.svg"},
+  {title:"ข้อความ" , icon:"imsg.svg",},
+  {title:"ปัญหา" , icon:"ireport.svg",},
 ]
 
 const Reports = () => {
@@ -28,16 +25,29 @@ const Reports = () => {
     ],
   };
   return (
-    <div className='w-[95%] mt-[30px] lg:mt-0'>
-    <div className='text-purple subtitle '>Reports & Comments</div>
-    <div className="rounded-xl drop-shadow-lg mt-[10px] mx-auto  overflow-hidden ">
+    <div className='w-full mt-[30px] lg:mt-0'>
+    {/* <div className='text-purple subtitle '>Reports & Comments</div> */}
+    <div className="rounded-xl drop-shadow-lg mt-[10px] mx-auto  overflow-hidden  py-[14px] relative">
     <Slider {...settings}>    
     {ReportTypes.map((r,index)=>{
-      return <div key={index} className='h-[200px] w-[91%] bg-white rounded-xl drop-shadow-lg flex flex-col'>
-        <p className='text-black text-[14px] px-[40px] text-center h-[70%] pt-[45px]'>{r.title}</p>
-        <p className='text-purple text-center h-[30%]'>20</p>
+      return <div key={index} className='mx-auto h-[180px] w-[94%] bg-white rounded-xl drop-shadow-lg relative'>    
+      <div className='w-full flex flex-col md:flex-none h-[140px]'>
+        <div className='w-[62px] h-[62px] my-auto mx-auto  flex justify-center items-center bg-[#336699] rounded-full'>
+        <img src={`/images/${r.icon}`} alt="" 
+        style={{
+          filter:
+            "invert(100%) sepia(30%) saturate(100%) hue-rotate(356deg) brightness(96%) contrast(111%)",
+        }}/>
+        </div>
+        <div className=' text-center'>
+        <p className=' text-[20px] text-black font-semibold'>{r.title}</p>
+        <p className='text-[#919191]  '>10 รายการ</p>
+        </div>
+        </div> 
+        <div className='relative bottom-0 w-full h-[40px] bg-[#FAFAFC] rounded-[5px] text-[#336699] px-[30px]'>
+          <h1 className='pt-[10px]'>ดูทั้งหมด</h1>
+        </div>
       </div>
-          
     })}
     
     </Slider>
