@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Router from 'next/router';
 import React, { useState } from 'react'
 import Swal from 'sweetalert2';
@@ -40,55 +41,38 @@ const LogIn = () => {
     }
   }
   return (
-    <div className='w-full h-screen   lg:px-[120px] pb-[100px] drop-shadow-lg '>
-      <div className='flex w-full h-screen md:h-[90vh] rounded-2xl md:pt-[80px]'>
-      <div className='hidden md:block w-full h-full bg-purple rounded-l-lg'>
-        <h1 className='text-white text-[36px] font-bold pl-[40px] pt-[40px]'>
-           SIT-CHATBOT
-        </h1>
-        <h1 className='text-[48px] font-bold text-white pt-[80px] pl-[40px]'>
-          Welcome to...
-        </h1>
-        <p className='pl-[40px] text-white pt-[10px]'>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-        Ut enim ad minim veniam.
-        </p>
-        <p className='pl-[40px] pt-[200px] text-white'>
-        Lorem ipsum dolor sit amet.
-        </p>
+    <div className='w-full h-screen lg:px-[120px] pb-[100px] drop-shadow-lg '>
+      <div className='flex w-full h-screen mx-auto rounded-2xl md:py-[120px]'>
+      <div className='hidden md:flex flex-col justify-center items-center  w-full h-full bg-white rounded-l-[30px] relative'>
+          <img src="/images/login.png" className='w-[90%] my-auto ' alt="login" />
       </div>
-      <div className='w-full h-full pt-[70px] md:pt-0 bg-white rounded-r-lg tracking-wider'>
-      <form onSubmit={handleSubmit}>
-        <div className='lg:px-[80px] px-[20px] py-[40px]'>
-        <h1 className='text-purple text-[40px] font-semibold'>Login (for admin) </h1>
-        <p className='text-warmGray-500 '>
-          Welcome to login to get SIT CHAT-BOT
-        </p>
-        <div className='pb-[20px] pt-[20px]'>
-          <label className='text-warmGray-500 '>User Name</label>
+      <div className='w-full h-full  md:pt-0 bg-white md:rounded-r-[30px] tracking-wider'>
+      <form onSubmit={handleSubmit} className=" h-full px-[10px] lg:px-[80px] mx-auto my-auto">
+        <div className='md:px-[10px]  flex flex-col justify-center items-center  h-full'>
+        <h1 className='text-black text-[44px] lg:text-[52px] w-full font-bold'>SIT CHATBOT </h1>
+        <div className='pb-[20px] pt-[20px] w-full relative'>
+          <label className='text-black '>ชื่อผู้ใช้</label>
+            <img src="/images/user.svg" className='icon1' alt="user" />
           <input
-                  className="text-body mt-[6px] shadow appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className="text-body mt-[6px] pl-[60px] shadow appearance-none border border-[#919191] rounded-[10px] w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   type="text"
+                  placeholder='ชื่อผู้ใข้'
                   onChange={e => setUserName(e.target.value)}
                 />
         </div>
-        <div className='pb-[20px]'>
-          <label className='text-warmGray-500 '>Password</label>
+        <div className='pb-[20px] w-full relative'>
+          <label className='text-black '>รหัสผ่าน</label>
+          <img src="/images/pass.svg" className='icon2' alt="pass" />
           <input
-                  className="text-body shadow mt-[6px] appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className="text-body shadow mt-[6px] pl-[60px] appearance-none border border-[#919191] rounded-[10px] w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   type="password"
+                  placeholder='รหัสผ่าน'
                   onChange={e => setPassword(e.target.value)}
                 />
         </div>
-         <button type="submit" className="w-full mt-[18px] shadow rounded py-3 px-3 bg-purple text-white tracking-wider uppercase font-semibold">
-              Login
+         <button type="submit" className="w-full mt-[4px] shadow rounded-[10px] py-3 px-3 bg-[#336699] text-[16px] text-white tracking-wider uppercase ">
+              เข้าสู่ระบบ
             </button>
-            {/* <div className='flex justify-between w-full text-[14px] mt-[60px]'>
-            <div className='text-warmGray-500'>New Users? <span className='text-purple'>Sign up</span></div>
-            <div>
-              forget your password ?
-            </div>
-        </div> */}
         </div>
         </form>
        
