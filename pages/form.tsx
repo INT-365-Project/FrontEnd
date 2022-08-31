@@ -1,10 +1,10 @@
 import React from 'react'
 import ReportForm from '../components/Reports/ReportForm'
 
-const Report = () => {
+const form = () => {
   return (
     <ReportForm/>
   )
 }
 
-export default Report
+export default form

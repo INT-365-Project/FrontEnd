@@ -13,7 +13,7 @@ if (typeof window !== 'undefined'){
 }
 let token = 'Bearer '+ getToken
 
-const News = () => {
+const InsiderNews = () => {
   const { adminUser, isLogin, setIsLogin } = useAppContext();
   const [newsData, setNewsData] = useState([]);
   const [useData, setUsedata] = useState([]);
@@ -62,51 +62,47 @@ const News = () => {
 
   return (
     <div id="news-card" className="w-full mt-[30px] lg:mt-0 ">
-      <div className="flex justify-between">
-        <div className="text-purple subtitle">News</div>
+      <div className="flex justify-between mb-[18px] bg-white py-[22px] px-[18px] rounded-[5px] drop-shadow-lg ">
+        <div className="text-black subtitle text-[20px] font-bold">ข่าว</div>
         <Link href="/news" passHref>
           <div
-            className="transition-all duration-300 px-[20px] border-[1.7px] border-purple rounded-2xl 
-      hover:bg-purple text-purple hover:text-white cursor-pointer"
+            className="transition-all duration-300 px-[10px] py-[4px] bg-[#336699] rounded-[5px] 
+      hover:bg-[#336699]/40 text-white text-[16px] hover:text-black cursor-pointer"
           >
-            See All
+            ดูทั้งหมด
           </div>
         </Link>
+      </div>
+      <div className="rounded-[5px] text-[#919191] drop-shadow-lg  bg-white w-full h-[60px] border-b-[2px] ">
+        <div className="pl-[10px] lg:pr-[170px] lg:pl-[40px] my-auto lg:pt-[20px] pt-[10px] flex justify-between">
+          <h1>
+          หัวข้อข่าว
+        </h1>
+        <p>
+          วันที่ลงข่าว
+        </p></div>
       </div>
       {useData && isConvert && useData.map((n: any, index: any) => {
           if (index <= 5) {
             return (
               <div
                 key={index}
-                className="rounded-2xl drop-shadow-lg mt-[12px] bg-white w-full h-[110px] flex"
+                className=" rounded-[5px] drop-shadow-lg  bg-white w-full h-[60px] flex"
               >
-                <div className="w-[200px]  rounded-l-2xl h-full flex just justify-center items-center">
-                  <Link
-                    href={{ pathname: `/news/${encodeURIComponent(n.newId)}` }}
-                    passHref
-                  >
-                    
-                    <img
-                          src={n.source}
-                          className="object-contain w-full relative lg:object-contain rounded-t-2xl lg:rounded-t-none h-full  lg:rounded-l-2xl cursor-pointer"
-                          alt="thumbnail"
-                        />
-                  </Link>
-                </div>
-                <div className="w-full flex lg:flex-row flex-col">
-                  <div className=" lg:w-[80%] pl-[10px] lg:pl-[40px] my-auto lg:pt-0 pt-[10px]">
+                <div className="w-full flex lg:flex-row flex-col border-b-[2px]">
+                  <div className=" lg:w-[80%] pl-[10px] lg:pl-[40px] my-auto lg:pt-0 pt-[10px] flex justify-between">
                     <Link
                       href={{
                         pathname: `/news/${encodeURIComponent(n.newId)}`,
                       }}
                       passHref
                     >
-                      <p className="text-[14px] text-purple hover:text-fuchsia-300 cursor-pointer">
+                      <p className="text-[14px] text-black hover:text-warmGray-700 cursor-pointer">
                         {n.title}
                       </p>
                     </Link>
-                    <p className="text-[12px] text-warmGray-500 short-sub-title">
-                      {n.detail}
+                    <p className="text-[14px] text-black short-sub-title">
+                      {n.createDate.slice(0, 10)}
                     </p>
                   </div>
                 </div>
@@ -118,4 +114,4 @@ const News = () => {
   );
 };
 
-export default News;
+export default InsiderNews;
