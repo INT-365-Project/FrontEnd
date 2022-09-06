@@ -245,7 +245,7 @@ const CreateEdit = ({ setIsOpen, isOpen, editData, setIsEdit, isEdit }) => {
                   <textarea
                     className=" text-body mt-[10px] tracking-wider shadow appearance-none border border-black rounded w-[80%] mx-auto py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline "
                     rows={8}
-                    placeholder="กรอกรายละเอียดข่าว"
+                    // placeholder="กรอกรายละเอียดข่าว"
                     {...register("detail", {
                       value: isEdit ? editData.detail : "",
                       required: "กรอกรายละเอียดข่าว",

@@ -12,10 +12,10 @@ const UsersLayout = ({ search, sort, useData,isConvert}) => {
   const paginateNews = paginate(useData,currentPage,pageSize)
   return (
     <div className="md:w-[95%] ">
-    <div className="flex justify-between items-center mt-[20px] h-[80px] px-[10px] md:px-[20px] bg-white rounded-[10px] shadow-lg">
-      <div className="flex flex-col w-full">
+    <div className="flex justify-between items-center mt-[20px] h-[80px] px-[10px] md:px-[20px] bg-white rounded-[10px] shadow-lg lg:mr-[30px]">
+      <div className="flex flex-col w-full ">
         <div className="mt-[8px] ">
-          <div className="flex text-lfec relative">
+          <div className="flex text-lfec relative ">
             <img
               src="/images/glass.svg"
               className="icon3"

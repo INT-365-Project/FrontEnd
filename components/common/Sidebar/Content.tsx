@@ -80,7 +80,52 @@ const Content = ({ isOpen, setIsOpen }) => {
         >
           <img src="/images/logo.png" alt="" />
         </div>
-        <div className="mt-[10px] mr-[40px]">
+        <div className="flex md:hidden ">
+        {menu.map((m, index) => {
+            return (
+              <Link key={index} href={m.href} passHref>
+                <div
+                  className={
+                    router.pathname == m.href
+                      ? "flex justify-center cursor-pointer items-center h-[56px] w-[56px] bg-[#336699] relative  rounded-full mx-auto my-auto"
+                      : "flex justify-center cursor-pointer items-center h-[56px] w-[56px] relative  rounded-full mx-auto my-auto"
+                  }
+                  onMouseEnter={() => {
+                    // setOpenDes(true);
+                    setCount(index);
+                  }}
+                  onMouseLeave={() => {
+                    setOpenDes(false);
+                    setCount(0);
+                  }}
+                >
+                  {router.pathname == m.href ? (
+                    <img
+                      src={`/images/${m.icon}`}
+                      className="iconic"
+                      alt={m.icon}
+                      style={{
+                        filter:
+                          "invert(100%) sepia(30%) saturate(100%) hue-rotate(356deg) brightness(96%) contrast(111%)",
+                      }}
+                    />
+                  ) : (
+                    <img
+                      src={`/images/${m.icon}`}
+                      className="iconic"
+                      alt={m.icon}
+                      style={{
+                        filter:
+                          "invert(50%) sepia(30%) saturate(100%) hue-rotate(356deg) brightness(96%) contrast(111%)",
+                      }}
+                    />
+                  )}
+                </div>
+              </Link>
+            );
+          })}
+          </div>
+        <div className="mt-[10px] mr-[10px]">
           {isLogin && (
             <div className="flex space-x-[10px]">
               <div className="flex px-[20px] cursor-pointer items-center rounded-full h-[52px] relative bg-[#D9D9D9]">
