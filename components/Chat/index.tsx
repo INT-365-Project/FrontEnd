@@ -67,25 +67,31 @@ const Chat = () => {
   const userJoin = () => {
     var chatMessage = {
       senderName: userData.username,
+      receiverName: userData.username,
       status: "JOIN",
     };
-    stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
+    stompClient.send("/app/getHistory", {}, JSON.stringify(chatMessage));
   };
 
   const onMessageReceived = (payload) => {
     var payloadData = JSON.parse(payload.body);
-    switch (payloadData.status) {
-      case "JOIN":
-        if (!privateChats.get(payloadData.senderName)) {
-          privateChats.set(payloadData.senderName, []);
-          setPrivateChats(new Map(privateChats));
-        }
-        break;
-      case "MESSAGE":
-        publicChats.push(payloadData);
-        setPublicChats([...publicChats]);
-        break;
+    for (let i = 0; i < payloadData.length; i++) {
+      publicChats.push(payloadData[i])
     }
+    publicChats.push(payloadData)
+    setPublicChats([...publicChats])
+    // switch (payloadData.status) {
+    //   case "JOIN":
+    //     if (!privateChats.get(payloadData.senderName)) {
+    //       privateChats.set(payloadData.senderName, []);
+    //       setPrivateChats(new Map(privateChats));
+    //     }
+    //     break;
+    //   case "MESSAGE":
+    //     publicChats.push(payloadData);
+    //     setPublicChats([...publicChats])
+    //     break;
+    // }
   };
 
   const onPrivateMessage = (payload) => {
@@ -113,6 +119,7 @@ const Chat = () => {
     if (stompClient) {
       var chatMessage = {
         senderName: userData.username,
+        receiverName: userData.username,
         message: userData.message,
         date: new Date(),
         status: "MESSAGE",
@@ -356,7 +363,7 @@ const Chat = () => {
                 </>
               )}
             </div>
-            <div id="mobile" className="hidden lg:w-[70%] lg:block ">
+            <div id="desktop" className="hidden lg:w-[70%] lg:block ">
               <div className=" h-[85%] ">
                 <div className="h-[95%] bg-white rounded-3xl drop-shadow-md  px-[20px]">
                   <div className="h-[15%] mx-auto flex items-center">
@@ -365,6 +372,24 @@ const Chat = () => {
                   {tab === "CHATROOM" && (
                     <div className="h-[400px]">
                       <ul className="overflow-y-auto h-[90%] border-[1px] border-[#336699] rounded-[15px]">
+                      {/* {history.map((h,index)=>{
+                              return  <li 
+                              className={`message ${
+                                h.senderName === userData.username && "self"
+                              }`}
+                              key={index}
+                            >
+                              {h.senderName !== userData.username && (
+                                <div className="avatar">{h.senderName}</div>
+                              )}
+                              <div className={`message-data w-[280px] break-words ${h.senderName === userData.username && "self" ? 'text-right' : 'text-left'}`}>kuy{h.message}</div>
+                              {h.senderName === userData.username && (
+                                <div className="avatar self">
+                                  {h.senderName}
+                                </div>
+                              )}
+                            </li>
+                            })} */}
                         {publicChats.map((chat, index) => (
                           <li
                             className={`message ${
