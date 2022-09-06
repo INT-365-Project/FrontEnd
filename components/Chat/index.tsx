@@ -372,24 +372,6 @@ const Chat = () => {
                   {tab === "CHATROOM" && (
                     <div className="h-[400px]">
                       <ul className="overflow-y-auto h-[90%] border-[1px] border-[#336699] rounded-[15px]">
-                      {/* {history.map((h,index)=>{
-                              return  <li 
-                              className={`message ${
-                                h.senderName === userData.username && "self"
-                              }`}
-                              key={index}
-                            >
-                              {h.senderName !== userData.username && (
-                                <div className="avatar">{h.senderName}</div>
-                              )}
-                              <div className={`message-data w-[280px] break-words ${h.senderName === userData.username && "self" ? 'text-right' : 'text-left'}`}>kuy{h.message}</div>
-                              {h.senderName === userData.username && (
-                                <div className="avatar self">
-                                  {h.senderName}
-                                </div>
-                              )}
-                            </li>
-                            })} */}
                         {publicChats.map((chat, index) => (
                           <li
                             className={`message ${
