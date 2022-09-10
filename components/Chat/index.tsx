@@ -73,13 +73,23 @@ const Chat = () => {
          data = item
        }
     })
+
     let list = [];
-    for (const history of data.chatHistory) {
-         list.push(history);
-         privateChats.set(data.chatId, list);
+    if(data.chatHistory.length>0){
+      for (const history of data.chatHistory) {
+        list.push(history);
+        privateChats.set(data.chatId, list);
+     }
+    }else{
+      privateChats.set(data.chatId,[])
     }
+   
     setPrivateChats(new Map(privateChats));
   } 
+
+  if(privateChats){
+    console.log(privateChats)
+  }
 
   const onMessageReceived = (payload:any) => {
     var payloadData = JSON.parse(payload.body);
@@ -184,13 +194,12 @@ const Chat = () => {
       name:name,
       chatId:chatId
     });
-    setCurrentUser({
-      name:name,
-      chatId:chatId
-    })
     setIsOpen(true);
   };
 
+  if(tab){
+    console.log(tab)
+  }
   return (
     <div className="px-[10px] bg-[#F8F8F8] lg:px-0  lg:pl-[130px] pt-[80px] lg:pt-[90px] lg:pr-[50px] w-full">
       <Head>
@@ -305,7 +314,7 @@ const Chat = () => {
                     {tab.name !== "CHATROOM" && (
                       <div className="pt-[30px] lg:hidden space-y-[10px] flex flex-col  h-[360px]  pb-[20px] ">
                         <div className="border-[1px] overflow-y-scroll h-full border-[#336699] rounded-[15px] mx-[4px]">
-                          {[...privateChats.get(tab.chatId)].map((chat, index) => (
+                          { [...privateChats.get(tab.chatId)].map((chat, index) => (
                             <li
                               className={`message ${
                                 chat.senderName === userData.username && "self"

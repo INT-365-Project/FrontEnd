@@ -26,7 +26,7 @@ const Intents = () => {
       topic: "นักศึกษาใหม่",
     },
   ];
-  const [editCommandInput,setEditCommandInput] = useState("");
+  const [editCommandInput, setEditCommandInput] = useState("");
   const [newCommand, setNewCommand] = useState("");
   const [isAddCommand, setIsAddCommand] = useState(false);
   const [commands, setCommands] = useState([]);
@@ -37,7 +37,7 @@ const Intents = () => {
   const [name, setName] = useState("");
   const [isFinish, setIsFinish] = useState(false);
   const [isEditFinish, setIsEditFinish] = useState(false);
-  const [submitEdit,setSubmitEdit] = useState(false);
+  const [submitEdit, setSubmitEdit] = useState(false);
   const [currentExpression, setCurrentExpression] = useState({
     name: "",
     text: "",
@@ -46,7 +46,7 @@ const Intents = () => {
     seq: 0,
     content: "",
   });
-  const [oldTopic,setOldTopic] = useState("");
+  const [oldTopic, setOldTopic] = useState("");
   const [isEditingExpression, setIsEditingExpression] = useState(false);
   const [isEditingResponse, setIsEditingResponse] = useState(false);
   const [isEditingCommand, setIsEditingCommand] = useState(false);
@@ -54,10 +54,17 @@ const Intents = () => {
   const [expressions, setExpressions] = useState([]);
   const [responseInput, setResponseInput] = useState("");
   const [response, setResponse] = useState([]);
-  const [errorCommand, setErrorCommand] = useState({status:false,msg:""});
-  const [errorExpress, setErrorExpress] = useState({status:false,msg:""});
-  const [errorResponse, setErrorResponse] = useState({status:false,msg:""});
+  const [errorCommand, setErrorCommand] = useState({ status: false, msg: "" });
+  const [errorExpress, setErrorExpress] = useState({ status: false, msg: "" });
+  const [errorResponse, setErrorResponse] = useState({
+    status: false,
+    msg: "",
+  });
   const [seq, setSeq] = useState(0);
+
+  useEffect(()=>{
+    
+  },[])
 
   useEffect(() => {
     BotServices.getAllBot()
@@ -97,13 +104,14 @@ const Intents = () => {
     }
     setIsFinish(false);
   }, [isFinish]);
+
   const sendIntents = () => {
     if (expressions.length > 0 && response.length > 0 && topic != "") {
       if (expressions.length != 0 || response.length != 0) {
         if (!isEditingExpression && !isEditingResponse) {
-          setErrorCommand({status:false,msg:""})
-          setErrorExpress({status:false,msg: ""})
-          setErrorResponse({status:false,msg: ""})
+          setErrorCommand({ status: false, msg: "" });
+          setErrorExpress({ status: false, msg: "" });
+          setErrorResponse({ status: false, msg: "" });
           Swal.fire({
             title: "ยืนยันการเพิ่มแก้ไข Bot Detect",
             text: "เมื่อทำการยืนยัน ระบบจะทำการส่งข้อมูล",
@@ -150,15 +158,24 @@ const Intents = () => {
               setTopic("");
               location.reload();
             } else if (result.isDismissed) {
-              location.reload()
+              location.reload();
             }
           });
         }
       }
-    }else{
-      setErrorCommand({status:true,msg:"กรุณาใส่ topic ไม่สามารถเป็นค่าว่างได้"})
-      setErrorExpress({status:true,msg: "โปรดใส่ Expression ไม่สามารถเป็นค่าว่าง"})
-      setErrorResponse({status:true,msg: "โปรดใส่ Response ไม่สามารถเป็นค่าว่าง"})
+    } else {
+      setErrorCommand({
+        status: true,
+        msg: "กรุณาใส่ topic ไม่สามารถเป็นค่าว่างได้",
+      });
+      setErrorExpress({
+        status: true,
+        msg: "โปรดใส่ Expression ไม่สามารถเป็นค่าว่าง",
+      });
+      setErrorResponse({
+        status: true,
+        msg: "โปรดใส่ Response ไม่สามารถเป็นค่าว่าง",
+      });
     }
   };
   const selectGroup = (tp: any) => {
@@ -173,6 +190,64 @@ const Intents = () => {
       // setTopic(tp)
     }
   };
+
+  const deleteTopic = () => {
+    const items = allBot.filter((item) => item.topic != topic);
+    items.push({
+                name: name,
+                topic: "",
+                expressions: [],
+                responses: [],
+    })
+    console.log(items)
+    const data = {
+      commands : items
+    }
+    Swal.fire({
+      title: "ยืนยันการลบ Bot Detect",
+      text: "เมื่อทำการยืนยัน ระบบจะทำการส่งข้อมูล",
+      icon: "warning",
+      showCancelButton: true,
+      cancelButtonColor: "#d33",
+      confirmButtonColor: "#3085d6",
+      cancelButtonText: "ยกเลิก",
+      confirmButtonText: "ยืนยัน",
+    }).then((result) => {
+      if (result.isConfirmed) {
+          BotServices.storeCommand(data)
+            .then((res) => {
+              console.log(res);
+            })
+            .catch((err) => {
+              console.log(err.response);
+            });
+          setCommands([]);
+          setExpressionInput("");
+          setResponseInput("");
+          setTopic("");
+        Swal.fire(
+          "ระบบดำเนินการเสร็จสิ้น",
+          "ข้อมูลของคุณได้ถูกลบแล้ว",
+          "success"
+        );
+        setCommands([]);
+        setExpressionInput("");
+        setResponseInput("");
+        setTopic("");
+        location.reload();
+      } else if (result.isDismissed) {
+        location.reload();
+      }
+    });
+    BotServices.storeCommand(data)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err.response);
+      });
+  };
+
   const handleResponseDelete = (seq) => {
     const removeItem = response.filter((rs) => {
       return rs.seq !== seq;
@@ -250,9 +325,9 @@ const Intents = () => {
   };
   const handlerTopicInputChange = (e: any) => {
     e.preventDefault();
-    if(!isEditingCommand){
+    if (!isEditingCommand) {
       setTopic(e.target.value);
-    }else{
+    } else {
       setTopic(e.target.value);
     }
   };
@@ -260,46 +335,52 @@ const Intents = () => {
     setResponseInput(e.target.value);
   };
   const handleFormNewCommands = (e: any) => {
-    setErrorCommand({status:false,msg:""});
+    setErrorCommand({ status: false, msg: "" });
     e.preventDefault();
-    console.log(newCommand)
-    console.log('edit='+editCommandInput)
     if (topic !== "") {
-      if(!isEditingCommand){
-      const checked = topics.some((item) => item.topic === topic);
-      if (!checked) {
-        setNewCommand(topic);
-        setErrorCommand({status:false,msg:""});
+      if (!isEditingCommand) {
+        const checked = topics.some((item) => item.topic === topic);
+        if (!checked) {
+          setNewCommand(topic);
+          setErrorCommand({ status: false, msg: "" });
+        } else {
+          setErrorCommand({
+            status: true,
+            msg: "ชื่อ Topic นี้มีอยู่แล้วในระบบ",
+          });
+        }
       } else {
-        setErrorCommand({status:true,msg:"ชื่อ Topic นี้มีอยู่แล้วในระบบ"});
-      }
-    } else{
-      const checked = topics.some((item) => item.topic === topic);
-      if (!checked || oldTopic===topic) {
-        setNewCommand(topic);
-        setErrorCommand({status:false,msg:""});
-        setEditCommandInput(topic)
-        setSubmitEdit(true)
-      }
-      else {
-        setErrorCommand({status:true,msg:"ชื่อ Topic นี้มีอยู่แล้วในระบบ"});
-        setSubmitEdit(false);
-        if(errorCommand){
-          if(oldTopic===topic){
-            setErrorCommand({status:false,msg:""});
-            setEditCommandInput(topic)
-            setNewCommand(topic);
-            setSubmitEdit(true)
+        const checked = topics.some((item) => item.topic === topic);
+        if (!checked || oldTopic === topic) {
+          setNewCommand(topic);
+          setErrorCommand({ status: false, msg: "" });
+          setEditCommandInput(topic);
+          setSubmitEdit(true);
+        } else {
+          setErrorCommand({
+            status: true,
+            msg: "ชื่อ Topic นี้มีอยู่แล้วในระบบ",
+          });
+          setSubmitEdit(false);
+          if (errorCommand) {
+            if (oldTopic === topic) {
+              setErrorCommand({ status: false, msg: "" });
+              setEditCommandInput(topic);
+              setNewCommand(topic);
+              setSubmitEdit(true);
+            }
           }
         }
       }
-    }
-    }else{
-      setErrorCommand({status:true,msg:"กรุณาใส่ topic ไม่สามารถเป็นค่าว่างได้"})
+    } else {
+      setErrorCommand({
+        status: true,
+        msg: "กรุณาใส่ topic ไม่สามารถเป็นค่าว่างได้",
+      });
     }
   };
   const editCommand = () => {
-    console.log('editcommand=',editCommandInput)
+    console.log("editcommand=", editCommandInput);
     setIsEditingCommand(true);
     setNewCommand(topic);
     setOldTopic(topic);
@@ -312,10 +393,10 @@ const Intents = () => {
     setResponse([]);
     setIsAddCommand(false);
     setIsEditingCommand(false);
-    setEditCommandInput("")
-    setErrorCommand({status:false,msg:""})
-    setErrorExpress({status:false,msg:""})
-    setErrorResponse({status:false,msg:""})
+    setEditCommandInput("");
+    setErrorCommand({ status: false, msg: "" });
+    setErrorExpress({ status: false, msg: "" });
+    setErrorResponse({ status: false, msg: "" });
   };
   const handleFormExpression = (e: any) => {
     e.preventDefault();
@@ -405,69 +486,80 @@ const Intents = () => {
                   )}
                   {isEditingCommand && (
                     <>
-                     <form onSubmit={handleFormNewCommands}>
-                     { editCommandInput === "" ? <><input
-                        type="text"
-                        className="mt-[10px] border w-full h-[40px] border-[#919191] text-gray-900 rounded-[5px] py-[4px] md:py-[8px] pl-[10px] focus:outline-none focus:shadow-outline"
-                        placeholder="Add New Commands"
-                        value={topic}
-                        onChange={handlerTopicInputChange}
-                      />
-                      
-                       {errorCommand.status && (
-                        <p className="text-red-400 pt-[10px]">
-                          {errorCommand.msg}
-                        </p>
-                      )}</>
-                      :
-                      <><input
-                        disabled
-                        type="text"
-                        className="mt-[10px] border w-full h-[40px] border-[#919191] text-gray-900 rounded-[5px] py-[4px] md:py-[8px] pl-[10px] focus:outline-none focus:shadow-outline"
-                        placeholder="Add New Commands"
-                        value={topic}
-                        onChange={handlerTopicInputChange}
-                      />
-                      
-                       {errorCommand.status && (
-                        <p className="text-red-400 pt-[10px]">
-                          {errorCommand.msg}
-                        </p>
-                      )}</> 
-                      }
-                     </form> 
+                      <form onSubmit={handleFormNewCommands}>
+                        {editCommandInput === "" ? (
+                          <>
+                            <input
+                              type="text"
+                              className="mt-[10px] border w-full h-[40px] border-[#919191] text-gray-900 rounded-[5px] py-[4px] md:py-[8px] pl-[10px] focus:outline-none focus:shadow-outline"
+                              placeholder="Add New Commands"
+                              value={topic}
+                              onChange={handlerTopicInputChange}
+                            />
+
+                            {errorCommand.status && (
+                              <p className="text-red-400 pt-[10px]">
+                                {errorCommand.msg}
+                              </p>
+                            )}
+                          </>
+                        ) : (
+                          <>
+                            <input
+                              disabled
+                              type="text"
+                              className="mt-[10px] border w-full h-[40px] border-[#919191] text-gray-900 rounded-[5px] py-[4px] md:py-[8px] pl-[10px] focus:outline-none focus:shadow-outline"
+                              placeholder="Add New Commands"
+                              value={topic}
+                              onChange={handlerTopicInputChange}
+                            />
+
+                            {errorCommand.status && (
+                              <p className="text-red-400 pt-[10px]">
+                                {errorCommand.msg}
+                              </p>
+                            )}
+                          </>
+                        )}
+                      </form>
                     </>
                   )}
                   {topic != "" && (
                     <div className="pt-[20px] space-x-[12px]">
-                    {!isEditingCommand &&
-                    <>
-                    <button
-                      onClick={() => editCommand()}
-                      disabled={topic === ""}
-                      className={`ml-[10px] pr-[10px] pl-[10px] ${
-                        topic == "" ? "bg-gray-600" : "bg-[#336699]"
-                      } rounded-[5px] text-white`}
-                    >
-                      แก้ไข
-                    </button>
-                    <button
-                      onClick={() => console.log('')}
-                      disabled={topic === ""}
-                      className={`ml-[10px] pr-[10px] pl-[10px] ${
-                        topic == "" ? "bg-gray-600" : "bg-gray-600"
-                      } rounded-[5px] text-white`}
-                    >
-                      ลบ
-                    </button>
-                    </>}
-                    {isEditingCommand &&<button  className={`ml-[10px] pr-[10px] pl-[10px] ${
-                        topic == "" ? "bg-gray-600" : "bg-gray-600"
-                      } rounded-[5px] text-white`} onClick={()=>cancelNewCommands()}>
-                      ยกเลิก
-                    </button>}
+                      {!isEditingCommand && (
+                        <>
+                          <button
+                            onClick={() => editCommand()}
+                            disabled={topic === ""}
+                            className={`ml-[10px] pr-[10px] pl-[10px] ${
+                              topic == "" ? "bg-gray-600" : "bg-[#336699]"
+                            } rounded-[5px] text-white`}
+                          >
+                            แก้ไข
+                          </button>
+                          <button
+                            onClick={() => deleteTopic()}
+                            disabled={topic === ""}
+                            className={`ml-[10px] pr-[10px] pl-[10px] ${
+                              topic == "" ? "bg-gray-600" : "bg-gray-600"
+                            } rounded-[5px] text-white`}
+                          >
+                            ลบ
+                          </button>
+                        </>
+                      )}
+                      {isEditingCommand && (
+                        <button
+                          className={`ml-[10px] pr-[10px] pl-[10px] ${
+                            topic == "" ? "bg-gray-600" : "bg-gray-600"
+                          } rounded-[5px] text-white`}
+                          onClick={() => cancelNewCommands()}
+                        >
+                          ยกเลิก
+                        </button>
+                      )}
                     </div>
-                   )} 
+                  )}
                 </div>
               )}
               {isAddCommand && (
@@ -484,7 +576,7 @@ const Intents = () => {
                         />
                         {errorCommand.status && (
                           <p className="text-red-400 pt-[10px]">
-                             {errorCommand.msg}
+                            {errorCommand.msg}
                           </p>
                         )}
                       </>
@@ -623,10 +715,10 @@ const Intents = () => {
                 })}
             </ul>
             {errorExpress.status && (
-                          <p className="text-red-400 pt-[10px] pb-[20px]">
-                             {errorExpress.msg}
-                          </p>
-                        )}
+              <p className="text-red-400 pt-[10px] pb-[20px]">
+                {errorExpress.msg}
+              </p>
+            )}
           </div>
         </div>
         <div className="flex justify-between items-center min-h-[60px] px-[20px]  md:px-[40px] bg-white rounded-[10px] shadow-lg mt-[30px]">
@@ -758,13 +850,13 @@ const Intents = () => {
               </ul>
             </div>
             {errorResponse.status && (
-                          <p className="text-red-400 pt-[10px] pl-[20px]">
-                             {errorResponse.msg}
-                          </p>
-                        )}
+              <p className="text-red-400 pt-[10px] pl-[20px]">
+                {errorResponse.msg}
+              </p>
+            )}
           </div>
         </div>
-        
+
         <button
           onClick={() => sendIntents()}
           className=" flex justify-between items-center space-x-[10px] text-white border-[2px] md:px-[14px] py-[18px] transition-all duration-300 bg-[#336699] rounded-[5px] h-[50%] p-1 mt-[30px]"
@@ -777,3 +869,4 @@ const Intents = () => {
 };
 
 export default Intents;
+
