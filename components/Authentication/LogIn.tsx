@@ -27,8 +27,8 @@ const LogIn = () => {
     console.log(response)
     if ('token' in response) {
       Swal.fire({  
-        title: 'Thank you!',  
-        text: 'you clicked the button ',
+        title: 'สำเร็จ!',  
+        text: 'คุณเข้าสู่ระบบสำเร็จ ',
         icon: 'success',
       })
       .then((value) => {

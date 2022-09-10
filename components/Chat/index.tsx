@@ -32,9 +32,13 @@ const Chat = () => {
     name:"",
     chatId:0
   });
-  // useEffect(()=>{
-  //   connect()
-  // },[])
+  useEffect(()=>{
+    const timeoutID = window.setTimeout(() => {
+      connect()
+  }, 300);
+
+  return () => window.clearTimeout(timeoutID );
+  },[])
 
   const connect = () => {
     let Sock = new SockJS(`${api}/api/chat`);
@@ -45,12 +49,10 @@ const Chat = () => {
   const onConnected = () => {
     setUserData({ ...userData, connected: true });
     stompClient.subscribe("/chatroom/public", onMessageReceived);
-    setTimeout(function() {
       stompClient.subscribe(
         "/user/" + userData.username + "/private",
         onPrivateMessage
       );
-    },1000)
     userJoin();
   };
 
@@ -74,7 +76,6 @@ const Chat = () => {
     let list = [];
     for (const history of data.chatHistory) {
          list.push(history);
-         console.log('history=',history)
          privateChats.set(data.chatId, list);
     }
     setPrivateChats(new Map(privateChats));
@@ -134,7 +135,6 @@ const Chat = () => {
         date: new Date(),
         status: "MESSAGE",
       };
-      console.log(chatMessage);
       stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
       setUserData({ ...userData, message: "" });
     }
@@ -143,19 +143,29 @@ const Chat = () => {
   const sendPrivateValue = (chatId:any) => {
     if (stompClient) {
       var chatMessage = {
+        // userId:tab.userId,
         senderName: "admin",
-        receiverName: tab.name,
+        receiverName: tab.name, //change to uId
         message: userData.message,
         date: new Date(),
         status: "MESSAGE",
       };
 
       if (chatId == tab.chatId) {
-        console.log('hi')
         privateChats.get(tab.chatId).push(chatMessage);
         setPrivateChats(new Map(privateChats));
       }
       stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
+      const data = {
+        senderName: "admin",
+        message: userData.message,
+        sentDate: new Date(),
+      }
+      for (const history of allHistory) {
+        if(history.chatId === tab.chatId){
+           history.chatHistory.push(data)
+        }
+      }
       setUserData({ ...userData, message: "" });
     }
   };
@@ -193,9 +203,9 @@ const Chat = () => {
           <div className="w-full bg-white ">
             <div className="h-[70px] flex justify-between items-center pl-[25px] rounded-[10px]">
               <h1 className="text-[24px] text-black font-bold">ข้อความทั้งหมด</h1>
-              {!userData.connected &&<button className="mr-[40px] text-white bg-[#336699] p-2  my-auto rounded-lg shadow-lg" type="button" onClick={registerUser}>
+              {/* {!userData.connected &&<button className="mr-[40px] text-white bg-[#336699] p-2  my-auto rounded-lg shadow-lg" type="button" onClick={registerUser}>
                  connect
-          </button>}
+          </button>} */}
             </div>
           </div>
           <div className="mt-[15px] block lg:hidden w-full mx-auto h-[30px]">

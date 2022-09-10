@@ -20,7 +20,7 @@ const NewsAdminLayout = ({
   const paginateNews = paginate(useData,currentPage,pageSize)
   return (
     <div className="md:w-[95%] ">
-      <div className="flex justify-between items-center mt-[80px] h-[128px] px-[10px] md:px-[40px] bg-white rounded-[10px] shadow-lg">
+      <div className="flex justify-between items-center mt-[80px] h-[148px] px-[10px] md:px-[40px] bg-white rounded-[10px] shadow-lg">
         <div className="flex flex-col">
           <div className="title text-black flex justify-between">
             <p>ข่าวทั้งหมด</p>
