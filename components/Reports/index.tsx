@@ -1,13 +1,35 @@
-import React from 'react'
+import Link from 'next/link';
+import React, { useEffect, useState } from 'react'
 import Slider from "react-slick";
+import NewsServices from '../../services/news';
+import ReportServices from '../../services/report';
 
-const ReportTypes = [
-  {title:"ข่าว" , icon:"inew.svg"},
-  {title:"ข้อความ" , icon:"imsg.svg",},
-  {title:"ปัญหา" , icon:"ireport.svg",},
-]
+
 
 const Reports = () => {
+  const [logs, setLogs] = useState([]);
+  const [news,setNews] = useState([]);
+  const ReportTypes = [
+    {title:"ข่าว" , icon:"inew.svg" , url:"/news" , count: news ? news.length : 0},
+    {title:"ข้อความ" , icon:"imsg.svg",url:"/chat",count:0},
+    {title:"ปัญหา" , icon:"ireport.svg",url:"/report",count:logs?logs.length:0},
+  ]
+  useEffect(() => {
+    ReportServices.getReport()
+      .then((res) => {
+        setLogs(res.data.responseData);
+      })
+      .catch((err) => {
+        console.log(err.response);
+      });
+      NewsServices.getNews()
+      .then((res) => {
+        setNews(res.data.responseData);
+      })
+      .catch((err) => {
+        console.log(err.response);
+      });
+  }, []);
   const settings = {
     dots: false,
     infinite: false,
@@ -41,11 +63,14 @@ const Reports = () => {
         </div>
         <div className=' text-center'>
         <p className=' text-[20px] text-black font-semibold'>{r.title}</p>
-        <p className='text-[#919191]  '>10 รายการ</p>
+        <p className='text-[#919191]  '>{r.count} รายการ</p>
         </div>
         </div> 
         <div className='relative bottom-0 w-full h-[40px] bg-[#FAFAFC] rounded-[5px] text-[#336699] px-[30px]'>
-          <h1 className='pt-[10px]'>ดูทั้งหมด</h1>
+          <Link  href={{
+                  pathname: `${r.url}`,
+                }} passHref>
+                  <h1 className='pt-[10px] cursor-pointer'>ดูทั้งหมด</h1></Link>
         </div>
       </div>
     })}

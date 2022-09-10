@@ -84,6 +84,7 @@ const CreateEdit = ({ setIsOpen, isOpen, editData, setIsEdit, isEdit }) => {
   };
 
   const onSubmit = (data: FormData) => {
+    console.log(data)
     setIsOpen(false);
     if (isEdit) {
       Swal.fire({

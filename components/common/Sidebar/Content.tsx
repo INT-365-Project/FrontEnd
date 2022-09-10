@@ -31,6 +31,12 @@ const Content = ({ isOpen, setIsOpen }) => {
           des: "สอบถาม",
         },
         {
+          label: "Intents",
+          href: "/intents",
+          icon: "intent.svg",
+          des: "ตั้งค่าบอท",
+        },
+        {
           label: "Report",
           href: "/report",
           icon: "report.svg",
@@ -87,8 +93,8 @@ const Content = ({ isOpen, setIsOpen }) => {
                 <div
                   className={
                     router.pathname == m.href
-                      ? "flex justify-center cursor-pointer items-center h-[56px] w-[56px] bg-[#336699] relative  rounded-full mx-auto my-auto"
-                      : "flex justify-center cursor-pointer items-center h-[56px] w-[56px] relative  rounded-full mx-auto my-auto"
+                      ? "flex justify-center cursor-pointer items-center h-[50px] w-[50px] bg-[#336699] relative  rounded-full mx-auto my-auto"
+                      : "flex justify-center cursor-pointer items-center h-[50px] w-[50px] relative  rounded-full mx-auto my-auto"
                   }
                   onMouseEnter={() => {
                     // setOpenDes(true);
@@ -127,7 +133,7 @@ const Content = ({ isOpen, setIsOpen }) => {
           </div>
         <div className="mt-[10px] mr-[10px]">
           {isLogin && (
-            <div className="flex space-x-[10px]">
+            <div className="md:flex space-x-[10px] hidden">
               <div className="flex px-[20px] cursor-pointer items-center rounded-full h-[52px] relative bg-[#D9D9D9]">
               <img
                 src="/images/ding.svg"

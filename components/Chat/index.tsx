@@ -5,49 +5,37 @@ import { over } from "stompjs";
 import SockJS from "sockjs-client";
 import liff from "@line/liff/dist/lib";
 import { api } from "../../config";
+import { useAppContext } from "../../pages/_app";
 
 var stompClient = null;
 
-type FormData = {
-  message: string;
-};
 const Chat = () => {
+  const { adminUser } = useAppContext();
   const [isOpen, setIsOpen] = useState(false);
+  const [allHistory,setAllHistory] = useState([]);
   const [buttonClick, setButtonClick] = useState(false);
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm<FormData>();
-  const onSubmit = (data: FormData) => {
-    console.log(data);
-  };
   const [privateChats, setPrivateChats] = useState(new Map());
   const [publicChats, setPublicChats] = useState([]);
-  const [tab, setTab] = useState("CHATROOM");
+  const [tab, setTab] = useState(
+    {
+      name:"CHATROOM",
+      chatId:0
+    });
+ 
   const [userData, setUserData] = useState({
-    username: "",
+    username: "admin",
     receivername: "",
     connected: false,
     message: "",
   });
-
-  // const initLine = () =>{
-  //   liff.init({
-  //     liffId:"1657152057-RQXLqEVZ"
-  //   }).then(()=>{
-  //     if(liff.isLoggedIn()){
-  //       console.log('hi')
-  //     }else{
-  //       liff.login();
-  //     }
-  //   })
-  // }
+  const [currentUser,setCurrentUser] = useState({
+    name:"",
+    chatId:0
+  });
   // useEffect(()=>{
-  //   initLine();
+  //   connect()
   // },[])
-  
+
   const connect = () => {
     let Sock = new SockJS(`${api}/api/chat`);
     stompClient = over(Sock);
@@ -57,35 +45,56 @@ const Chat = () => {
   const onConnected = () => {
     setUserData({ ...userData, connected: true });
     stompClient.subscribe("/chatroom/public", onMessageReceived);
-    stompClient.subscribe(
-      "/user/" + userData.username + "/private",
-      onPrivateMessage
-    );
+    setTimeout(function() {
+      stompClient.subscribe(
+        "/user/" + userData.username + "/private",
+        onPrivateMessage
+      );
+    },1000)
     userJoin();
   };
 
   const userJoin = () => {
     var chatMessage = {
       senderName: userData.username,
-      receiverName: userData.username,
+      receiverName: "admin",
       status: "JOIN",
     };
     stompClient.send("/app/getHistory", {}, JSON.stringify(chatMessage));
   };
 
-  const onMessageReceived = (payload) => {
-    var payloadData = JSON.parse(payload.body);
-    for (let i = 0; i < payloadData.length; i++) {
-      publicChats.push(payloadData[i])
+  const showHistory = (chatId:any) =>{
+    var temp = allHistory
+    var data;
+    temp = temp.map((item,index)=>{
+       if(item.chatId === chatId){
+         data = item
+       }
+    })
+    let list = [];
+    for (const history of data.chatHistory) {
+         list.push(history);
+         console.log('history=',history)
+         privateChats.set(data.chatId, list);
     }
-    publicChats.push(payloadData)
-    setPublicChats([...publicChats])
+    setPrivateChats(new Map(privateChats));
+  } 
+
+  const onMessageReceived = (payload:any) => {
+    var payloadData = JSON.parse(payload.body);
+    setAllHistory(payloadData)
+    for (let i = 0; i < payloadData.length; i++) {
+      // publicChats.push(payloadData[i])
+      privateChats.set(payloadData[i].displayName,[])
+    }
+    // publicChats.push(payloadData)
+    // setPublicChats([...publicChats])
     // switch (payloadData.status) {
     //   case "JOIN":
-    //     if (!privateChats.get(payloadData.senderName)) {
-    //       privateChats.set(payloadData.senderName, []);
-    //       setPrivateChats(new Map(privateChats));
-    //     }
+        // if (!privateChats.get(payloadData.senderName)) {
+        //   privateChats.set(payloadData.senderName, []);
+        //   setPrivateChats(new Map(privateChats));
+        // }
     //     break;
     //   case "MESSAGE":
     //     publicChats.push(payloadData);
@@ -96,15 +105,16 @@ const Chat = () => {
 
   const onPrivateMessage = (payload) => {
     var payloadData = JSON.parse(payload.body);
-    if (privateChats.get(payloadData.senderName)) {
-      privateChats.get(payloadData.senderName).push(payloadData);
+    if (privateChats.get(payloadData.chatId)) {
+      privateChats.get(payloadData.chatId).push(payloadData);
       setPrivateChats(new Map(privateChats));
     } else {
       let list = [];
       list.push(payloadData);
-      privateChats.set(payloadData.senderName, list);
+      privateChats.set(payloadData.chatId, list);
       setPrivateChats(new Map(privateChats));
     }
+    showHistory(payload.chatId)
   };
 
   const onError = (err) => {
@@ -119,7 +129,7 @@ const Chat = () => {
     if (stompClient) {
       var chatMessage = {
         senderName: userData.username,
-        receiverName: userData.username,
+        receiverName: "admin",
         message: userData.message,
         date: new Date(),
         status: "MESSAGE",
@@ -130,18 +140,19 @@ const Chat = () => {
     }
   };
 
-  const sendPrivateValue = () => {
+  const sendPrivateValue = (chatId:any) => {
     if (stompClient) {
       var chatMessage = {
-        senderName: userData.username,
-        receiverName: tab,
+        senderName: "admin",
+        receiverName: tab.name,
         message: userData.message,
         date: new Date(),
         status: "MESSAGE",
       };
 
-      if (userData.username !== tab) {
-        privateChats.get(tab).push(chatMessage);
+      if (chatId == tab.chatId) {
+        console.log('hi')
+        privateChats.get(tab.chatId).push(chatMessage);
         setPrivateChats(new Map(privateChats));
       }
       stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
@@ -157,24 +168,34 @@ const Chat = () => {
   const registerUser = () => {
     connect();
   };
-  const tabName = (name) => {
-    setTab(name);
+  const tabName = (name:any,chatId:any) => {
+    showHistory(chatId)
+    setTab({
+      name:name,
+      chatId:chatId
+    });
+    setCurrentUser({
+      name:name,
+      chatId:chatId
+    })
     setIsOpen(true);
   };
 
   return (
-
     <div className="px-[10px] bg-[#F8F8F8] lg:px-0  lg:pl-[130px] pt-[80px] lg:pt-[90px] lg:pr-[50px] w-full">
       <Head>
         <title>Chat</title>
         <meta name="Chat" content="Chat" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {userData.connected ? (
+      {adminUser && (
         <main className="lg:min-h-screen relative w-full pt-[30px]">
           <div className="w-full bg-white ">
-            <div className="h-[70px] flex items-center pl-[25px] rounded-[10px]">
+            <div className="h-[70px] flex justify-between items-center pl-[25px] rounded-[10px]">
               <h1 className="text-[24px] text-black font-bold">ข้อความทั้งหมด</h1>
+              {!userData.connected &&<button className="mr-[40px] text-white bg-[#336699] p-2  my-auto rounded-lg shadow-lg" type="button" onClick={registerUser}>
+                 connect
+          </button>}
             </div>
           </div>
           <div className="mt-[15px] block lg:hidden w-full mx-auto h-[30px]">
@@ -213,67 +234,41 @@ const Chat = () => {
                   </button>
                 </div>}
                 {isOpen&&<div className="flex lg:hidden items-center px-[30px] pt-[20px] h-[40px] ">
-                {tab && tab}
+                {tab.name && tab.name}
                 </div>}
                 <div className=" hidden space-y-[20px] lg:flex flex-col overflow-y-scroll h-[520px]">
                   <ul>
-                    <li
-                      onClick={() => {
-                        setTab("CHATROOM");
-                      }}
-                      className={`member ${
-                        tab === "CHATROOM" && "active"
+                    {allHistory.map((history,index)=>{
+                      return <li  onClick={() => {
+                        tabName(history.displayName,history.chatId)
+                      }} className={`member ${
+                        tab.chatId === history.chatId && "active"
                       } text-center`}
-                    >
-                      Chatroom
-                    </li>
-                    {[...privateChats.keys()].map((name, index) => (
-                      <li
-                        onClick={() => {
-                          setTab(name);
-                        }}
-                        className={`member ${
-                          tab === name && "active"
-                        } text-center`}
-                        key={index}
-                      >
-                        {name}
+                      key={index}>
+                          {history.displayName}
                       </li>
-                    ))}
+                    })}
                   </ul>
                 </div>
                 {!isOpen ? (
                   <div className="lg:hidden pt-[30px] space-y-[32px] flex flex-col overflow-y-scroll h-[360px]">
                     <ul>
-                      <li
-                        onClick={() => {
-                          tabName("CHATROOM");
-                        }}
-                        className={`member ${
-                          tab === "CHATROOM" && "active"
-                        } text-center`}
-                      >
-                        Chatroom
+                      {allHistory.map((history,index)=>{
+                      return <li  onClick={() => {
+                        tabName(history.displayName,history.chatId)
+                      }} className={`member ${
+                        tab.chatId === history.chatId && "active"
+                      } text-center`}
+                      key={index}>
+                          {history.displayName}
                       </li>
-                      {[...privateChats.keys()].map((name, index) => (
-                        <li
-                          onClick={() => {
-                            tabName(name);
-                          }}
-                          className={`member ${
-                            tab === name && "active"
-                          } text-center`}
-                          key={index}
-                        >
-                          {name}
-                        </li>
-                      ))}
+                    })}
                     </ul>
                     {/* Contact */}
                   </div>
                 ) : (
                   <>
-                    {tab == "CHATROOM" && (
+                    {tab.name == "CHATROOM" && (
                       <div className="pt-[30px] lg:hidden space-y-[10px] flex flex-col h-[400px] pb-[20px]">
                         <div className="border-[1px] overflow-y-scroll h-full border-[#336699] rounded-[15px]  mx-[4px]">
                           {publicChats.map((chat, index) => (
@@ -297,10 +292,10 @@ const Chat = () => {
                         </div>
                       </div>
                     )}
-                    {tab !== "CHATROOM" && (
+                    {tab.name !== "CHATROOM" && (
                       <div className="pt-[30px] lg:hidden space-y-[10px] flex flex-col  h-[360px]  pb-[20px] ">
                         <div className="border-[1px] overflow-y-scroll h-full border-[#336699] rounded-[15px] mx-[4px]">
-                          {[...privateChats.get(tab)].map((chat, index) => (
+                          {[...privateChats.get(tab.chatId)].map((chat, index) => (
                             <li
                               className={`message ${
                                 chat.senderName === userData.username && "self"
@@ -326,24 +321,25 @@ const Chat = () => {
               </div>
               {isOpen && (
                 <>
-                  {tab == "CHATROOM" && (
+                  {tab.name == "CHATROOM" && (
                     <div className="h-[15%] w-full lg:w-[93%]  lg:hidden bg-white  rounded-xl drop-shadow-md flex items-center mt-[20px]">
                       <textarea
                         rows={2}
-                        className="text-[14px] pl-[30px]   ml-[4px]  rounded w-[90%] py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="text-[14px] pl-[30px] ml-[4px] rounded w-[90%] py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         placeholder="ข้อความ ...."
                         value={userData.message}
                         onChange={handleMessage}
                       />
                       <button
+                        disabled
                         onClick={sendValue}
-                        className="w-[30%] lg:w-[10%] mx-auto h-[30px] mr-[10px] text-white bg-[#336699] rounded-lg  "
+                        className="w-[30%] lg:w-[10%] mx-auto h-[30px] mr-[10px] text-white bg-gray-600 rounded-lg  "
                       >
                         Send
                       </button>
                     </div>
                   )}
-                  {tab !== "CHATROOM" && (
+                  {tab.name !== "CHATROOM" && (
                     <div className="h-[15%] w-full lg:w-[93%]  lg:hidden bg-white rounded-xl drop-shadow-md flex items-center mt-[20px]">
                       <textarea
                         className="text-[14px] pl-[30px] ml-[4px]  rounded w-[90%] py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -353,7 +349,7 @@ const Chat = () => {
                         onChange={handleMessage}
                       />
                       <button
-                        onClick={sendPrivateValue}
+                        onClick={()=>sendPrivateValue(tab.chatId)}
                         className="w-[30%] lg:w-[10%] mx-auto h-[30px] mr-[10px] text-white bg-[#336699] rounded-lg  "
                       >
                         Send
@@ -367,9 +363,9 @@ const Chat = () => {
               <div className=" h-[85%] ">
                 <div className="h-[95%] bg-white rounded-3xl drop-shadow-md  px-[20px]">
                   <div className="h-[15%] mx-auto flex items-center">
-                    {tab && tab}
+                    {tab.name && tab.name}
                   </div>
-                  {tab === "CHATROOM" && (
+                  {tab.name === "CHATROOM" && (
                     <div className="h-[400px]">
                       <ul className="overflow-y-auto h-[90%] border-[1px] border-[#336699] rounded-[15px]">
                         {publicChats.map((chat, index) => (
@@ -393,10 +389,10 @@ const Chat = () => {
                       </ul>
                     </div>
                   )}
-                  {tab !== "CHATROOM" && (
+                  {tab.name !== "CHATROOM" && (
                     <div className="h-[400px]">
                       <ul className="overflow-y-auto h-[90%] border-[1px] border-[#336699] rounded-[15px]">
-                        {[...privateChats.get(tab)].map((chat, index) => (
+                        {[...privateChats.get(tab.chatId)].map((chat, index) => (
                           <li
                             className={`message ${
                               chat.senderName === userData.username && "self"
@@ -419,7 +415,7 @@ const Chat = () => {
                   )}
                 </div>
               </div>
-              {tab === "CHATROOM" && (
+              {tab.name === "CHATROOM" && (
                 <div className="h-[15%] bg-white rounded-3xl drop-shadow-md flex items-center">
                   <textarea
                     className="text-[14px] pl-[30px] ml-[4px] mt-[6px]  rounded w-[90%] py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -429,14 +425,15 @@ const Chat = () => {
                     onChange={handleMessage}
                   />
                   <button
+                    disabled
                     onClick={sendValue}
-                    className="w-[8%] mx-auto h-[30px] text-white bg-[#336699] rounded-lg  "
+                    className="w-[8%] mx-auto h-[30px] text-white bg-gray-600 rounded-lg  "
                   >
                     Send
                   </button>
                 </div>
               )}
-              {tab !== "CHATROOM" && (
+              {tab.name !== "CHATROOM" && (
                 <div className="h-[15%] bg-white rounded-3xl drop-shadow-md flex items-center">
                   <textarea
                     rows={2}
@@ -446,7 +443,7 @@ const Chat = () => {
                     onChange={handleMessage}
                   />
                   <button
-                    onClick={sendPrivateValue}
+                    onClick={()=>sendPrivateValue(tab.chatId)}
                     className="w-[8%] mx-auto h-[30px] text-white bg-[#336699] rounded-lg  "
                   >
                     Send
@@ -456,25 +453,8 @@ const Chat = () => {
             </div>
           </div>
         </main>
-      ) : (
-        <div className="h-screen pt-[80px]">
-          <div className="flex flex-col justify-center items-center">
-          <div className="bg-white rounded-[10px] w-[90%] h-[60px] flex items-center pl-[25px] font-bold shadow-lg"><label>Chat Room</label></div>
-          <div className="flex items-center space-x-2 pt-[10px] w-[90%]"><input
-          className="rounded-lg p-2 w-[60%] shadow-lg"
-            id="user-name"
-            placeholder="Enter your name"
-            name="userName"
-            value={userData.username}
-            onChange={handleUsername}
-          />
-          <button className="w-[40%]  mx-auto text-white bg-[#336699] p-2  my-auto rounded-lg shadow-lg" type="button" onClick={registerUser}>
-            connect
-          </button>
-        </div>
-        </div>
-        </div>
-      )}
+      ) 
+      }
     </div>
   );
 };

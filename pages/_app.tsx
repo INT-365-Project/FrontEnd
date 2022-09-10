@@ -37,7 +37,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
       <>
-      <AppContext.Provider  value={{adminUser,isLogin,setIsLogin}}>
+      <AppContext.Provider value={{adminUser,isLogin,setIsLogin}}>
       <Head>
         <link rel="icon" href="/favicon.ico" />
         <title>SIT-CHATBOT</title>

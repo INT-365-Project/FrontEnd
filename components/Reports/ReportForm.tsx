@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import ReportServices from "../../services/report";
 
 type FormData = {
+  reportId: number;
   description: string;
   topic: string;
 };
@@ -19,7 +20,12 @@ const ReportForm = () => {
   } = useForm<FormData>();
 
   const onSubmit = (data: FormData) => {
-    ReportServices.storeReport(data)
+    const rp = {
+      reportId : 0,
+      description : data.description,
+      topic : data.topic
+    }
+    ReportServices.storeReport(rp)
       .then((res) => {
         console.log(res.data);
         successAlert();
@@ -27,7 +33,7 @@ const ReportForm = () => {
       .catch((err) => {
         console.log(err.response);
       });
-    console.log(data);
+    console.log(rp);
   };
   const successAlert = () => {
     Swal.fire({
