@@ -31,6 +31,7 @@ const Chat = () => {
     connected: false,
     message: "",
   });
+
   useEffect(() => {
     const timeoutID = window.setTimeout(() => {
       connect()
@@ -90,7 +91,8 @@ const Chat = () => {
         if (data.chatHistory.length > 0) {
           let list = [];
           console.log(data.chatHistory)
-          for (const history of data.chatHistory) {
+          for (let history of data.chatHistory) {
+            history["displayName"] = history.senderName == "admin" ? "admin" : data.displayName
             list.push(history);
           }
           if (privateChats.get(data.chatId)) {
@@ -187,6 +189,7 @@ const Chat = () => {
         message: userData.message,
         date: new Date(),
         status: "MESSAGE",
+        displayName : "admin"
       };
 
       // if (privateChats.get(chatId)) {
@@ -320,17 +323,17 @@ const Chat = () => {
                         <div className="border-[1px] overflow-y-scroll h-full border-[#336699] rounded-[15px] mx-[4px]">
                           {[...privateChats.get(tab.chatId)].map((chat, index) => (
                             <li
-                              className={`message ${chat.senderName === userData.username && "self"
+                              className={`message ${chat.displayName === userData.username && "self"
                                 }`}
                               key={index}
                             >
-                              {chat.senderName !== userData.username && (
-                                <div className="avatar">{chat.senderName}</div>
+                              {chat.displayName !== userData.username && (
+                                <div className="avatar">{chat.displayName}</div>
                               )}
-                              <div className={`message-data w-[280px] break-words ${chat.senderName === userData.username && "self" ? 'text-right' : 'text-left'}`}>{chat.message}</div>
-                              {chat.senderName === userData.username && (
+                              <div className={`message-data w-[280px] break-words ${chat.displayName === userData.username && "self" ? 'text-right' : 'text-left'}`}>{chat.message}</div>
+                              {chat.displayName === userData.username && (
                                 <div className="avatar self">
-                                  {chat.senderName}
+                                  {chat.displayName}
                                 </div>
                               )}
                             </li>
@@ -415,17 +418,17 @@ const Chat = () => {
                       <ul className="overflow-y-auto h-[90%] border-[1px] border-[#336699] rounded-[15px]">
                         {[...privateChats.get(tab.chatId)].map((chat, index) => (
                           <li
-                            className={`message ${chat.senderName === userData.username && "self"
+                            className={`message ${chat.displayName === userData.username && "self"
                               }`}
                             key={index}
                           >
-                            {chat.senderName !== userData.username && (
-                              <div className="avatar">{chat.senderName}</div>
+                            {chat.displayName !== userData.username && (
+                              <div className="avatar">{chat.displayName}</div>
                             )}
-                            <div className={`message-data w-[280px] break-words ${chat.senderName === userData.username && "self" ? 'text-right' : 'text-left'}`}>{chat.message}</div>
-                            {chat.senderName === userData.username && (
+                            <div className={`message-data w-[280px] break-words ${chat.displayName === userData.username && "self" ? 'text-right' : 'text-left'}`}>{chat.message}</div>
+                            {chat.displayName === userData.username && (
                               <div className="avatar self">
-                                {chat.senderName}
+                                {chat.displayName}
                               </div>
                             )}
                           </li>
