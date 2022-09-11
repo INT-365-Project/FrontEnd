@@ -13,6 +13,7 @@ const Chat = () => {
   const { adminUser } = useAppContext();
   const [isOpen, setIsOpen] = useState(false);
   const [allHistory,setAllHistory] = useState([]);
+  const [tempHistorys,setTempHistorys] = useState([]);
   const [buttonClick, setButtonClick] = useState(false);
   const [privateChats, setPrivateChats] = useState(new Map());
   const [publicChats, setPublicChats] = useState([]);
@@ -66,15 +67,18 @@ const Chat = () => {
   };
 
   const showHistory = (chatId:any) =>{
+    if(allHistory){
     var temp = allHistory
     var data;
+    console.log("all history in show history=",allHistory)
     temp = temp.map((item,index)=>{
        if(item.chatId === chatId){
          data = item
        }
     })
-
+   
     let list = [];
+    if(data){
     if(data.chatHistory.length>0){
       for (const history of data.chatHistory) {
         list.push(history);
@@ -83,39 +87,29 @@ const Chat = () => {
     }else{
       privateChats.set(data.chatId,[])
     }
-   
     setPrivateChats(new Map(privateChats));
-  } 
-
-  if(privateChats){
-    console.log(privateChats)
+   }
   }
+  } 
 
   const onMessageReceived = (payload:any) => {
     var payloadData = JSON.parse(payload.body);
+    console.log("payload all data",payloadData)
     setAllHistory(payloadData)
     for (let i = 0; i < payloadData.length; i++) {
-      // publicChats.push(payloadData[i])
+      // publicChats.push(payloadData[i])'
+      stompClient.subscribe(
+        "/user/" + payloadData[i].displayName + "/private",
+        onPrivateMessage
+      );
       privateChats.set(payloadData[i].displayName,[])
     }
-    // publicChats.push(payloadData)
-    // setPublicChats([...publicChats])
-    // switch (payloadData.status) {
-    //   case "JOIN":
-        // if (!privateChats.get(payloadData.senderName)) {
-        //   privateChats.set(payloadData.senderName, []);
-        //   setPrivateChats(new Map(privateChats));
-        // }
-    //     break;
-    //   case "MESSAGE":
-    //     publicChats.push(payloadData);
-    //     setPublicChats([...publicChats])
-    //     break;
-    // }
   };
 
   const onPrivateMessage = (payload) => {
     var payloadData = JSON.parse(payload.body);
+    console.log('payload = ',payloadData)
+    console.log('private message all history = ',allHistory)
     if (privateChats.get(payloadData.chatId)) {
       privateChats.get(payloadData.chatId).push(payloadData);
       setPrivateChats(new Map(privateChats));
@@ -125,8 +119,23 @@ const Chat = () => {
       privateChats.set(payloadData.chatId, list);
       setPrivateChats(new Map(privateChats));
     }
-    showHistory(payload.chatId)
+    updateAllHistory(payloadData)
+    showHistory(payloadData.chatId)
   };
+
+  const updateAllHistory = (payload) =>{
+    console.log('test')
+    for (let history of allHistory) {
+      if(history.chatId === payload.chatId){
+        let data = {
+          senderName : payload.senderName,
+          message : payload.message,
+          sentDate : payload.sentDate
+        }
+        history.chatHistory.push(data)
+      }
+    }
+  }
 
   const onError = (err) => {
     console.log(err);
@@ -179,15 +188,7 @@ const Chat = () => {
       setUserData({ ...userData, message: "" });
     }
   };
-
-  const handleUsername = (event) => {
-    const { value } = event.target;
-    setUserData({ ...userData, username: value });
-  };
-
-  const registerUser = () => {
-    connect();
-  };
+  
   const tabName = (name:any,chatId:any) => {
     showHistory(chatId)
     setTab({
@@ -197,9 +198,6 @@ const Chat = () => {
     setIsOpen(true);
   };
 
-  if(tab){
-    console.log(tab)
-  }
   return (
     <div className="px-[10px] bg-[#F8F8F8] lg:px-0  lg:pl-[130px] pt-[80px] lg:pt-[90px] lg:pr-[50px] w-full">
       <Head>
