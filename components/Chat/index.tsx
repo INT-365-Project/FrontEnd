@@ -9,7 +9,7 @@ import { useAppContext } from "../../pages/_app";
 
 var stompClient = null;
 let historyList = [];
-let s;
+let tempTab = [];
 
 const Chat = () => {
   const { adminUser } = useAppContext();
@@ -20,6 +20,7 @@ const Chat = () => {
   const [publicChats, setPublicChats] = useState([]);
   const [tab, setTab] = useState(
     {
+      userId:"",
       name: "CHATROOM",
       chatId: 0
     });
@@ -50,6 +51,7 @@ const Chat = () => {
       "/user/" + userData.username + "/private",
       onPrivateMessage
     );
+    stompClient.subscribe("/updateNewChat", updateChatHistory);
     userJoin();
   };
 
@@ -62,7 +64,18 @@ const Chat = () => {
     stompClient.send("/app/getHistory", {}, JSON.stringify(chatMessage));
   };
 
+  const updateChatHistory = (payload: any) => {
+    stompClient.subscribe(
+      "/user/" + payloadData.userId + "/private",
+      onPrivateMessage
+    );
+    var payloadData = JSON.parse(payload.body);
+    console.log('change history ',historyList)
+    historyList.push(payloadData);
+  }
+
   const showHistory = (chatId: any) => {
+    // const timeoutID = window.setTimeout(() => {
     if (historyList) {
       var temp = historyList
       var data;
@@ -73,20 +86,29 @@ const Chat = () => {
         }
       })
 
-      let list = [];
       if (data) {
         if (data.chatHistory.length > 0) {
+          let list = [];
+          console.log(data.chatHistory)
           for (const history of data.chatHistory) {
             list.push(history);
+          }
+          if (privateChats.get(data.chatId)) {
+            privateChats.delete(data.chatId)
           }
           privateChats.set(data.chatId, list);
         } else {
           privateChats.set(data.chatId, [])
         }
         setPrivateChats(new Map(privateChats));
+
       }
     }
+    console.log('private chat = ',privateChats)
+    // }, 1000);
   }
+
+
 
   const onMessageReceived = (payload: any) => {
     var payloadData = JSON.parse(payload.body);
@@ -94,9 +116,8 @@ const Chat = () => {
     historyList = payloadData;
     console.log("payload all data", payloadData);
     for (let i = 0; i < payloadData.length; i++) {
-      // publicChats.push(payloadData[i])'
       stompClient.subscribe(
-        "/user/" + payloadData[i].displayName + "/private",
+        "/user/" + payloadData[i].userId + "/private",
         onPrivateMessage
       );
       privateChats.set(payloadData[i].chatId, [])
@@ -133,7 +154,6 @@ const Chat = () => {
     }
     console.log("history List ", historyList)
     setAllHistory(historyList);
-    setPrivateChats(new Map(privateChats));
   }
 
   const onError = (err) => {
@@ -161,26 +181,27 @@ const Chat = () => {
   const sendPrivateValue = (chatId: any) => {
     if (stompClient) {
       var chatMessage = {
-        // userId:tab.userId,
+        chatId: chatId,
         senderName: "admin",
-        receiverName: tab.name, //change to uId
+        receiverName: tab.userId, //change to uId
         message: userData.message,
         date: new Date(),
         status: "MESSAGE",
       };
 
-      if (chatId == tab.chatId) {
-        privateChats.get(tab.chatId).push(chatMessage);
-        setPrivateChats(new Map(privateChats));
-      }
+      // if (privateChats.get(chatId)) {
+      //   privateChats.get(chatId).push(chatMessage);
+      //   setPrivateChats(new Map(privateChats));
+      // }
       stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
       setUserData({ ...userData, message: "" });
     }
   };
 
-  const tabName = (name: any, chatId: any) => {
+  const tabName = (userId: any, name:any , chatId: any) => {
     showHistory(chatId)
     setTab({
+      userId: userId,
       name: name,
       chatId: chatId
     });
@@ -227,7 +248,7 @@ const Chat = () => {
                     onClick={() => setButtonClick(true)}
                     className={`${"border-t-4 text-[#336699]"} border-[#336699] w-full `}
                   >
-                    Message
+                    Message {historyList.length}
                   </button>
                 </div>
                 {!isOpen && <div className="flex lg:hidden justify-center items-center px-[30px] pb-[10px] h-[40px] ">
@@ -242,11 +263,11 @@ const Chat = () => {
                   {tab.name && tab.name}
                 </div>}
                 <div className=" hidden space-y-[20px] lg:flex flex-col overflow-y-scroll h-[520px]">
-                  <ul>
+                  <ul id="history">
                     {historyList.map((history, index) => {
-                      return <li onClick={() => {
-                        tabName(history.displayName, history.chatId)
-                      }} className={`member ${tab.chatId === history.chatId && "active"
+                      return <li id={`${history.chatId}`} onClick={() => {
+                        tabName(history.userId,history.displayName, history.chatId)
+                      }} className={` member ${tab.chatId === history.chatId && "active"
                         } text-center`}
                         key={index}>
                         {history.displayName}
@@ -259,7 +280,7 @@ const Chat = () => {
                     <ul>
                       {historyList.map((history, index) => {
                         return <li onClick={() => {
-                          tabName(history.displayName, history.chatId)
+                          tabName(history.userId,history.displayName, history.chatId)
                         }} className={`member ${tab.chatId === history.chatId && "active"
                           } text-center`}
                           key={index}>

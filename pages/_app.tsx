@@ -39,21 +39,21 @@ function MyApp({ Component, pageProps }: AppProps) {
         Router.push('/')
       }
     }
-    if(router.pathname=='/chat'){
-      if(!isLogin){
-        Router.push('/signin')
-      }else{
-        Router.push('/')
-      }
-    }
-    if(router.pathname=='/intents'){
-      if(!isLogin){
-        Router.push('/signin')
-      }else{
-        Router.push('/')
-      }
+    // if(router.pathname=='/chat'){
+    //   if(!isLogin){
+    //     Router.push('/signin')
+    //   }else{
+    //     Router.push('/')
+    //   }
+    // }
+    // if(router.pathname=='/intents'){
+    //   if(!isLogin){
+    //     Router.push('/signin')
+    //   }else{
+    //     Router.push('/')
+    //   }
       
-    }
+    // }
   },[isLogin])
 
 
