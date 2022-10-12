@@ -12,8 +12,7 @@ const ReportService = axios.create({
 const ReportServices = {
   getReport:()=> ReportService.get("/api/reports"),
   getReportById:(slug:any)=> ReportService.get(`/api/reports/`,{params:{reportId:slug}}),
-  storeReport:(data:{topic:string;description:string})=>
-  ReportService.post("/api/reports/createReport",data)
+  storeReport:(data:{topic:string;description:string})=>ReportService.post("/api/reports/createReport",data)
 }
 
 export default ReportServices;

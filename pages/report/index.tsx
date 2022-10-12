@@ -125,12 +125,12 @@ const Report = () => {
         </div>
       </div>
       <div className="pt-[25px] pb-[40px] md:w-[95%]">
-        <div className="bg-white min-h-[60px] rounded-[10px] border-b-[2px] text-[#919191] flex justify-between px-[30px] md:px-[40px] pt-[14px]">
+        {/* <div className="bg-white min-h-[60px] rounded-[10px] border-b-[2px] text-[#919191] flex justify-between px-[30px] md:px-[40px] pt-[14px]">
           <h1 className="w-full">หัวข้อปัญหา</h1>
           <h1 className="w-full">วันที่แจ้ง</h1>
           <h1 className="w-full">สร้างโดย</h1>
           <h1></h1>
-        </div>
+        </div> */}
         <LogsLayout
           logs={paginateNews}
           setData={setData}
