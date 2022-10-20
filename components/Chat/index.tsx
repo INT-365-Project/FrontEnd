@@ -9,21 +9,21 @@ import { useAppContext } from "../../pages/_app";
 
 var stompClient = null;
 let historyList = [];
-let tempTab = [];
-
+let countIsRead = [];
 const Chat = () => {
   const { adminUser } = useAppContext();
+  const [count, setCount] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   let [allHistory, setAllHistory] = useState([]);
   const [buttonClick, setButtonClick] = useState(false);
   const [privateChats, setPrivateChats] = useState(new Map());
   const [publicChats, setPublicChats] = useState([]);
-  const [tab, setTab] = useState(
-    {
-      userId:"",
-      name: "CHATROOM",
-      chatId: 0
-    });
+
+  const [tab, setTab] = useState({
+    userId: "",
+    name: "CHATROOM",
+    chatId: 0,
+  });
 
   const [userData, setUserData] = useState({
     username: "admin",
@@ -34,10 +34,10 @@ const Chat = () => {
 
   useEffect(() => {
     const timeoutID = window.setTimeout(() => {
-      connect()
+      connect();
     }, 300);
     return () => window.clearTimeout(timeoutID);
-  }, [])
+  }, []);
 
   const connect = () => {
     let Sock = new SockJS(`${api}/api/chat`);
@@ -66,51 +66,45 @@ const Chat = () => {
   };
 
   const updateChatHistory = (payload: any) => {
+    var payloadData = JSON.parse(payload.body);
+    console.log("update new payload = ", payloadData);
+    historyList.push(payloadData);
     stompClient.subscribe(
       "/user/" + payloadData.userId + "/private",
       onPrivateMessage
     );
-    var payloadData = JSON.parse(payload.body);
-    console.log('change history ',historyList)
-    historyList.push(payloadData);
-  }
+  };
 
   const showHistory = (chatId: any) => {
-    // const timeoutID = window.setTimeout(() => {
     if (historyList) {
-      var temp = historyList
+      var temp = historyList;
       var data;
-      console.log("all history in show history=", historyList)
       temp = temp.map((item, index) => {
         if (item.chatId === chatId) {
-          data = item
+          data = item;
         }
-      })
+      });
 
       if (data) {
         if (data.chatHistory.length > 0) {
           let list = [];
-          console.log(data.chatHistory)
+          console.log("show history = ", data.chatHistory);
           for (let history of data.chatHistory) {
-            history["displayName"] = history.senderName == "admin" ? "admin" : data.displayName
+            history["displayName"] =
+              history.senderName == "admin" ? "admin" : data.displayName;
             list.push(history);
           }
           if (privateChats.get(data.chatId)) {
-            privateChats.delete(data.chatId)
+            privateChats.delete(data.chatId);
           }
           privateChats.set(data.chatId, list);
         } else {
-          privateChats.set(data.chatId, [])
+          privateChats.set(data.chatId, []);
         }
         setPrivateChats(new Map(privateChats));
-
       }
     }
-    console.log('private chat = ',privateChats)
-    // }, 1000);
-  }
-
-
+  };
 
   const onMessageReceived = (payload: any) => {
     var payloadData = JSON.parse(payload.body);
@@ -122,14 +116,16 @@ const Chat = () => {
         "/user/" + payloadData[i].userId + "/private",
         onPrivateMessage
       );
-      privateChats.set(payloadData[i].chatId, [])
+      privateChats.set(payloadData[i].chatId, []);
     }
   };
 
   const onPrivateMessage = (payload) => {
     var payloadData = JSON.parse(payload.body);
-    console.log('payload = ', payloadData)
-    console.log('private message all history = ', allHistory)
+    console.log("on private payload", payloadData);
+     let temp = historyList.filter(element=>element.chatId === payloadData.chatId)
+     temp[0].chatHistory.push(payloadData)
+     console.log("temp= ",temp)
     if (privateChats.get(payloadData.chatId)) {
       privateChats.get(payloadData.chatId).push(payloadData);
       setPrivateChats(new Map(privateChats));
@@ -139,8 +135,7 @@ const Chat = () => {
       privateChats.set(payloadData.chatId, list);
       setPrivateChats(new Map(privateChats));
     }
-    updateAllHistory(payloadData)
-    // showHistory(payloadData.chatId)
+    updateAllHistory(payloadData);
   };
 
   const updateAllHistory = (payload) => {
@@ -149,14 +144,13 @@ const Chat = () => {
         let data = {
           senderName: payload.senderName,
           message: payload.message,
-          sentDate: payload.sentDate
-        }
+          sentDate: payload.sentDate,
+        };
         history.chatHistory.push(data);
       }
     }
-    console.log("history List ", historyList)
     setAllHistory(historyList);
-  }
+  };
 
   const onError = (err) => {
     console.log(err);
@@ -183,32 +177,62 @@ const Chat = () => {
   const sendPrivateValue = (chatId: any) => {
     if (stompClient) {
       var chatMessage = {
+        type: "text",
         chatId: chatId,
         senderName: "admin",
         receiverName: tab.userId, //change to uId
         message: userData.message,
         date: new Date(),
         status: "MESSAGE",
-        displayName : "admin"
+        displayName: "admin",
       };
-
-      // if (privateChats.get(chatId)) {
-      //   privateChats.get(chatId).push(chatMessage);
-      //   setPrivateChats(new Map(privateChats));
-      // }
       stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
       setUserData({ ...userData, message: "" });
     }
   };
 
-  const tabName = (userId: any, name:any , chatId: any) => {
-    showHistory(chatId)
+  if (historyList) {
+    countIsRead = historyList.map((e) =>
+      e.chatHistory.filter((c: any) => c.isRead === false)
+    );
+    // console.log("count unread = ", countIsRead);
+  }
+
+  const sendIsRead = (chatId: any, userId: any,index:any) => {
+    console.log("sendIsRead method");
+    historyList[index].chatHistory = historyList[index].chatHistory.filter(element=>element.isRead === true);
+    console.log(historyList[index].chatHistory)
+    if (stompClient) {
+      var chatMessage = {
+        type: "text",
+        chatId: chatId,
+        senderName: "admin",
+        receiverName: userId, //change to uId
+        status: "READ",
+        displayName: "admin",
+      };
+      stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
+      setUserData({ ...userData, message: "" });
+    }
+  };
+
+  const tabName = (userId: any, name: any, chatId: any,index:any) => {
+    showHistory(chatId);
+    sendIsRead(chatId, userId,index);
     setTab({
       userId: userId,
       name: name,
-      chatId: chatId
+      chatId: chatId,
     });
     setIsOpen(true);
+  };
+
+  const test = () =>{
+    console.log("count unread after push",count)
+  }
+  
+  const readMessage = () => {
+    console.log(count)
   };
 
   return (
@@ -222,10 +246,9 @@ const Chat = () => {
         <main className="lg:min-h-screen relative w-full pt-[30px]">
           <div className="w-full bg-white ">
             <div className="h-[70px] flex justify-between items-center pl-[25px] rounded-[10px]">
-              <h1 className="text-[24px] text-black font-bold">ข้อความทั้งหมด</h1>
-              {/* {!userData.connected &&<button className="mr-[40px] text-white bg-[#336699] p-2  my-auto rounded-lg shadow-lg" type="button" onClick={registerUser}>
-                 connect
-          </button>} */}
+              <h1 className="text-[24px] text-black font-bold">
+                ข้อความทั้งหมด{" "}
+              </h1>
             </div>
           </div>
           <div className="mt-[15px] block lg:hidden w-full mx-auto h-[30px]">
@@ -233,8 +256,11 @@ const Chat = () => {
               onClick={() => {
                 setIsOpen(false);
               }}
-              className={`${isOpen ? "bg-[#336699] text-white" : "text-[#336699] border-[#336699]"
-                } border-[1.6px]  p-2 rounded-xl w-full lg:w-[92%]`}
+              className={`${
+                isOpen
+                  ? "bg-[#336699] text-white"
+                  : "text-[#336699] border-[#336699]"
+              } border-[1.6px]  p-2 rounded-xl w-full lg:w-[92%]`}
             >
               Back
             </button>
@@ -251,30 +277,62 @@ const Chat = () => {
                     onClick={() => setButtonClick(true)}
                     className={`${"border-t-4 text-[#336699]"} border-[#336699] w-full `}
                   >
-                    Message {historyList.length}
+                    Contact {historyList.length}
                   </button>
                 </div>
-                {!isOpen && <div className="flex lg:hidden justify-center items-center px-[30px] pb-[10px] h-[40px] ">
-                  <button
-                    onClick={() => setButtonClick(true)}
-                    className={`${"border-t-4 text-[#336699]"} border-[#336699] w-full `}
-                  >
-                    Message
-                  </button>
-                </div>}
-                {isOpen && <div className="flex lg:hidden items-center px-[30px] pt-[20px] h-[40px] ">
-                  {tab.name && tab.name}
-                </div>}
+                {!isOpen && (
+                  <div className="flex lg:hidden justify-center items-center px-[30px] pb-[10px] h-[40px] ">
+                    <button
+                      onClick={() => setButtonClick(true)}
+                      className={`${"border-t-4 text-[#336699]"} border-[#336699] w-full `}
+                    >
+                      Message
+                    </button>
+                  </div>
+                )}
+                {isOpen && (
+                  <div className="flex lg:hidden items-center px-[30px] pt-[20px] h-[40px] ">
+                    {tab.name && tab.name}
+                  </div>
+                )}
                 <div className=" hidden space-y-[20px] lg:flex flex-col overflow-y-scroll h-[520px]">
                   <ul id="history">
                     {historyList.map((history, index) => {
-                      return <li id={`${history.chatId}`} onClick={() => {
-                        tabName(history.userId,history.displayName, history.chatId)
-                      }} className={` member ${tab.chatId === history.chatId && "active"
-                        } text-center`}
-                        key={index}>
-                        {history.displayName}
-                      </li>
+                      return (
+                        <li
+                          id={`${history.chatId}`}
+                          onClick={() => {
+                            tabName(
+                              history.userId,
+                              history.displayName,
+                              history.chatId,
+                              index,
+                            );
+                          }}
+                          className={` member ${
+                            tab.chatId === history.chatId && "active"
+                          } text-center relative`}
+                          key={index}
+                        >
+                          {
+                            historyList[index].chatHistory.filter(element=>element.isRead === false).length > 0 && 
+                            <div className="rounded-full bg-[#336699] p-3 h-[4px] w-[14px] absolute right-2 top-2 flex justify-center items-center">
+                              <p className="text-white">
+                                {historyList[index].chatHistory.filter(element=>element.isRead === false).length}
+                              </p>
+                            </div>
+                          }
+                          {/* {countIsRead[index].length != 0 && (
+                            <div className="rounded-full bg-[#336699] p-3 h-[4px] w-[14px] absolute right-2 top-2 flex justify-center items-center">
+                              <p className="text-white">
+                                {countIsRead[index].length != 0 &&
+                                  countIsRead[index].length}
+                              </p>
+                            </div>
+                          )} */}
+                          {history.displayName}
+                        </li>
+                      );
                     })}
                   </ul>
                 </div>
@@ -282,13 +340,40 @@ const Chat = () => {
                   <div className="lg:hidden pt-[30px] space-y-[32px] flex flex-col overflow-y-scroll h-[360px]">
                     <ul>
                       {historyList.map((history, index) => {
-                        return <li onClick={() => {
-                          tabName(history.userId,history.displayName, history.chatId)
-                        }} className={`member ${tab.chatId === history.chatId && "active"
-                          } text-center`}
-                          key={index}>
-                          {history.displayName}
-                        </li>
+                        return (
+                          <li
+                            onClick={() => {
+                              tabName(
+                                history.userId,
+                                history.displayName,
+                                history.chatId,
+                                index
+                              );
+                            }}
+                            className={`member relative ${
+                              tab.chatId === history.chatId && "active"
+                            } text-center`}
+                            key={index}
+                          >
+                            {
+                            historyList[index].chatHistory.filter(element=>element.isRead === false).length > 0 && 
+                            <div className="rounded-full bg-[#336699] p-3 h-[4px] w-[14px] absolute right-2 top-2 flex justify-center items-center">
+                              <p className="text-white">
+                                {historyList[index].chatHistory.filter(element=>element.isRead === false).length}
+                              </p>
+                            </div>
+                           }
+                            {/* {countIsRead[index].length > 0 && (
+                              <div className="rounded-full bg-[#336699] p-3 h-[4px] w-[14px] absolute right-2 top-2 flex justify-center items-center">
+                                <p className="text-white">
+                                  {countIsRead.length &&
+                                    countIsRead[index].length}
+                                </p>
+                              </div>
+                            )} */}
+                            {history.displayName}
+                          </li>
+                        );
                       })}
                     </ul>
                     {/* Contact */}
@@ -300,14 +385,24 @@ const Chat = () => {
                         <div className="border-[1px] overflow-y-scroll h-full border-[#336699] rounded-[15px]  mx-[4px]">
                           {publicChats.map((chat, index) => (
                             <li
-                              className={`message ${chat.senderName === userData.username && "self"
-                                }`}
+                              className={`message ${
+                                chat.senderName === userData.username && "self"
+                              }`}
                               key={index}
                             >
                               {chat.senderName !== userData.username && (
                                 <div className="avatar">{chat.senderName}</div>
                               )}
-                              <div className={`message-data w-[280px] break-words ${chat.senderName === userData.username && "self" ? 'text-right' : 'text-left'}`}>{chat.message}</div>
+                              <div
+                                className={`message-data w-[280px] break-words ${
+                                  chat.senderName === userData.username &&
+                                  "self"
+                                    ? "text-right"
+                                    : "text-left"
+                                }`}
+                              >
+                                {chat.message}
+                              </div>
                               {chat.senderName === userData.username && (
                                 <div className="avatar self">
                                   {chat.senderName}
@@ -321,23 +416,38 @@ const Chat = () => {
                     {tab.name !== "CHATROOM" && (
                       <div className="pt-[30px] lg:hidden space-y-[10px] flex flex-col  h-[360px]  pb-[20px] ">
                         <div className="border-[1px] overflow-y-scroll h-full border-[#336699] rounded-[15px] mx-[4px]">
-                          {[...privateChats.get(tab.chatId)].map((chat, index) => (
-                            <li
-                              className={`message ${chat.displayName === userData.username && "self"
+                          {[...privateChats.get(tab.chatId)].map(
+                            (chat, index) => (
+                              <li
+                                className={`message ${
+                                  chat.displayName === userData.username &&
+                                  "self"
                                 }`}
-                              key={index}
-                            >
-                              {chat.displayName !== userData.username && (
-                                <div className="avatar">{chat.displayName}</div>
-                              )}
-                              <div className={`message-data w-[280px] break-words ${chat.displayName === userData.username && "self" ? 'text-right' : 'text-left'}`}>{chat.message}</div>
-                              {chat.displayName === userData.username && (
-                                <div className="avatar self">
-                                  {chat.displayName}
+                                key={index}
+                              >
+                                {chat.displayName !== userData.username && (
+                                  <div className="avatar">
+                                    {chat.displayName}
+                                  </div>
+                                )}
+                                <div
+                                  className={`message-data w-[280px] break-words ${
+                                    chat.displayName === userData.username &&
+                                    "self"
+                                      ? "text-right"
+                                      : "text-left"
+                                  }`}
+                                >
+                                  {chat.message}
                                 </div>
-                              )}
-                            </li>
-                          ))}
+                                {chat.displayName === userData.username && (
+                                  <div className="avatar self">
+                                    {chat.displayName}
+                                  </div>
+                                )}
+                              </li>
+                            )
+                          )}
                         </div>
                       </div>
                     )}
@@ -395,14 +505,23 @@ const Chat = () => {
                       <ul className="overflow-y-auto h-[90%] border-[1px] border-[#336699] rounded-[15px]">
                         {publicChats.map((chat, index) => (
                           <li
-                            className={`message ${chat.senderName === userData.username && "self"
-                              }`}
+                            className={`message ${
+                              chat.senderName === userData.username && "self"
+                            }`}
                             key={index}
                           >
                             {chat.senderName !== userData.username && (
                               <div className="avatar">{chat.senderName}</div>
                             )}
-                            <div className={`message-data w-[280px] break-words ${chat.senderName === userData.username && "self" ? 'text-right' : 'text-left'}`}>{chat.message}</div>
+                            <div
+                              className={`message-data w-[280px] break-words ${
+                                chat.senderName === userData.username && "self"
+                                  ? "text-right"
+                                  : "text-left"
+                              }`}
+                            >
+                              {chat.message}
+                            </div>
                             {chat.senderName === userData.username && (
                               <div className="avatar self">
                                 {chat.senderName}
@@ -416,23 +535,35 @@ const Chat = () => {
                   {tab.name !== "CHATROOM" && (
                     <div className="h-[400px]">
                       <ul className="overflow-y-auto h-[90%] border-[1px] border-[#336699] rounded-[15px]">
-                        {[...privateChats.get(tab.chatId)].map((chat, index) => (
-                          <li
-                            className={`message ${chat.displayName === userData.username && "self"
+                        {[...privateChats.get(tab.chatId)].map(
+                          (chat, index) => (
+                            <li
+                              className={`message ${
+                                chat.displayName === userData.username && "self"
                               }`}
-                            key={index}
-                          >
-                            {chat.displayName !== userData.username && (
-                              <div className="avatar">{chat.displayName}</div>
-                            )}
-                            <div className={`message-data w-[280px] break-words ${chat.displayName === userData.username && "self" ? 'text-right' : 'text-left'}`}>{chat.message}</div>
-                            {chat.displayName === userData.username && (
-                              <div className="avatar self">
-                                {chat.displayName}
+                              key={index}
+                            >
+                              {chat.displayName !== userData.username && (
+                                <div className="avatar">{chat.displayName}</div>
+                              )}
+                              <div
+                                className={`message-data w-[280px] break-words ${
+                                  chat.displayName === userData.username &&
+                                  "self"
+                                    ? "text-right"
+                                    : "text-left"
+                                }`}
+                              >
+                                {chat.message}
                               </div>
-                            )}
-                          </li>
-                        ))}
+                              {chat.displayName === userData.username && (
+                                <div className="avatar self">
+                                  {chat.displayName}
+                                </div>
+                              )}
+                            </li>
+                          )
+                        )}
                       </ul>
                     </div>
                   )}
@@ -476,8 +607,7 @@ const Chat = () => {
             </div>
           </div>
         </main>
-      )
-      }
+      )}
     </div>
   );
 };

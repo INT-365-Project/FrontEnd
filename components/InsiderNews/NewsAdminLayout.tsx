@@ -13,7 +13,7 @@ const NewsAdminLayout = ({
   search,
 }) => {
   const [currentPage,setCurrentPage] = useState(1);
-  const pageSize = 10
+  const pageSize = 5
   const handlePageChange = (page:any) =>{
     setCurrentPage(page)
   } 

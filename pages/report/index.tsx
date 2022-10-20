@@ -16,7 +16,7 @@ const Report = () => {
   const handlePageChange = (page:any) =>{
     setCurrentPage(page)
   } 
-  const pageSize = 10
+  const pageSize = 4
   const paginateNews = paginate(logs,currentPage,pageSize)
   useEffect(() => {
     ReportServices.getReport()
