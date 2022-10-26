@@ -4,7 +4,7 @@ import Popup from "../../components/common/Popup";
 
 const PopupNews = ({ data, setIsPreview }) => {
   return (
-    <Popup>
+    <Popup isChat={false}>
       <div className="w-full h-[50vh] drop-shadow-lg overflow-y-auto">
         <div className="border-b-[1.6px] w-full h-[40px] flex justify-end">
           <img

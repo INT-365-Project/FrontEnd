@@ -4,7 +4,7 @@ import Popup from "../common/Popup";
 
 const PopupLogs = ({ setOpenEyes , data }) => {
   return (
-    <Popup>
+    <Popup isChat={false}>
       <div className="w-full h-[40vh] drop-shadow-lg overflow-y-auto">
         <div className="border-b-[1.6px] w-full h-[40px] flex justify-end">
           <img

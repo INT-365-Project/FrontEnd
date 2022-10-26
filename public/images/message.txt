@@ -14,11 +14,8 @@ let historyList = [];
 let countIsRead = [];
 const Chat = () => {
   const { adminUser } = useAppContext();
-
   const [selectedImage,setSelectedImage] = useState(false);
   const [imgSrc, setImgSrc] = useState(null);
-  const [emoji,setEmoji] = useState([]);
-  const [sticker,setSticker] = useState(null)
 
   const [isHasSticker,setIsHasSticker] = useState(false);
   const [isHasImage,setIsHasImage] = useState(false);
@@ -28,6 +25,7 @@ const Chat = () => {
   const [openDes,setOpenDes] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   let [allHistory, setAllHistory] = useState([]);
+  const [buttonClick, setButtonClick] = useState(false);
   const [privateChats, setPrivateChats] = useState(new Map());
   const [publicChats, setPublicChats] = useState([]);
 
@@ -42,12 +40,7 @@ const Chat = () => {
     receivername: "",
     connected: false,
     message: "",
-    type:"text"
   });
-
-  if(emoji){
-    console.log(emoji)
-  }
 
   useEffect(() => {
     const timeoutID = window.setTimeout(() => {
@@ -126,8 +119,7 @@ const Chat = () => {
 
     var payloadData = JSON.parse(payload.body);
     setAllHistory(payloadData);
-    console.log('check payload = ',payloadData)
-    // historyList = payloadData
+
     const temp = []
     if(payloadData.length>0){
     payloadData.map((chat,index)=>{
@@ -141,35 +133,19 @@ const Chat = () => {
     historyList = res
     }
 
-
     for (let i = 0; i < payloadData.length; i++) {
-      let tempList = []
-      for(let j = 0; j<payloadData[i].chatHistory.length; j++){
-        const data = {
-          chatId: payloadData[i].chatId,
-          senderName: payloadData[i].chatHistory[j].senderName,
-          receiverName: payloadData[i].chatHistory[j].receiverName,
-          type: payloadData[i].chatHistory[j].type,
-          message: payloadData[i].chatHistory[j].message,
-          date: payloadData[i].chatHistory[j].sentDate,
-          status: "MESSAGE",
-          displayName: payloadData[i].displayName,
-          isRead:  payloadData[i].chatHistory[j].isRead,
-         }
-         tempList.push(data)
-      }
       stompClient.subscribe(
         "/user/" + payloadData[i].userId + "/private",
         onPrivateMessage
       );
-      privateChats.set(payloadData[i].chatId, tempList);
+      privateChats.set(payloadData[i].chatId, []);
     }
-    console.log('show history = ',privateChats)
   };
 
   const onPrivateMessage = (payload) => {
 
     var payloadData = JSON.parse(payload.body);
+    console.log("on private payload", payloadData);
 
     let temp = historyList.filter(element=>element.chatId === payloadData.chatId)
     temp[0].chatHistory.push(payloadData)
@@ -177,6 +153,8 @@ const Chat = () => {
     test.unshift(temp[0])
     historyList = test
 
+    // console.log("test= ",test)
+    // console.log("temp= ",temp)
 
     if (privateChats.get(payloadData.chatId)) {
       privateChats.get(payloadData.chatId).push(payloadData);
@@ -187,12 +165,11 @@ const Chat = () => {
       privateChats.set(payloadData.chatId, list);
       setPrivateChats(new Map(privateChats));
     }
-    console.log('private message = ', privateChats)
     updateAllHistory(payloadData);
   };
 
   const updateAllHistory = (payload) => {
-    // console.log("payload update = ",payload)
+    console.log("payload update = ",payload)
     for (let history of historyList) {
       if (history.chatId === payload.chatId) {
         let data = {
@@ -203,7 +180,6 @@ const Chat = () => {
         history.chatHistory.push(data);
       }
     }
-    console.log(historyList)
   };
 
   const onError = (err) => {
@@ -227,31 +203,11 @@ const Chat = () => {
       setUserData({ ...userData, message: "" });
     }
   };
-  const sendPrivateValue = (chatId: any,data:any) => {
+
+  const sendPrivateValue = (chatId: any) => {
     if (stompClient) {
-      if(data.type != "text"){
-        console.log('hi')
-        let chatMessage = {
-          type: data.type, 
-          chatId: chatId,
-          senderName: "admin",
-          receiverName: tab.userId, //change to uId
-          message: `${data.packageId},${data.stickerId}`,
-          date: new Date(),
-          status: "MESSAGE",
-          displayName: "admin",
-        };
-        if (privateChats.get(chatId)) {
-          privateChats.get(chatId).push(chatMessage);
-          setPrivateChats(new Map(privateChats));
-        }
-        stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
-        setUserData({ ...userData, message: "" });
-        console.log('send private = ',chatMessage)
-      }
-      else{
-      let chatMessage = {
-        type: "text", 
+      var chatMessage = {
+        type: "text",
         chatId: chatId,
         senderName: "admin",
         receiverName: tab.userId, //change to uId
@@ -260,17 +216,16 @@ const Chat = () => {
         status: "MESSAGE",
         displayName: "admin",
       };
-       if (privateChats.get(chatId)) {
-        privateChats.get(chatId).push(chatMessage);
-        setPrivateChats(new Map(privateChats));
-      }
       stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
       setUserData({ ...userData, message: "" });
-      console.log('send private = ',privateChats)
     }
-  // }
-   }
   };
+
+  if (historyList) {
+    countIsRead = historyList.map((e) =>
+      e.chatHistory.filter((c: any) => c.isRead === false)
+    );
+  }
 
   // const sticker = {
   //   index:index,
@@ -279,7 +234,9 @@ const Chat = () => {
   // }
 
   const sendIsRead = (chatId: any, userId: any,index:any) => {
+    // console.log("sendIsRead method");
     historyList[index].chatHistory = historyList[index].chatHistory.filter(element=>element.isRead === true);
+    // console.log(historyList[index].chatHistory)
     if (stompClient) {
       var chatMessage = {
         type: "text",
@@ -305,11 +262,6 @@ const Chat = () => {
     });
     setIsOpen(true);
   };
-
-  // const removeEmoji = (index) =>{
-  //   const temps = emoji.filter((item,index)=>index!=index)
-  //   setEmoji(temps)
-  // }
 
   return (
     <div className="px-[10px] bg-[#F8F8F8] lg:px-0  lg:pl-[130px] pt-[80px] lg:pt-[90px] lg:pr-[50px] w-full">
@@ -345,12 +297,6 @@ const Chat = () => {
           <div className=" min-h-[80vh] mt-[35px] flex flex-col lg:flex-row">
             <div className="lg:w-[30%] lg:h-auto">
               {openPopup && <PopupChat
-              sendPrivateValue={sendPrivateValue}
-              chatId={tab.chatId}
-              sticker={sticker}
-              setSticker={setSticker}
-              emoji={emoji}
-              setEmoji={setEmoji}
               imgSrc={imgSrc}
               setImgSrc={setImgSrc}
               selectedImage={selectedImage}
@@ -368,6 +314,7 @@ const Chat = () => {
               >
                 <div className="lg:flex hidden justify-center px-[30px] pb-[10px] h-[60px]  border-b border-[#919191]-[0.8px]">
                   <button
+                    onClick={() => setButtonClick(true)}
                     className={`${"border-t-4 text-[#336699]"} border-[#336699] w-full `}
                   >
                     Contact {historyList.length}
@@ -376,6 +323,7 @@ const Chat = () => {
                 {!isOpen && (
                   <div className="flex lg:hidden justify-center items-center px-[30px] pb-[10px] h-[40px] ">
                     <button
+                      onClick={() => setButtonClick(true)}
                       className={`${"border-t-4 text-[#336699]"} border-[#336699] w-full `}
                     >
                       Message
@@ -491,19 +439,10 @@ const Chat = () => {
                       </div>
                     )}
                     {tab.name !== "CHATROOM" && (
-                      <div className="pt-[30px] lg:hidden space-y-[10px] flex flex-col  h-[500px]  pb-[20px] ">
+                      <div className="pt-[30px] lg:hidden space-y-[10px] flex flex-col  h-[360px]  pb-[20px] ">
                         <div className="border-[1px] overflow-y-scroll h-full border-[#336699] rounded-[15px] mx-[4px]">
-                          
                           {[...privateChats.get(tab.chatId)].map(
-                            (chat, index) => { 
-                              let packageId = ""
-                              let stickerId = ""
-                              if(chat.type === "sticker") {
-                                let [a, b] = chat.message.split(",");
-                                packageId = a
-                                stickerId = b
-                              }
-                              return (
+                            (chat, index) => (
                               <li
                                 className={`message ${
                                   chat.displayName === userData.username &&
@@ -511,7 +450,6 @@ const Chat = () => {
                                 }`}
                                 key={index}
                               >
-                                <div className={`flex ${ stickerId ?'flex-col' : 'flex-row'}`}>
                                 {chat.displayName !== userData.username && (
                                   <div className="avatar">
                                     {chat.displayName}
@@ -525,9 +463,7 @@ const Chat = () => {
                                       : "text-left"
                                   }`}
                                 >
-                                  {(chat.type === "message"|| chat.type === "text") && chat.message}
-                                  {chat.type ==="sticker" && <img src={`/sticker/${packageId}/${stickerId}.${packageId === "446"? 'png' :'jpg'}`} className={`${chat.displayName === userData.username ? 'float-right' : ''}`} alt="sticker"></img>}
-                                </div>
+                                  {chat.message}
                                 </div>
                                 {chat.displayName === userData.username && (
                                   <div className="avatar self">
@@ -535,7 +471,7 @@ const Chat = () => {
                                   </div>
                                 )}
                               </li>
-                            )}
+                            )
                           )}
                         </div>
                       </div>
@@ -573,7 +509,7 @@ const Chat = () => {
                         onChange={handleMessage}
                       />
                       <button
-                        onClick={() => sendPrivateValue(tab.chatId,userData)}
+                        onClick={() => sendPrivateValue(tab.chatId)}
                         className="w-[30%] lg:w-[10%] mx-auto h-[30px] mr-[10px] text-white bg-[#336699] rounded-lg  "
                       >
                         Send
@@ -625,16 +561,8 @@ const Chat = () => {
                     <div className="h-[470px]">
                       <ul className="overflow-y-auto h-[95%] border-[1px] border-[#336699] rounded-[15px]">
                         {[...privateChats.get(tab.chatId)].map(
-                          (chat, index) => {
-                            let packageId = ""
-                              let stickerId = ""
-                              if(chat.type === "sticker") {
-                                let [a, b] = chat.message.split(",");
-                                packageId = a
-                                stickerId = b
-                              }
-                            return (
-                              <li
+                          (chat, index) => (
+                            <li
                               className={`message ${
                                 chat.displayName === userData.username && "self"
                               }`}
@@ -651,9 +579,7 @@ const Chat = () => {
                                     : "text-left"
                                 }`}
                               >
-                                {(chat.type === "message" || chat.type === "text") && chat.message}
-                                {chat.type ==="sticker" && <img src={`/sticker/${packageId}/${stickerId}.${packageId === "446"? 'png' :'jpg'}`} className={`${chat.displayName === userData.username ? 'float-right' : ''}`} alt="sticker"></img>}
-                                
+                                {chat.message}
                               </div>
                               {chat.displayName === userData.username && (
                                 <div className="avatar self">
@@ -661,8 +587,7 @@ const Chat = () => {
                                 </div>
                               )}
                             </li>
-                            )
-                          }         
+                          )
                         )}
                       </ul>
                     </div>
@@ -758,32 +683,14 @@ const Chat = () => {
                      {openDes && count === 2 && <div className="absolute truncate w-[80px] rounded-[6px] top-[-40px] left-[-20px] bg-[#336699] text-white py-[4px] text-center">image</div>}
                   </button>
                   </div>
-                  <div className="text-[14px] pl-[24px] ml-[12px] flex  border border-solid border-gray-300 rounded-full w-[78%] py-2 px-2 text-gray-700 leading-tight focus:shadow-outline bg-gray-100 bg-clip-padding transition ease-in-out focus:text-gray-700 focus:border-blue-600 focus:outline-none">
-                  {/* {(imgSrc && !isHasImage) &&<div className="relative"> 
-                  {<img src={imgSrc} className='w-[40px]' alt="" />}
-                  <img src="/images/X.c" alt="x" className="absolute top-[-6px] right-[-6px] w-[16px]" onClick={()=>setImgSrc(null)} />
-                  </div>
-                  } */}
-                  {emoji && <div className="relative flex flex-row space-x-[2px]">
-                      {emoji.map((emoji,index)=>{
-                        return (
-                          // <p className="pr-[5px]">{emoji.index}</p>
-                          <div className="relative">
-                          <img key={index} src={`/emoji/${emoji.productId}/${emoji.emojiId}.jpg`} className="w-[40px]" alt="emoji" />
-                          <img src="/images/X.c" alt="x" className="absolute top-[-6px] right-[-6px] w-[16px]" onClick={()=>removeEmoji(index)} />
-                          </div>
-                        )
-                      })}
-                    </div>}
                   <input
-                    className="text-[14px] rounded-full w-full py-3 px-3 text-gray-700 leading-tight focus:shadow-outline bg-gray-100 bg-clip-padding transition ease-in-out focus:text-gray-700 focus:border-blue-600 focus:outline-none"
+                    className="text-[14px] pl-[24px] ml-[12px]  border border-solid border-gray-300 rounded-full w-[78%] py-3 px-3 text-gray-700 leading-tight focus:shadow-outline bg-gray-100 bg-clip-padding transition ease-in-out focus:text-gray-700 focus:border-blue-600 focus:outline-none"
                     // rows={1}
                     type="text"
                     placeholder="ข้อความ ....."
                     value={userData.message}
                     onChange={handleMessage}
                   />
-                  </div>
                   <div className="ml-[10px]">
                     <button className="relative"
                     onClick={()=>{
@@ -807,7 +714,7 @@ const Chat = () => {
                   </button>
                   </div>
                   <button
-                    onClick={() => sendPrivateValue(tab.chatId,userData)}
+                    onClick={() => sendPrivateValue(tab.chatId)}
                     className="w-[8%] mx-auto h-[30px] text-white bg-[#336699] rounded-lg "
                   >
                     Send

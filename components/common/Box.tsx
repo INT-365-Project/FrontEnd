@@ -1,6 +1,6 @@
 import React from "react";
 
-const Box = ({ children, styles, className }) => {
+const Box = ({ children, styles, className ,isChat}) => {
   let stylesProps = {
     borderRadius: styles?.borderRadius || 15,
     width: styles?.width || "100%",
@@ -10,7 +10,7 @@ const Box = ({ children, styles, className }) => {
   };
   return (
     <div
-      className={`relative bg-white md:w-[560px] md:h-[450px] w-full  ${className}`}
+      className={`relative bg-white ${ isChat ? 'md:w-[660px] md:h-[600px]' : 'md:w-[560px] md:h-[450px]'} w-full  ${className}`}
       style={{
         ...styles,
         transition: "2s",

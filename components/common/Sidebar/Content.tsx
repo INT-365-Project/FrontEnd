@@ -73,12 +73,6 @@ const Content = ({ isOpen, setIsOpen }) => {
 
   return (
     <>
-      {/*
-          {adminUser && (
-            <p className="text-[14px] font-medium text-[#fff]" style={style}>
-              {adminUser.fullName}
-            </p>
-          )} */}
       <div id="navbar">
         <div
           onClick={() => router.push("/")}
@@ -131,7 +125,7 @@ const Content = ({ isOpen, setIsOpen }) => {
             );
           })}
           </div>
-        <div className="mt-[10px] mr-[10px]">
+        {/* <div className="mt-[10px] mr-[10px]">
           {isLogin && (
             <div className="md:flex space-x-[10px] hidden">
               <div className="flex px-[20px] cursor-pointer items-center rounded-full h-[52px] relative bg-[#D9D9D9]">
@@ -148,7 +142,7 @@ const Content = ({ isOpen, setIsOpen }) => {
             
               </div>
           )}
-        </div>
+        </div> */}
       </div>
       <div
         id={`${isOpen ? "sidebar" : "sidebarMobile"}`}
