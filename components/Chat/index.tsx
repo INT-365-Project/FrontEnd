@@ -52,15 +52,15 @@ const Chat = () => {
   });
 
   
-  const text = useRef('');
+//   const text = useRef('');
   
-const handleChange = evt => {
-    text.current = evt.target.value;
-};
+// const handleChange = evt => {
+//     text.current = evt.target.value;
+// };
 
-const handleBlur = () => {
-  console.log('')
-};
+// const handleBlur = () => {
+//   console.log('')
+// };
 
 
   useEffect(() => {
@@ -135,9 +135,9 @@ const handleBlur = () => {
       }
     }
   };
-  if(imgSrc){
-    console.log(imgSrc)
-  }
+  // if(imgSrc){
+  //   console.log(imgSrc)
+  // }
   // if(base64){
   //   console.log(base64)
   // }
@@ -266,15 +266,12 @@ const handleBlur = () => {
         }
         stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
         setUserData({ ...userData, message: "" });
-        // console.log('send private = ', chatMessage)
       }else if(data.type == "image"){
-        var byteArray = new Uint8Array(data.message);
         let chatMessage = {
           type: data.type,
           chatId: chatId,
           senderName: "admin",
           receiverName: tab.userId, //change to uId
-          // message : "https://images.unsplash.com/photo-1500576992153-0271099def59?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1469&q=80",
           message: data.message,
           date: new Date(),
           status: "MESSAGE",
@@ -645,9 +642,9 @@ const handleBlur = () => {
                       <ContentEditable 
                       placeholder="ข้อความ ....."  className="textBox text-[14px] rounded-full w-full py-2 px-2 text-gray-700 leading-tight focus:shadow-outline bg-gray-100 bg-clip-padding transition ease-in-out focus:text-gray-700 focus:border-blue-600 focus:outline-none" 
                       html={userData.message} 
-                      onBlur={handleBlur} 
+                      // onBlur={handleBlur} 
                       onChange={handleMessage}
-                      onFocus={handleBlur}
+                      // onFocus={handleBlur}
                        onKeyDown={(e)=> {
                           if(e.key === 'Enter' && userData.message!="") {
                             sendPrivateValue(tab.chatId, userData)
@@ -866,9 +863,9 @@ const handleBlur = () => {
                     <ContentEditable 
                     placeholder="ข้อความ ....."  className="textBox text-[14px] rounded-full w-full py-3 px-3 text-gray-700 leading-tight focus:shadow-outline bg-gray-100 bg-clip-padding transition ease-in-out focus:text-gray-700 focus:border-blue-600 focus:outline-none" 
                     html={userData.message} 
-                    onBlur={handleBlur} 
+                    // onBlur={handleBlur} 
                     onChange={handleMessage}
-                    onFocus={handleBlur}
+                    // onFocus={handleBlur}
                      onKeyDown={(e)=> {
                         if(e.key === 'Enter' && userData.message!="") {
                           sendPrivateValue(tab.chatId, userData)
