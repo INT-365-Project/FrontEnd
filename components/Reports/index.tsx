@@ -51,7 +51,7 @@ const Reports = () => {
     {/* <div className='text-purple subtitle '>Reports & Comments</div> */}
     <div className="rounded-xl drop-shadow-lg mt-[10px] mx-auto  overflow-hidden  py-[14px] relative">
     <Slider {...settings}>    
-    {ReportTypes.map((r,index)=>{
+    {ReportTypes && ReportTypes.map((r,index)=>{
       return <div key={index} className='mx-auto h-[180px] w-[94%] bg-white rounded-xl drop-shadow-lg relative'>    
       <div className='w-full flex flex-col md:flex-none h-[140px]'>
         <div className='w-[62px] h-[62px] my-auto mx-auto  flex justify-center items-center bg-[#336699] rounded-full'>
