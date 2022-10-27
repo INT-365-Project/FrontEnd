@@ -38,7 +38,7 @@ const InsiderNews = () => {
 
   const getImage = async () => {
     for (let n of newsData) {
-      const res = await axios.post(`${api}/api/viewFileByPath`,{filePath:n.thumbnailPath})
+      const res = await axios.post(`/api/viewFileByPath`,{filePath:n.thumbnailPath})
       var byteCharacters = atob(res.data.responseData.base64);
       var byteNumbers = new Array(byteCharacters.length);
       for (var i = 0; i < byteCharacters.length; i++) {
