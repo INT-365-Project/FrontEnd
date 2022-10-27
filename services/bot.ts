@@ -7,7 +7,7 @@ if (typeof window !== 'undefined') {
 let token = 'Bearer ' + getToken
 
 const botService = axios.create({
-  baseURL: `${api}`
+  baseURL: `www.chatbotwebapp.ninja`
 })
 
 const BotServices = {
