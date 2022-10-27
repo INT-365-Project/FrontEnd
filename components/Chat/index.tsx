@@ -9,12 +9,16 @@ import Popup from "../common/Popup";
 import PopupChat from "./PopupChat";
 
 import ContentEditable from 'react-contenteditable'
+import PopupImage from "./PopupImage";
 
 var stompClient = null;
 let historyList = [];
 let countIsRead = [];
 const Chat = () => {
   const { adminUser } = useAppContext();
+  
+  const [showPreviewImage,setShowPreviewImage] = useState(false)
+  const [previewUrl,setPreviewUrl] = useState (null)
   
   const [selectedImage, setSelectedImage] = useState(false);
   const [imgSrc, setImgSrc] = useState(null);
@@ -131,9 +135,9 @@ const handleBlur = () => {
       }
     }
   };
-  // if(imgSrc){
-  //   console.log(imgSrc)
-  // }
+  if(imgSrc){
+    console.log(imgSrc)
+  }
   // if(base64){
   //   console.log(base64)
   // }
@@ -169,6 +173,8 @@ const handleBlur = () => {
           status: "MESSAGE",
           displayName: payloadData[i].displayName,
           isRead: payloadData[i].chatHistory[j].isRead,
+          originalContentUrl : payloadData[i].chatHistory[j].originalContentUrl,
+          previewImageUrl : payloadData[i].chatHistory[j].previewImageUrl
         }
         tempList.push(data)
       }
@@ -262,13 +268,14 @@ const handleBlur = () => {
         setUserData({ ...userData, message: "" });
         // console.log('send private = ', chatMessage)
       }else if(data.type == "image"){
+        var byteArray = new Uint8Array(data.message);
         let chatMessage = {
           type: data.type,
           chatId: chatId,
           senderName: "admin",
           receiverName: tab.userId, //change to uId
-          message : "https://images.unsplash.com/photo-1500576992153-0271099def59?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1469&q=80",
-          // message: data.message,
+          // message : "https://images.unsplash.com/photo-1500576992153-0271099def59?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1469&q=80",
+          message: data.message,
           date: new Date(),
           status: "MESSAGE",
           displayName: "admin",
@@ -332,8 +339,9 @@ const handleBlur = () => {
     setIsOpen(true);
   };
 
-  const openFullscreen  = () =>{
-    document.getElementById('image')?.requestFullscreen()
+  const openFullscreen  = (url) =>{
+    setPreviewUrl(url)
+    setShowPreviewImage(true)
   }
 
 
@@ -369,6 +377,7 @@ const handleBlur = () => {
           {/* Contact */}
           <div className=" min-h-[80vh] mt-[35px] flex flex-col lg:flex-row">
             <div className="lg:w-[30%] lg:h-auto">
+              {showPreviewImage && <PopupImage url={previewUrl} setShowPreviewImage={setShowPreviewImage} />}
               {openPopup && <PopupChat
                 base64={base64}
                 setBase64={setBase64}
@@ -544,9 +553,10 @@ const handleBlur = () => {
                                     : "text-left"
                                     }`}
                                 >
-                                  {(chat.type === "image") && <p>test</p>}
+                                  {(chat.type==="image" && chat.originalContentUrl == null) && <img id="image" className="cursor-pointer" onClick={()=>openFullscreen(chat.message)} src={`${chat.message}`} alt="image"/>}
+                                  {(chat.type==="image" && chat.originalContentUrl != null) && <img id="image" className="cursor-pointer" onClick={()=>openFullscreen(chat.originalContentUrl)} src={`${chat.originalContentUrl}`} alt="image"/>}
                                   {(chat.type === "message" || chat.type === "text") &&  <span className={`myEmoji flex ${chat.senderName === userData.username ? 'float-right' : '' }`} dangerouslySetInnerHTML={{__html: chat.message}}></span>}
-                                  {chat.type === "sticker" && <img src={`/sticker/${packageId}/${stickerId}.${packageId === "446" ? 'png' : 'jpg'}`} className={`${chat.senderName === userData.username ? 'float-right' : ''}`} alt="sticker"></img>}
+                                  {chat.type === "sticker" && <img onError={e=>{e.currentTarget.src = "/sticker/sorry.jpg";}} src={`/sticker/${packageId}/${stickerId}.${packageId === "446" ? 'png' : 'jpg'}`} className={`${chat.senderName === userData.username ? 'float-right' : ''}`} alt="sticker"></img>}
 
                                 </div>
                                 {chat.senderName === userData.username && (
@@ -742,9 +752,10 @@ const handleBlur = () => {
                                     : "text-left"
                                     }`}
                                 >
-                                  {(chat.type==="image") && <img id="image" className="cursor-pointer" onClick={()=>openFullscreen} src={`${chat.message}`} alt="image"/>}
+                                  {(chat.type==="image" && chat.originalContentUrl == null) && <img id="image" className="cursor-pointer" onClick={()=>openFullscreen(chat.message)} src={`${chat.message}`} alt="image"/>}
+                                  {(chat.type==="image" && chat.originalContentUrl != null) && <img id="image" className="cursor-pointer" onClick={()=>openFullscreen(chat.originalContentUrl)} src={`${chat.originalContentUrl}`} alt="image"/>}
                                   {(chat.type === "message" || chat.type === "text") &&  <span className={`myEmoji flex ${chat.senderName === userData.username ? 'float-right' : '' }`} dangerouslySetInnerHTML={{__html: chat.message}}></span>}
-                                  {chat.type === "sticker" && <img src={`/sticker/${packageId}/${stickerId}.${packageId === "446" ? 'png' : 'jpg'}`} className={`${chat.senderName === userData.username ? 'float-right' : ''}`} alt="sticker"></img>}
+                                  {chat.type === "sticker" && <img onError={e=>{e.currentTarget.src = "/sticker/sorry.jpg";}} src={`/sticker/${packageId}/${stickerId}.${packageId === "446" ? 'png' : 'jpg'}`} className={`${chat.senderName === userData.username ? 'float-right' : ''}`} alt="sticker"></img>}
 
                                 </div>
                                 {chat.senderName === userData.username && (

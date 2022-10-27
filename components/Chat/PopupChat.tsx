@@ -35,12 +35,13 @@ const PopupChat = ({
     reader.onloadend = function () {
       endCode64 = reader.result;
       // console.log(file.name.slice(file.name.length-3,file.name.length))
+      setBase64(reader)
       setSelectedImage(true);
       setImgSrc(endCode64)
-      setBase64(endCode64.slice(
-        endCode64.indexOf(",") + 1,
-        endCode64.length - 1
-      ),)
+      // setBase64(endCode64.slice(
+      //   endCode64.indexOf(",") + 1,
+      //   endCode64.length - 1
+      // ),)
 
     };
     reader.readAsDataURL(file);
@@ -91,7 +92,7 @@ const PopupChat = ({
   };
 
   return (
-    <Popup isChat={true}>
+    <Popup isChat={true} >
       <div className="w-full">
         <div className="bg-[#53a1f0] h-[56px] flex items-center">
           {isHasImage &&
@@ -161,7 +162,7 @@ const PopupChat = ({
                 เลือกรูปภาพ
               </label> :
                 <button onClick={() => {
-                  sendPrivateValue(chatId,{type:'image',message:base64})
+                  sendPrivateValue(chatId,{type:'image',message:imgSrc})
                   // console.log({type:'image',message:base64})
                   setSelectedImage(false)
                   setIsHasImage(false);

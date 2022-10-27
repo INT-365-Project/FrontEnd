@@ -35,6 +35,36 @@ a {
 .myEmoji > img {
   width: 28px;
 }
+#overlay {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#overlay.hidden {
+  display: none;
+}
+#root {
+  height: 100%;
+  background: white;
+  padding: 20px;
+  box-sizing: border-box;
+  font-family: sans-serif;
+}
+#overlay ~ #root {
+  transition: 600ms filter ease-in-out, 800ms opacity ease-out;
+  filter: blur(0) saturate(1);
+  opacity: 1;
+}
+#overlay:not(.hidden) ~ #root {
+  filter: blur(5px) saturate(0.1);
+  opacity: 0.2;
+}
 .textBox {
   display: flex;
   flex-direction: row;
