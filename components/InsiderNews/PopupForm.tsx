@@ -139,7 +139,7 @@ const PopupForm = ({ setIsOpen, isOpen ,editData, setIsEdit , isEdit }) => {
 
   return (
     <div className="relative min-h-screen">
-    <Popup>
+    <Popup isChat={false}>
       <div className="w-full h-[80vh]  drop-shadow-lg overflow-y-auto">
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>

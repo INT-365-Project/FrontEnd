@@ -1,6 +1,5 @@
 import Head from "next/head";
-import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import React, { useEffect, useRef, useState } from "react";
 import { over } from "stompjs";
 import SockJS from "sockjs-client";
 import liff from "@line/liff/dist/lib";
@@ -9,14 +8,17 @@ import { useAppContext } from "../../pages/_app";
 import Popup from "../common/Popup";
 import PopupChat from "./PopupChat";
 
+import ContentEditable from 'react-contenteditable'
+
 var stompClient = null;
 let historyList = [];
 let countIsRead = [];
 const Chat = () => {
   const { adminUser } = useAppContext();
-
+  
   const [selectedImage, setSelectedImage] = useState(false);
   const [imgSrc, setImgSrc] = useState(null);
+  const [base64,setBase64] = useState("")
   const [emoji, setEmoji] = useState([]);
   const [sticker, setSticker] = useState(null);
 
@@ -44,6 +46,18 @@ const Chat = () => {
     message: "",
     type: "text"
   });
+
+  
+  const text = useRef('');
+  
+const handleChange = evt => {
+    text.current = evt.target.value;
+};
+
+const handleBlur = () => {
+  console.log('')
+};
+
 
   useEffect(() => {
     const timeoutID = window.setTimeout(() => {
@@ -117,6 +131,12 @@ const Chat = () => {
       }
     }
   };
+  // if(imgSrc){
+  //   console.log(imgSrc)
+  // }
+  // if(base64){
+  //   console.log(base64)
+  // }
 
   const onMessageReceived = (payload: any) => {
 
@@ -241,6 +261,25 @@ const Chat = () => {
         stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
         setUserData({ ...userData, message: "" });
         // console.log('send private = ', chatMessage)
+      }else if(data.type == "image"){
+        let chatMessage = {
+          type: data.type,
+          chatId: chatId,
+          senderName: "admin",
+          receiverName: tab.userId, //change to uId
+          message : "https://images.unsplash.com/photo-1500576992153-0271099def59?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1469&q=80",
+          // message: data.message,
+          date: new Date(),
+          status: "MESSAGE",
+          displayName: "admin",
+        };
+        console.log(chatMessage)
+        if (privateChats.get(chatId)) {
+          privateChats.get(chatId).push(chatMessage);
+          setPrivateChats(new Map(privateChats));
+        }
+        stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
+        setUserData({ ...userData, message: "" });
       }
       else {
         let chatMessage = {
@@ -264,12 +303,6 @@ const Chat = () => {
       // }
     }
   };
-
-  // const sticker = {
-  //   index:index,
-  //   productId:productId,
-  //   emojiId:emojiId,
-  // }
 
   const sendIsRead = (chatId: any, userId: any, index: any) => {
     historyList[index].chatHistory = historyList[index].chatHistory.filter(element => element.isRead === true);
@@ -299,13 +332,13 @@ const Chat = () => {
     setIsOpen(true);
   };
 
-  // const removeEmoji = (index) =>{
-  //   const temps = emoji.filter((item,index)=>index!=index)
-  //   setEmoji(temps)
-  // }
+  const openFullscreen  = () =>{
+    document.getElementById('image')?.requestFullscreen()
+  }
+
 
   return (
-    <div className="px-[10px] bg-[#F8F8F8] lg:px-0  lg:pl-[130px] pt-[80px] lg:pt-[90px] lg:pr-[50px] w-full">
+    <div className="px-[10px] bg-[#F8F8F8] lg:px-0  lg:pl-[130px] pt-[80px] lg:pt-[90px] lg:pr-[50px] w-full ">
       <Head>
         <title>Chat</title>
         <meta name="Chat" content="Chat" />
@@ -337,6 +370,8 @@ const Chat = () => {
           <div className=" min-h-[80vh] mt-[35px] flex flex-col lg:flex-row">
             <div className="lg:w-[30%] lg:h-auto">
               {openPopup && <PopupChat
+                base64={base64}
+                setBase64={setBase64}
                 sendPrivateValue={sendPrivateValue}
                 chatId={tab.chatId}
                 sticker={sticker}
@@ -381,7 +416,7 @@ const Chat = () => {
                     {tab.name && tab.name}
                   </div>
                 )}
-                <div className=" hidden space-y-[20px] lg:flex flex-col overflow-y-scroll h-[520px]">
+                <div className=" hidden space-y-[20px] lg:flex flex-col overflow-y-scroll h-[680px]">
                   <ul id="history">
                     {historyList.map((history, index) => {
                       return (
@@ -415,7 +450,7 @@ const Chat = () => {
                   </ul>
                 </div>
                 {!isOpen ? (
-                  <div className="lg:hidden pt-[30px] space-y-[32px] flex flex-col overflow-y-scroll h-[360px]">
+                  <div className="lg:hidden pt-[30px] space-y-[32px] flex flex-col overflow-y-scroll h-[500px]">
                     <ul>
                       {historyList.map((history, index) => {
                         return (
@@ -495,34 +530,31 @@ const Chat = () => {
                               }
                               return (
                                 <li
-                                  className={`message ${chat.displayName === userData.username &&
+                                className={`message ${chat.senderName === userData.username && "self"
+                                  }`}
+                                key={index}
+                              >
+                                {chat.senderName !== userData.username && (
+                                  <div className="avatar">{chat.senderName == "admin" ? "admin" : chat.displayName}</div> // name of user in chat
+                                )}
+                                <div
+                                  className={`message-data w-[280px] break-words ${chat.senderName === userData.username &&
                                     "self"
+                                    ? "text-right"
+                                    : "text-left"
                                     }`}
-                                  key={index}
                                 >
-                                  <div className={`flex ${stickerId ? 'flex-col' : 'flex-row'}`}>
-                                    {chat.displayName !== userData.username && (
-                                      <div className="avatar">
-                                        {chat.displayName}
-                                      </div>
-                                    )}
-                                    <div
-                                      className={`message-data w-[280px] break-words ${chat.displayName === userData.username &&
-                                        "self"
-                                        ? "text-right"
-                                        : "text-left"
-                                        }`}
-                                    >
-                                      {(chat.type === "message" || chat.type === "text") && chat.message}
-                                      {chat.type === "sticker" && <img src={`/sticker/${packageId}/${stickerId}.${packageId === "446" ? 'png' : 'jpg'}`} className={`${chat.displayName === userData.username ? 'float-right' : ''}`} alt="sticker"></img>}
-                                    </div>
-                                  </div>
-                                  {chat.displayName === userData.username && (
-                                    <div className="avatar self">
-                                      {chat.displayName}
-                                    </div>
-                                  )}
-                                </li>
+                                  {(chat.type === "image") && <p>test</p>}
+                                  {(chat.type === "message" || chat.type === "text") &&  <span className={`myEmoji flex ${chat.senderName === userData.username ? 'float-right' : '' }`} dangerouslySetInnerHTML={{__html: chat.message}}></span>}
+                                  {chat.type === "sticker" && <img src={`/sticker/${packageId}/${stickerId}.${packageId === "446" ? 'png' : 'jpg'}`} className={`${chat.senderName === userData.username ? 'float-right' : ''}`} alt="sticker"></img>}
+
+                                </div>
+                                {chat.senderName === userData.username && (
+                                  <div className="avatar self">
+                                    {chat.senderName == "admin" ? "admin" : chat.displayName}
+                                  </div> // new
+                                )}
+                              </li>
                               )
                             }
                           )}
@@ -553,21 +585,95 @@ const Chat = () => {
                     </div>
                   )}
                   {tab.name !== "CHATROOM" && (
-                    <div className="h-[15%] w-full lg:w-[93%]  lg:hidden bg-white rounded-xl drop-shadow-md flex items-center mt-[20px]">
-                      <textarea
-                        className="text-[14px] pl-[30px] ml-[4px]  rounded w-[90%] py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline "
-                        rows={2}
-                        placeholder="ข้อความ ...."
-                        value={userData.message}
-                        onChange={handleMessage}
-                      />
-                      <button
-                        onClick={() => sendPrivateValue(tab.chatId, userData)}
-                        className="w-[30%] lg:w-[10%] mx-auto h-[30px] mr-[10px] text-white bg-[#336699] rounded-lg  "
+                    <div className="min-h-[10vh] w-full lg:w-[93%]  lg:hidden bg-white rounded-xl drop-shadow-md flex items-center mt-[20px]">
+                    <div className="ml-[18px] space-x-[4px] flex justify-center">
+                      <button className="relative"
+                        onClick={() => {
+                          setOpenPopup(true);
+                          setIsHasSticker(true);
+                        }}
+                        onMouseEnter={() => {
+                          setOpenDes(true);
+                          setCount(1);
+                        }}
+                        onMouseLeave={() => {
+                          setOpenDes(false);
+                          setCount(0);
+                        }}
                       >
-                        Send
+                        <img src="/images/chatIcon/sticker.svg" alt="sticker"
+                          style={{
+                            filter:
+                              "invert(41%) sepia(20%) saturate(1448%) hue-rotate(169deg) brightness(83%) contrast(91%)",
+                          }} />
+                        {openDes && count === 1 && <div className="absolute truncate w-[80px] rounded-[6px] top-[-40px] left-[-20px] bg-[#336699] text-white py-[4px] text-center">sticker</div>}
+                      </button>
+                      <button className="relative"
+                        onClick={() => {
+                          setOpenPopup(true);
+                          setIsHasImage(true);
+                        }
+                        }
+                        onMouseEnter={() => {
+                          setOpenDes(true);
+                          setCount(2);
+                        }}
+                        onMouseLeave={() => {
+                          setOpenDes(false);
+                          setCount(0);
+                        }}>
+                        <img src="/images/chatIcon/image.svg" alt="image"
+                          style={{
+                            filter:
+                              "invert(41%) sepia(20%) saturate(1448%) hue-rotate(169deg) brightness(83%) contrast(91%)",
+                          }} />
+                        {openDes && count === 2 && <div className="absolute truncate w-[80px] rounded-[6px] top-[-40px] left-[-20px] bg-[#336699] text-white py-[4px] text-center">image</div>}
                       </button>
                     </div>
+                    <div className="mx-auto my-auto overflow-y-scroll text-[14px] relative pl-[24px] ml-[12px] flex  border border-solid border-gray-300 rounded-full min-w-[60%] py-2 px-2 text-gray-700 leading-tight focus:shadow-outline bg-gray-100 bg-clip-padding transition ease-in-out focus:text-gray-700 focus:border-blue-600 focus:outline-none">
+                      {/* markup */}
+                      <ContentEditable 
+                      placeholder="ข้อความ ....."  className="textBox text-[14px] rounded-full w-full py-2 px-2 text-gray-700 leading-tight focus:shadow-outline bg-gray-100 bg-clip-padding transition ease-in-out focus:text-gray-700 focus:border-blue-600 focus:outline-none" 
+                      html={userData.message} 
+                      onBlur={handleBlur} 
+                      onChange={handleMessage}
+                      onFocus={handleBlur}
+                       onKeyDown={(e)=> {
+                          if(e.key === 'Enter' && userData.message!="") {
+                            sendPrivateValue(tab.chatId, userData)
+                          }
+                        }} />
+                    </div>
+                    <div className="ml-[4px]">
+                      <button className="relative"
+                        onClick={() => {
+                          setOpenPopup(true);
+                          setIsHasEmoji(true);
+                        }}
+                        onMouseEnter={() => {
+                          setOpenDes(true);
+                          setCount(3);
+                        }}
+                        onMouseLeave={() => {
+                          setOpenDes(false);
+                          setCount(0);
+                        }}>
+                        <img src="/images/chatIcon/emoji.svg" alt="image"
+                          style={{
+                            filter:
+                              "invert(41%) sepia(20%) saturate(1448%) hue-rotate(169deg) brightness(83%) contrast(91%)",
+                          }} />
+                        {openDes && count === 3 && <div className=" absolute truncate w-[80px] rounded-[6px] top-[-40px] left-[-20px] bg-[#336699] text-white py-[4px] text-center">emoji</div>}
+                      </button>
+                    </div>
+                    <button
+                      onClick={() => sendPrivateValue(tab.chatId, userData)}
+                      className="w-[8%] text-[10px] mx-auto h-[30px] text-white bg-[#336699] rounded-lg "
+                    >
+                      Send
+                    </button>
+                  </div>
+
                   )}
                 </>
               )}
@@ -627,7 +733,7 @@ const Chat = () => {
                                 key={index}
                               >
                                 {chat.senderName !== userData.username && (
-                                  <div className="avatar">{chat.senderName == "admin" ? "admin" : chat.displayName}</div> // name of user in chat
+                                  <div className="avatar flex items-center">{chat.senderName == "admin" ? "admin" : chat.displayName}</div> // name of user in chat
                                 )}
                                 <div
                                   className={`message-data w-[280px] break-words ${chat.senderName === userData.username &&
@@ -636,12 +742,13 @@ const Chat = () => {
                                     : "text-left"
                                     }`}
                                 >
-                                  {(chat.type === "message" || chat.type === "text") && chat.message}
+                                  {(chat.type==="image") && <img id="image" className="cursor-pointer" onClick={()=>openFullscreen} src={`${chat.message}`} alt="image"/>}
+                                  {(chat.type === "message" || chat.type === "text") &&  <span className={`myEmoji flex ${chat.senderName === userData.username ? 'float-right' : '' }`} dangerouslySetInnerHTML={{__html: chat.message}}></span>}
                                   {chat.type === "sticker" && <img src={`/sticker/${packageId}/${stickerId}.${packageId === "446" ? 'png' : 'jpg'}`} className={`${chat.senderName === userData.username ? 'float-right' : ''}`} alt="sticker"></img>}
 
                                 </div>
                                 {chat.senderName === userData.username && (
-                                  <div className="avatar self">
+                                  <div className="avatar self flex items-center">
                                     {chat.senderName == "admin" ? "admin" : chat.displayName}
                                   </div> // new
                                 )}
@@ -674,7 +781,6 @@ const Chat = () => {
                   </div>
                   <input
                     className="text-[14px] pl-[24px] ml-[12px]  border border-solid border-gray-300 rounded-full w-[78%] py-3 px-3 text-gray-700 leading-tight focus:shadow-outline bg-gray-100 bg-clip-padding transition ease-in-out focus:text-gray-700 focus:border-blue-600 focus:outline-none"
-                    // rows={1}
                     type="text"
                     placeholder="ข้อความ ....."
                     value={userData.message}
@@ -699,7 +805,7 @@ const Chat = () => {
                 </div>
               )}
               {tab.name !== "CHATROOM" && (
-                <div className="h-[15%] bg-white rounded-3xl drop-shadow-md flex items-center">
+                <div className="min-h-[15%] bg-white rounded-3xl drop-shadow-md flex items-center">
                   <div className="ml-[18px] space-x-[8px]">
                     <button className="relative"
                       onClick={() => {
@@ -744,31 +850,19 @@ const Chat = () => {
                       {openDes && count === 2 && <div className="absolute truncate w-[80px] rounded-[6px] top-[-40px] left-[-20px] bg-[#336699] text-white py-[4px] text-center">image</div>}
                     </button>
                   </div>
-                  <div className="text-[14px] pl-[24px] ml-[12px] flex  border border-solid border-gray-300 rounded-full w-[78%] py-2 px-2 text-gray-700 leading-tight focus:shadow-outline bg-gray-100 bg-clip-padding transition ease-in-out focus:text-gray-700 focus:border-blue-600 focus:outline-none">
-                    {/* {(imgSrc && !isHasImage) &&<div className="relative"> 
-                  {<img src={imgSrc} className='w-[40px]' alt="" />}
-                  <img src="/images/X.c" alt="x" className="absolute top-[-6px] right-[-6px] w-[16px]" onClick={()=>setImgSrc(null)} />
-                  </div>
-                  } */}
-                    {emoji && <div className="relative flex flex-row space-x-[2px]">
-                      {emoji.map((emoji, index) => {
-                        return (
-                          // <p className="pr-[5px]">{emoji.index}</p>
-                          <div>
-                            <img key={index} src={`/emoji/${emoji.productId}/${emoji.emojiId}.jpg`} className="w-[40px]" alt="emoji" />
-                            <img src="/images/X.png" alt="x" className="absolute top-[-6px] right-[-6px] w-[16px]" onClick={() => removeEmoji(index)} />
-                          </div>
-                        )
-                      })}
-                    </div>}
-                    <input
-                      className="text-[14px] rounded-full w-full py-3 px-3 text-gray-700 leading-tight focus:shadow-outline bg-gray-100 bg-clip-padding transition ease-in-out focus:text-gray-700 focus:border-blue-600 focus:outline-none"
-                      // rows={1}
-                      type="text"
-                      placeholder="ข้อความ ....."
-                      value={userData.message}
-                      onChange={handleMessage}
-                    />
+                  <div className="overflow-y-scroll text-[14px] relative pl-[24px] ml-[12px] flex  border border-solid border-gray-300 rounded-full w-[78%] py-2 px-2 text-gray-700 leading-tight focus:shadow-outline bg-gray-100 bg-clip-padding transition ease-in-out focus:text-gray-700 focus:border-blue-600 focus:outline-none">
+                    {/* markup */}
+                    <ContentEditable 
+                    placeholder="ข้อความ ....."  className="textBox text-[14px] rounded-full w-full py-3 px-3 text-gray-700 leading-tight focus:shadow-outline bg-gray-100 bg-clip-padding transition ease-in-out focus:text-gray-700 focus:border-blue-600 focus:outline-none" 
+                    html={userData.message} 
+                    onBlur={handleBlur} 
+                    onChange={handleMessage}
+                    onFocus={handleBlur}
+                     onKeyDown={(e)=> {
+                        if(e.key === 'Enter' && userData.message!="") {
+                          sendPrivateValue(tab.chatId, userData)
+                        }
+                      }} />
                   </div>
                   <div className="ml-[10px]">
                     <button className="relative"

@@ -3,6 +3,8 @@ import Popup from "../common/Popup";
 import { emojis } from "../../utils/emojis"
 import { stickers } from "../../utils/stickers"
 const PopupChat = ({
+  base64,
+  setBase64,
   chatId,
   sendPrivateValue,
   sticker,
@@ -35,6 +37,10 @@ const PopupChat = ({
       // console.log(file.name.slice(file.name.length-3,file.name.length))
       setSelectedImage(true);
       setImgSrc(endCode64)
+      setBase64(endCode64.slice(
+        endCode64.indexOf(",") + 1,
+        endCode64.length - 1
+      ),)
 
     };
     reader.readAsDataURL(file);
@@ -141,7 +147,6 @@ const PopupChat = ({
                 <input
                   className="mt-[20px] hidden"
                   id="inputFileToLoad"
-                  // required={isEdit ? false : true}
                   accept="image/*"
                   type="file"
                   onChange={uploadImage}
@@ -156,6 +161,8 @@ const PopupChat = ({
                 เลือกรูปภาพ
               </label> :
                 <button onClick={() => {
+                  sendPrivateValue(chatId,{type:'image',message:base64})
+                  // console.log({type:'image',message:base64})
                   setSelectedImage(false)
                   setIsHasImage(false);
                   setOpenPopup(false)
@@ -207,11 +214,9 @@ const PopupChat = ({
               {isHasEmoji &&
                 emojiItem.map((emoji, index) => {
                   return (
-                    <div key={index} onClick={() => {
+                    <div key={index}  onClick={() => {
                       setEmoji(oldEmoji => [...oldEmoji, emoji])
-                      setUserData({ ...userData, message: `${userData.message}<img key={index} src={/emoji/${emoji.productId}/${emoji.emojiId}.jpg} className="w-[40px]" alt="emoji" />`})
-                      console.log("stick is", emoji)
-                      console.log("userData", userData.message)
+                      setUserData({ ...userData, message: `${userData.message}<img src='/emoji/${emoji.productId}/${emoji.emojiId}.jpg' alt=${emoji.productId},${emoji.emojiId} />`})
                       setIsHasEmoji(false)
                       setOpenPopup(false)
                     }}>

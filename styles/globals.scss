@@ -32,6 +32,16 @@ a {
   color: inherit;
   text-decoration: none;
 }
+.myEmoji > img {
+  width: 28px;
+}
+.textBox {
+  display: flex;
+  flex-direction: row;
+}
+.textBox > img{
+  width: 28px;
+}
 .icon1 {
   height:2rem;
   width: 2rem;
