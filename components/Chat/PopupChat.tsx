@@ -217,7 +217,7 @@ const PopupChat = ({
                   return (
                     <div key={index}  onClick={() => {
                       setEmoji(oldEmoji => [...oldEmoji, emoji])
-                      setUserData({ ...userData, message: `${userData.message}<img src='/emoji/${emoji.productId}/${emoji.emojiId}.jpg' alt=${emoji.productId},${emoji.emojiId} />`})
+                      setUserData({ ...userData, message: `${userData.message}<img src='/emoji/${emoji.productId}/${emoji.emojiId}.jpg' alt='emoji'/>`})
                       setIsHasEmoji(false)
                       setOpenPopup(false)
                     }}>
