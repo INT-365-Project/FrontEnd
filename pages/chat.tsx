@@ -3,7 +3,8 @@ import Chat from '../components/Chat'
 
 const chat = () => {
   return (
-    <Chat/>
+    // <Chat/>
+    <p>test</p>
   )
 }
 

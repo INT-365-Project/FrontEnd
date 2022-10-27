@@ -24,37 +24,37 @@ function MyApp({ Component, pageProps }: AppProps) {
     }
   },[router])
 
-  // useEffect(()=>{
-  //   // if(router.pathname=='/'){
-  //   //   if(!isLogin){
-  //   //     Router.push('/signin')
-  //   //   }else{
-  //   //     Router.push('/')
-  //   //   } 
-  //   // }
-  //   // if(router.pathname=='/report'){
-  //   //   if(!isLogin){
-  //   //     Router.push('/signin')
-  //   //   }else{
-  //   //     Router.push('/')
-  //   //   }
-  //   // }
-  //   // if(router.pathname=='/chat'){
-  //   //   if(!isLogin){
-  //   //     Router.push('/signin')
-  //   //   }else{
-  //   //     Router.push('/')
-  //   //   }
-  //   // }
-  //   // if(router.pathname=='/intents'){
-  //   //   if(!isLogin){
-  //   //     Router.push('/signin')
-  //   //   }else{
-  //   //     Router.push('/')
-  //   //   }
+  useEffect(()=>{
+    if(router.pathname=='/'){
+      if(!isLogin){
+        Router.push('/signin')
+      }else{
+        Router.push('/')
+      } 
+    }
+    if(router.pathname=='/report'){
+      if(!isLogin){
+        Router.push('/signin')
+      }else{
+        Router.push('/')
+      }
+    }
+    // if(router.pathname=='/chat'){
+    //   if(!isLogin){
+    //     Router.push('/signin')
+    //   }else{
+    //     Router.push('/')
+    //   }
+    // }
+    // if(router.pathname=='/intents'){
+    //   if(!isLogin){
+    //     Router.push('/signin')
+    //   }else{
+    //     Router.push('/')
+    //   }
       
-  //   // }
-  // },[isLogin])
+    // }
+  },[isLogin])
 
 
   
