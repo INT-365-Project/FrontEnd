@@ -7,7 +7,7 @@ import { api } from '../../config';
 const LogIn = () => {
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
-
+  
   async function loginUser(credentials:any) {
     return fetch(`/api/authenticate`, {
       method: 'POST',
