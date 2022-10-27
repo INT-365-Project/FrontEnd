@@ -6,7 +6,7 @@ if (typeof window !== 'undefined'){
 }
 let token = 'Bearer '+ getToken
 const ReportService = axios.create({
-  baseURL:``
+  baseURL:`${api}`
 })
 
 const ReportServices = {

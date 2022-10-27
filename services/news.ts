@@ -7,7 +7,7 @@ if (typeof window !== 'undefined') {
 let token = 'Bearer ' + getToken
 
 const NewsService = axios.create({
-  baseURL: ``
+  baseURL: `${api}`
 })
 
 

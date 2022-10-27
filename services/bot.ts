@@ -7,7 +7,7 @@ if (typeof window !== 'undefined') {
 let token = 'Bearer ' + getToken
 
 const botService = axios.create({
-  baseURL: ``
+  baseURL: `${api}`
 })
 
 const BotServices = {
