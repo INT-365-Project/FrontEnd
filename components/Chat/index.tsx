@@ -374,7 +374,7 @@ const Chat = () => {
           {/* Contact */}
           <div className=" min-h-[80vh] mt-[35px] flex flex-col lg:flex-row">
             <div className="lg:w-[30%] lg:h-auto">
-              {showPreviewImage && <PopupImage url={previewUrl} setShowPreviewImage={setShowPreviewImage} />}
+              {showPreviewImage && <PopupImage showPreviewImage={showPreviewImage} url={previewUrl} setShowPreviewImage={setShowPreviewImage} />}
               {openPopup && <PopupChat
                 base64={base64}
                 setBase64={setBase64}
