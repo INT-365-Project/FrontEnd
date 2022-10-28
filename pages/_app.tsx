@@ -40,10 +40,10 @@ function MyApp({ Component, pageProps }: AppProps) {
       }
     }
     if(router.pathname =="/news"){
-      router.push('/news')
+      Router.push('/news')
     }
     if(router.pathname == "/form"){
-      router.push("/form")
+      Router.push("/form")
     }
     
     // if(router.pathname=='/chat'){
