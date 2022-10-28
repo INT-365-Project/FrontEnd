@@ -39,6 +39,13 @@ function MyApp({ Component, pageProps }: AppProps) {
         Router.push('/')
       }
     }
+    if(router.pathname =="/news"){
+      router.push('/news')
+    }
+    if(router.pathname == "/form"){
+      router.push("/form")
+    }
+    
     // if(router.pathname=='/chat'){
     //   if(!isLogin){
     //     Router.push('/signin')
