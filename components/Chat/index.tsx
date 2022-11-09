@@ -613,8 +613,7 @@ const handleBlur = () => {
                       >
                         <img src="/images/chatIcon/sticker.svg" alt="sticker"
                           style={{
-                            filter:
-                              "invert(41%) sepia(20%) saturate(1448%) hue-rotate(169deg) brightness(83%) contrast(91%)",
+                            filter : "invert(41%) sepia(20%) saturate(1448%) hue-rotate(169deg) brightness(83%) contrast(91%)",
                           }} />
                         {openDes && count === 1 && <div className="absolute truncate w-[80px] rounded-[6px] top-[-40px] left-[-20px] bg-[#336699] text-white py-[4px] text-center">sticker</div>}
                       </button>

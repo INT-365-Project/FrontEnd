@@ -53,7 +53,7 @@ const Reports = () => {
     <Slider {...settings}>    
     {ReportTypes.map((r,index)=>{
       return <div key={index} className='mx-auto h-[180px] w-[94%] bg-white rounded-xl drop-shadow-lg relative'>    
-      <div className='w-full flex flex-col md:flex-none h-[140px]'>
+      <div className='w-full flex flex-col md:flex-none h-[140px] '>
         <div className='w-[62px] h-[62px] my-auto mx-auto  flex justify-center items-center bg-[#336699] rounded-full'>
         <img src={`/images/${r.icon}`} alt="" 
         style={{
