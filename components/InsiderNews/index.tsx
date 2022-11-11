@@ -61,7 +61,7 @@ const InsiderNews = () => {
   },[isFinish])
 
   return (
-    <div id="news-card" className="w-full mt-[30px] lg:mt-0 ">
+    <div id="news-card" className="w-[98%] mt-[30px] lg:mt-0 ">
       <div className="flex justify-between mb-[18px] bg-white py-[22px] px-[18px] rounded-[5px] drop-shadow-lg ">
         <div className="text-black subtitle text-[20px] font-bold">ข่าว</div>
         <Link href="/news" passHref>
@@ -73,40 +73,22 @@ const InsiderNews = () => {
           </div>
         </Link>
       </div>
-      <div className="rounded-[5px] text-[#919191] drop-shadow-lg  bg-white w-full h-[60px] border-b-[2px] ">
-        <div className="pl-[10px] lg:pr-[170px] lg:pl-[40px] my-auto lg:pt-[20px] pt-[10px] flex justify-between">
-          <h1>
-          หัวข้อข่าว
-        </h1>
-        <p>
-          วันที่ลงข่าว
-        </p></div>
-      </div>
+      <div className="flex rounded-t-xl justify-between pt-[20px] py-[5px] h-[60px border-b-[2px] bg-white text-[#919191]">
+            <p className="pl-[20px]">
+            หัวข้อปัญหา
+            </p>
+            <p className="pr-[20px]">
+            วันที่แจ้ง
+            </p>
+          </div>
       {useData && isConvert && useData.map((n: any, index: any) => {
           if (index <= 5) {
             return (
-              <div
-                key={index}
-                className=" rounded-[5px] drop-shadow-lg  bg-white w-full h-[60px] flex"
-              >
-                <div className="w-full flex lg:flex-row flex-col border-b-[2px]">
-                  <div className=" lg:w-[80%] pl-[10px] lg:pl-[40px] my-auto lg:pt-0 pt-[10px] flex justify-between">
-                    <Link
-                      href={{
-                        pathname: `/news/${encodeURIComponent(n.newId)}`,
-                      }}
-                      passHref
-                    >
-                      <p className="text-[14px] text-black hover:text-warmGray-700 cursor-pointer">
-                        {n.title}
-                      </p>
-                    </Link>
-                    <p className="text-[14px] text-black short-sub-title">
-                      {n.createDate.slice(0, 10)}
-                    </p>
-                  </div>
-                </div>
-              </div>
+              <div key={index} className={`${index === useData.length-1 ? 'rounded-b-xl' : '' }  drop-shadow-lg flex justify-between pt-[20px] py-[5px] h-[60px] short-sub-title border-b-[2px] bg-white `}>
+              <p className="w-[50%] pl-[20px] text-black">{n.title}</p>
+              <p className="pr-[20px]">{n.createDate.slice(0, 10)}</p>
+              {/* <p>{dateFormat(publishedAt, "dd mmm yy")}</p> */}
+            </div>
             );
           }
         })}

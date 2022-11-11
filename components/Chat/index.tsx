@@ -610,8 +610,7 @@ const Chat = () => {
                       >
                         <img src="/images/chatIcon/sticker.svg" alt="sticker"
                           style={{
-                            filter:
-                              "invert(41%) sepia(20%) saturate(1448%) hue-rotate(169deg) brightness(83%) contrast(91%)",
+                            filter : "invert(41%) sepia(20%) saturate(1448%) hue-rotate(169deg) brightness(83%) contrast(91%)",
                           }} />
                         {openDes && count === 1 && <div className="absolute truncate w-[80px] rounded-[6px] top-[-40px] left-[-20px] bg-[#336699] text-white py-[4px] text-center">sticker</div>}
                       </button>
@@ -860,6 +859,8 @@ const Chat = () => {
                   </div>
                   <div className="overflow-y-scroll text-[14px] relative pl-[24px] ml-[12px] flex  border border-solid border-gray-300 rounded-full w-[78%] py-2 px-2 text-gray-700 leading-tight focus:shadow-outline bg-gray-100 bg-clip-padding transition ease-in-out focus:text-gray-700 focus:border-blue-600 focus:outline-none">
                     {/* markup */}
+
+                    <input className="w-[1000px]" type="text" value={userData.message} onChange={handleMessage}/>
                     <ContentEditable 
                     placeholder="ข้อความ ....."  className="textBox text-[14px] rounded-full w-full py-3 px-3 text-gray-700 leading-tight focus:shadow-outline bg-gray-100 bg-clip-padding transition ease-in-out focus:text-gray-700 focus:border-blue-600 focus:outline-none" 
                     html={userData.message} 
@@ -870,7 +871,8 @@ const Chat = () => {
                         if(e.key === 'Enter' && userData.message!="") {
                           sendPrivateValue(tab.chatId, userData)
                         }
-                      }} />
+                      }} 
+                      />
                   </div>
                   <div className="ml-[10px]">
                     <button className="relative"

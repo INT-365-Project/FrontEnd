@@ -8,15 +8,15 @@ const LogsLayout = ({logs,setData,setOpenEyes}) => {
   return (
     <div> {logs.map((p: any, index: any) => {
       return (
-        <div key={index} className="bg-white md:min-h-[140px] rounded-[10px] border-b-[2px] pl-[15px] md:px-[40px] pb-[20px]  shadow-lg">
-          <p className="pt-[10px] pb-[6px]"><span className='text-[#919191]'>หัวข้อปัญหา</span> {p.topic}</p>
-          <p className="my-auto md:pr-[20px] pb-[6px] flex">
-          <span className='text-[#919191]'>วันที่แจ้ง</span><p className='pl-[25px]'>{p.createDate.slice(0, 10)}</p> 
-          </p>
-          <p className="my-auto pb-[6px] flex"> <span className='text-[#919191]'>แจ้งโดย</span> <p className='pl-[25px]'>mock up person</p> </p>
+        <div key={p.reportId} onClick={()=>eyesDetail(p)} className=" cursor-pointer hidden md:flex bg-white md:h-[50px]  justify-between rounded-[10px] border-b-[2px] pl-[15px] md:px-[40px] pb-[20px]  shadow-lg">
+          <p className="pt-[10px] "> {p.topic}</p>
+          <div className="my-auto md:ml-[110px]  flex">
+          <p className='pt-[10px]  pl-[25px] '>{p.createDate.slice(0, 10)}</p> 
+          </div>
+          <div className="my-auto md:ml-[120px] pb-[6px] flex pt-[10px] "> <p className='pl-[25px]'>mock up person</p> </div>
           <button
             onClick={() => eyesDetail(p)}
-            className="border-[#919191] border-[1.7px] w-[30px] h-[30px]  rounded-[5px] flex justify-center items-center my-auto ml-[80px]"
+            className="hidden mt-[10px]  border-[#919191] border-[1.7px] w-[30px] h-[30px]  rounded-[5px] md:flex justify-center items-center my-auto ml-[80px]"
           >
             <img
               src="/images/eyes.svg"

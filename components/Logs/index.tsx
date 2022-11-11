@@ -14,7 +14,7 @@ const Logs = () => {
     });
   },[])
   return (
-    <div id="news-card" className="w-full lg:w-[80%] ">
+    <div id="news-card" className="w-full lg:w-[80%] mt-[25px]">
       <div className="mt-[10px] bg-white py-[10px] px-[18px] text-black subtitle flex justify-between drop-shadow-lg rounded-[5px] ">
         <p className="text-[24px] font-semibold">
           ปัญหา

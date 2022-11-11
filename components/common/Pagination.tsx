@@ -16,41 +16,11 @@ const Pagination = ({ items, pageSize, currentPage, onPageChange }) => {
   };
   return (
     <div className="flex items-center justify-center py-10 lg:px-0 sm:px-6 px-4">
-      <div className="lg:w-3/5 w-full  flex items-center justify-between border-t border-gray-200 dark:border-gray-700">
-        <div onClick={()=>handlePrevious()} className="flex items-center pt-3 text-gray-600 dark:text-gray-200  hover:text-indigo-700 cursor-pointer">
-          <svg
-            width="14"
-            height="8"
-            viewBox="0 0 14 8"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M1.1665 4H12.8332"
-              stroke="currentColor"
-              strokeWidth="1.25"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M1.1665 4L4.49984 7.33333"
-              stroke="currentColor"
-              strokeWidth="1.25"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M1.1665 4.00002L4.49984 0.666687"
-              stroke="currentColor"
-              strokeWidth="1.25"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-          <p className="text-sm ml-3 font-medium leading-none ">Previous</p>
-        </div>
-        <div className="sm:flex hidden">
-          {pages.map((page) => {
+      <div className="lg:w-full w-full  flex items-center justify-between  border-gray-200 dark:border-gray-700">
+
+        <div className="sm:flex hidden text-[#8F90A6]">
+          <p>Result {currentPage} of {pageCount}</p>
+          {/* {pages.map((page) => {
             return (
               <p
                 key={page}
@@ -64,14 +34,20 @@ const Pagination = ({ items, pageSize, currentPage, onPageChange }) => {
                 {page}
               </p>
             );
-          })}
+          })} */}
+        </div>
+        <div className="flex justify-between space-x-[18px] mr-[16px]">
+            <div onClick={()=>handlePrevious()} className="flex items-center pt-3 text-gray-600 dark:text-gray-200  hover:text-indigo-700 cursor-pointer">
+            <img src="/images/next.png" alt="next" className="rotate-180"/>
+          {/* <p className="text-sm ml-3 font-medium leading-none ">Previous</p> */}
         </div>
         <div
           onClick={() => handleNext()}
           className="flex items-center pt-3 text-gray-600 dark:text-gray-200  hover:text-indigo-700 cursor-pointer"
         >
-          <p className="text-sm font-medium leading-none mr-3">Next</p>
-          <svg
+          {/* <p className="text-sm font-medium leading-none mr-3">Next</p> */}
+          <img src="/images/next.png" alt="next" />
+          {/* <svg
             width="14"
             height="8"
             viewBox="0 0 14 8"
@@ -99,7 +75,8 @@ const Pagination = ({ items, pageSize, currentPage, onPageChange }) => {
               strokeLinecap="round"
               strokeLinejoin="round"
             />
-          </svg>
+          </svg> */}
+        </div>
         </div>
       </div>
     </div>
