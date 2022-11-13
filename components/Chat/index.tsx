@@ -10,13 +10,14 @@ import PopupChat from "./PopupChat";
 
 import ContentEditable from 'react-contenteditable'
 import PopupImage from "./PopupImage";
+import { useRouter } from "next/router";
 
 var stompClient = null;
 let historyList = [];
 let countIsRead = [];
 const Chat = () => {
   const { adminUser } = useAppContext();
-  
+  const router = useRouter();
   const [showPreviewImage,setShowPreviewImage] = useState(false)
   const [previewUrl,setPreviewUrl] = useState (null)
   
@@ -61,6 +62,7 @@ const Chat = () => {
 // const handleBlur = () => {
 //   console.log('')
 // };
+
 
 
   useEffect(() => {
@@ -135,12 +137,6 @@ const Chat = () => {
       }
     }
   };
-  // if(imgSrc){
-  //   console.log(imgSrc)
-  // }
-  // if(base64){
-  //   console.log(base64)
-  // }
 
   const onMessageReceived = (payload: any) => {
 
@@ -349,6 +345,7 @@ const Chat = () => {
         <meta name="Chat" content="Chat" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      {/* <button onClick={()=>connect()}>connect</button> */}
       {adminUser && (
         <main className="lg:min-h-screen relative w-full pt-[30px]">
           <div className="w-full bg-white ">
@@ -732,13 +729,13 @@ const Chat = () => {
                               packageId = a
                               stickerId = b
                             }
-                            return (
+                            return  (
                               <li
                                 className={`message ${chat.senderName === userData.username && "self"
                                   }`}
                                 key={index}
                               >
-                                {chat.senderName !== userData.username && (
+                                {(chat.senderName !== userData.username && (chat.message != "" || chat.message != null)) && (
                                   <div className="avatar flex items-center">{chat.senderName == "admin" ? "admin" : chat.displayName}</div> // name of user in chat
                                 )}
                                 <div
@@ -754,7 +751,7 @@ const Chat = () => {
                                   {chat.type === "sticker" && <img onError={e=>{e.currentTarget.src = "/sticker/sorry.jpg";}} src={`/sticker/${packageId}/${stickerId}.${packageId === "446" ? 'png' : 'jpg'}`} className={`${chat.senderName === userData.username ? 'float-right' : ''}`} alt="sticker"></img>}
 
                                 </div>
-                                {chat.senderName === userData.username && (
+                                {(chat.senderName === userData.username && (chat.message != "" || chat.message != null)) && (
                                   <div className="avatar self flex items-center">
                                     {chat.senderName == "admin" ? "admin" : chat.displayName}
                                   </div> // new
@@ -859,8 +856,6 @@ const Chat = () => {
                   </div>
                   <div className="overflow-y-scroll text-[14px] relative pl-[24px] ml-[12px] flex  border border-solid border-gray-300 rounded-full w-[78%] py-2 px-2 text-gray-700 leading-tight focus:shadow-outline bg-gray-100 bg-clip-padding transition ease-in-out focus:text-gray-700 focus:border-blue-600 focus:outline-none">
                     {/* markup */}
-
-                    <input className="w-[1000px]" type="text" value={userData.message} onChange={handleMessage}/>
                     <ContentEditable 
                     placeholder="ข้อความ ....."  className="textBox text-[14px] rounded-full w-full py-3 px-3 text-gray-700 leading-tight focus:shadow-outline bg-gray-100 bg-clip-padding transition ease-in-out focus:text-gray-700 focus:border-blue-600 focus:outline-none" 
                     html={userData.message} 
