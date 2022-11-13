@@ -20,7 +20,7 @@ export default function Home() {
         <div className='w-full min-h-screen flex flex-col lg:flex-row'>
           <div className='lg:w-[75%]'>
           <div>
-            <Reports/>
+                <Reports/>
             </div>
             <div className='h-[60%] mt-[20px]'>
             <InsiderNews/>

@@ -6,7 +6,6 @@ import Layout from "../components/common/Layout";
 import "../styles/globals.scss";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import  Router ,{ useRouter } from "next/router";
-
 const AppContext = createContext(null);
 export function useAppContext(){
   return useContext(AppContext)
