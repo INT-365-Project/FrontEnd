@@ -38,7 +38,7 @@ const Logs = () => {
             วันที่แจ้ง
             </p>
           </div>
-          {logs.map((l,index) => {
+          {logs && logs.map((l,index) => {
             return (
               <div key={index} className="flex justify-between pt-[20px] py-[5px] h-[60px] short-sub-title border-b-[2px] ">
                 <p className="w-[50%] pl-[20px]">{l.topic}</p>
