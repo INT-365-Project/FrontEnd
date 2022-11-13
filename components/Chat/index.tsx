@@ -7,11 +7,10 @@ import { api } from "../../config";
 import { useAppContext } from "../../pages/_app";
 import Popup from "../common/Popup";
 import PopupChat from "./PopupChat";
-
+import { useBeforeUnload } from "react-use";
 import ContentEditable from 'react-contenteditable'
 import PopupImage from "./PopupImage";
-import { useRouter } from "next/router";
-
+import Router,{ useRouter } from "next/router";
 var stompClient = null;
 let historyList = [];
 let countIsRead = [];
@@ -37,13 +36,11 @@ const Chat = () => {
   let [allHistory, setAllHistory] = useState([]);
   const [privateChats, setPrivateChats] = useState(new Map());
   const [publicChats, setPublicChats] = useState([]);
-
   const [tab, setTab] = useState({
     userId: "",
     name: "CHATROOM",
     chatId: 0,
   });
-
   const [userData, setUserData] = useState({
     username: "admin",
     receivername: "",
@@ -52,19 +49,6 @@ const Chat = () => {
     type: "text"
   });
 
-  
-//   const text = useRef('');
-  
-// const handleChange = evt => {
-//     text.current = evt.target.value;
-// };
-
-// const handleBlur = () => {
-//   console.log('')
-// };
-
-
-
   useEffect(() => {
     const timeoutID = window.setTimeout(() => {
       connect();
@@ -72,8 +56,29 @@ const Chat = () => {
     return () => window.clearTimeout(timeoutID);
   }, []);
 
+  useEffect(() => {
+    const handleRouteChange = (url, { shallow }) => {
+      closeConnection()
+    }
+
+    router.events.on('routeChangeStart', handleRouteChange)
+
+    // If the component is unmounted, unsubscribe
+    // from the event with the `off` method:
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange)
+    }
+  }, [])
+
+  const closeConnection = () =>{
+    if (stompClient != null) {
+      stompClient.disconnect(function() {
+          console.log('disconnected...');
+      });                    
+  }     
+  }
   const connect = () => {
-    let Sock = new SockJS(`/api/chat`);
+    let Sock = new SockJS(`${api}/api/chat`);
     stompClient = over(Sock);
     stompClient.connect({}, onConnected, onError);
   };
@@ -120,13 +125,13 @@ const Chat = () => {
       if (data) {
         if (data.chatHistory.length > 0) {
           let list = [];
-          for (let history of data.chatHistory) {
-            history["displayName"] = history.senderName == ("admin") ? "admin" : data.displayName;
+          for (let history of data.chatHistory) { // แยก sender กับ reciever
+            history["displayName"] = history.senderName == ("admin") ? "admin" : data.displayName; 
             list.push(history);
           }
-          if (privateChats.get(data.chatId)) {
-            privateChats.delete(data.chatId);
-          }
+          // if (privateChats.get(data.chatId)) {
+          //   privateChats.delete(data.chatId);
+          // }
           privateChats.set(data.chatId, list);
         } else {
           privateChats.set(data.chatId, []);
@@ -134,11 +139,12 @@ const Chat = () => {
         setPrivateChats(new Map(privateChats));
       }
     }
+    console.log('click tab private = ', privateChats)
   };
 
   const onMessageReceived = (payload: any) => {
     var payloadData = JSON.parse(payload.body);
-    historyList = payloadData
+    // historyList = payloadData
     setAllHistory(payloadData);
     const temp = []
     if (payloadData.length > 0) {
@@ -187,8 +193,8 @@ const Chat = () => {
     temp[0].chatHistory.push(payloadData)
     let test = historyList.filter(element => element.chatId !== payloadData.chatId)
     test.unshift(temp[0])
-    historyList = test
     // historyList.push(payloadData)
+
     if (privateChats.get(payloadData.chatId)) {
       privateChats.get(payloadData.chatId).push(payloadData);
       setPrivateChats(new Map(privateChats));
@@ -199,6 +205,7 @@ const Chat = () => {
       setPrivateChats(new Map(privateChats));
     }
     console.log('private message = ', privateChats)
+    historyList = test
     updateAllHistory(payloadData);
   };
 
@@ -312,7 +319,7 @@ const Chat = () => {
       };
       stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
       setUserData({ ...userData, message: "" });
-    }
+    }   
   };
 
   const tabName = (userId: any, name: any, chatId: any, index: any) => {
@@ -340,7 +347,7 @@ const Chat = () => {
         <meta name="Chat" content="Chat" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {/* <button onClick={()=>connect()}>connect</button> */}
+      {/* <button onClick={()=>closeConnection()}>disconnect</button> */}
       {adminUser && (
         <main className="lg:min-h-screen relative w-full pt-[30px]">
           <div className="w-full bg-white ">
@@ -414,11 +421,12 @@ const Chat = () => {
                     {tab.name && tab.name}
                   </div>
                 )}
-                <div className=" hidden space-y-[20px] lg:flex flex-col overflow-y-scroll h-[680px]">
+                <div className=" hidden space-y-[20px] lg:flex flex-col overflow-y-scroll overflow-x-hidden h-[680px]">
                   <ul id="history">
                     {historyList.map((history, index) => {
                       return (
-                        <li
+                        <button
+                          disabled={tab.chatId == history.chatId ? true : false}
                           id={`${history.chatId}`}
                           onClick={() => {
                             tabName(
@@ -428,7 +436,7 @@ const Chat = () => {
                               index,
                             );
                           }}
-                          className={` member ${tab.chatId === history.chatId && "active"
+                          className={`w-full member ${tab.chatId === history.chatId && "active"
                             } text-center relative`}
                           key={index}
                         >
@@ -442,7 +450,7 @@ const Chat = () => {
                           }
 
                           {history.displayName}
-                        </li>
+                        </button>
                       );
                     })}
                   </ul>
@@ -482,37 +490,6 @@ const Chat = () => {
                   </div>
                 ) : (
                   <>
-                    {tab.name == "CHATROOM" && (
-                      <div className="pt-[30px] lg:hidden space-y-[10px] flex flex-col h-[400px] pb-[20px]">
-                        <div className="border-[1px] overflow-y-scroll h-full border-[#336699] rounded-[15px]  mx-[4px]">
-                          {publicChats.map((chat, index) => (
-                            <li
-                              className={`message ${chat.senderName === userData.username && "self"
-                                }`}
-                              key={index}
-                            >
-                              {chat.senderName !== userData.username && (
-                                <div className="avatar">{chat.senderName}</div>
-                              )}
-                              <div
-                                className={`message-data w-[280px] break-words ${chat.senderName === userData.username &&
-                                  "self"
-                                  ? "text-right"
-                                  : "text-left"
-                                  }`}
-                              >
-                                {chat.message}
-                              </div>
-                              {chat.senderName === userData.username && (
-                                <div className="avatar self">
-                                  {chat.senderName}
-                                </div>
-                              )}
-                            </li>
-                          ))}
-                        </div>
-                      </div>
-                    )}
                     {tab.name !== "CHATROOM" && (
                       <div className="pt-[30px] lg:hidden space-y-[10px] flex flex-col  h-[500px]  pb-[20px] ">
                         <div className="border-[1px] overflow-y-scroll h-full border-[#336699] rounded-[15px] mx-[4px]">
@@ -854,9 +831,7 @@ const Chat = () => {
                     <ContentEditable 
                     placeholder="ข้อความ ....."  className="textBox text-[14px] rounded-full w-full py-3 px-3 text-gray-700 leading-tight focus:shadow-outline bg-gray-100 bg-clip-padding transition ease-in-out focus:text-gray-700 focus:border-blue-600 focus:outline-none" 
                     html={userData.message} 
-                    // onBlur={handleBlur} 
                     onChange={handleMessage}
-                    // onFocus={handleBlur}
                      onKeyDown={(e)=> {
                         if(e.key === 'Enter' && userData.message!="") {
                           sendPrivateValue(tab.chatId, userData)
@@ -901,5 +876,18 @@ const Chat = () => {
     </div>
   );
 };
+
+export function getServerSideProps(ctx: { params: any; }) {
+  const { params } = ctx;
+  const { id } = params;
+
+  const currentDate = Date.now();
+
+  return {
+    props: {
+      currentDate,
+    }, // will be passed to the page component as props
+  };
+}
 
 export default Chat;
