@@ -1,7 +1,17 @@
+import axios from "axios";
 import Head from "next/head";
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import BotServices from "../services/bot";
+
+let getToken = null
+if (typeof window !== 'undefined') {
+  getToken = localStorage.getItem('accessToken')
+}
+const headers = {
+  'Content-Type': 'application/json',
+  'Authorization': (typeof window !== 'undefined') && getToken 
+}
 
 const Intents = () => {
   const mockGroup = [
@@ -67,6 +77,13 @@ const Intents = () => {
   },[])
 
   useEffect(() => {
+  //   axios.get("/api/bot/getAllBot", { headers:headers })
+  // .then((response => {
+  //   console.log(response.data);
+  // })
+  // .catch((error) => {
+  //   console.log(error);
+  // })
     BotServices.getAllBot()
       .then((res) => {
         setAllBot(res.data.responseData.commands);
@@ -135,6 +152,16 @@ const Intents = () => {
                   commands: commands,
                 };
                 console.log(intents);
+                // axios.post('/api/bot/createOrUpdateBot', {data:intents},{
+                //   headers:headers
+                // }
+                // )
+                // .then(function (response) {
+                //   console.log(response);
+                // })
+                // .catch(function (error) {
+                //   console.log(error);
+                // });
                 BotServices.storeCommand(intents)
                   .then((res) => {
                     console.log(res);

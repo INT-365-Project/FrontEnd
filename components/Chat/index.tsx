@@ -53,15 +53,15 @@ const Chat = () => {
   });
 
   
-  const text = useRef('');
+//   const text = useRef('');
   
-const handleChange = evt => {
-    text.current = evt.target.value;
-};
+// const handleChange = evt => {
+//     text.current = evt.target.value;
+// };
 
-const handleBlur = () => {
-  console.log('')
-};
+// const handleBlur = () => {
+//   console.log('')
+// };
 
 
 
@@ -73,7 +73,7 @@ const handleBlur = () => {
   }, []);
 
   const connect = () => {
-    let Sock = new SockJS(`${api}/api/chat`);
+    let Sock = new SockJS(`/api/chat`);
     stompClient = over(Sock);
     stompClient.connect({}, onConnected, onError);
   };
@@ -263,7 +263,6 @@ const handleBlur = () => {
         stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
         setUserData({ ...userData, message: "" });
       }else if(data.type == "image"){
-        var byteArray = new Uint8Array(data.message);
         let chatMessage = {
           type: data.type,
           chatId: chatId,
@@ -372,7 +371,7 @@ const handleBlur = () => {
           {/* Contact */}
           <div className=" min-h-[80vh] mt-[35px] flex flex-col lg:flex-row">
             <div className="lg:w-[30%] lg:h-auto">
-              {showPreviewImage && <PopupImage url={previewUrl} setShowPreviewImage={setShowPreviewImage} />}
+              {showPreviewImage && <PopupImage showPreviewImage={showPreviewImage} url={previewUrl} setShowPreviewImage={setShowPreviewImage} />}
               {openPopup && <PopupChat
                 base64={base64}
                 setBase64={setBase64}
@@ -639,9 +638,9 @@ const handleBlur = () => {
                       <ContentEditable 
                       placeholder="ข้อความ ....."  className="textBox text-[14px] rounded-full w-full py-2 px-2 text-gray-700 leading-tight focus:shadow-outline bg-gray-100 bg-clip-padding transition ease-in-out focus:text-gray-700 focus:border-blue-600 focus:outline-none" 
                       html={userData.message} 
-                      onBlur={handleBlur} 
+                      // onBlur={handleBlur} 
                       onChange={handleMessage}
-                      onFocus={handleBlur}
+                      // onFocus={handleBlur}
                        onKeyDown={(e)=> {
                           if(e.key === 'Enter' && userData.message!="") {
                             sendPrivateValue(tab.chatId, userData)
@@ -860,9 +859,9 @@ const handleBlur = () => {
                     <ContentEditable 
                     placeholder="ข้อความ ....."  className="textBox text-[14px] rounded-full w-full py-3 px-3 text-gray-700 leading-tight focus:shadow-outline bg-gray-100 bg-clip-padding transition ease-in-out focus:text-gray-700 focus:border-blue-600 focus:outline-none" 
                     html={userData.message} 
-                    onBlur={handleBlur} 
+                    // onBlur={handleBlur} 
                     onChange={handleMessage}
-                    onFocus={handleBlur}
+                    // onFocus={handleBlur}
                      onKeyDown={(e)=> {
                         if(e.key === 'Enter' && userData.message!="") {
                           sendPrivateValue(tab.chatId, userData)
