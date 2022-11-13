@@ -100,7 +100,6 @@ const handleBlur = () => {
 
   const updateChatHistory = (payload: any) => {
     var payloadData = JSON.parse(payload.body);
-    // console.log("update new payload = ", payloadData);
     historyList.push(payloadData);
     stompClient.subscribe(
       "/user/" + payloadData.userId + "/private",
@@ -121,7 +120,6 @@ const handleBlur = () => {
       if (data) {
         if (data.chatHistory.length > 0) {
           let list = [];
-          // console.log("show history = ", data.chatHistory);
           for (let history of data.chatHistory) {
             history["displayName"] = history.senderName == ("admin") ? "admin" : data.displayName;
             list.push(history);
@@ -139,11 +137,9 @@ const handleBlur = () => {
   };
 
   const onMessageReceived = (payload: any) => {
-
     var payloadData = JSON.parse(payload.body);
+    historyList = payloadData
     setAllHistory(payloadData);
-    // console.log('check payload = ', payloadData)
-    // historyList = payloadData
     const temp = []
     if (payloadData.length > 0) {
       payloadData.map((chat, index) => {
@@ -156,6 +152,7 @@ const handleBlur = () => {
         b.date.localeCompare(a.date) || b.time.localeCompare(a.time));
       historyList = res
     }
+
     for (let i = 0; i < payloadData.length; i++) {
       let tempList = []
       for (let j = 0; j < payloadData[i].chatHistory.length; j++) {
@@ -191,7 +188,7 @@ const handleBlur = () => {
     let test = historyList.filter(element => element.chatId !== payloadData.chatId)
     test.unshift(temp[0])
     historyList = test
-
+    // historyList.push(payloadData)
     if (privateChats.get(payloadData.chatId)) {
       privateChats.get(payloadData.chatId).push(payloadData);
       setPrivateChats(new Map(privateChats));
@@ -206,7 +203,6 @@ const handleBlur = () => {
   };
 
   const updateAllHistory = (payload) => {
-    // console.log("payload update = ",payload)
     for (let history of historyList) {
       if (history.chatId === payload.chatId) {
         let data = {
@@ -217,7 +213,6 @@ const handleBlur = () => {
         history.chatHistory.push(data);
       }
     }
-    // console.log(historyList)
   };
 
   const onError = (err) => {
@@ -299,14 +294,14 @@ const handleBlur = () => {
         }
         stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
         setUserData({ ...userData, message: "" });
-        console.log('send private = ', privateChats)
+        // console.log('send private = ', privateChats)
       }
       // }
     }
   };
 
   const sendIsRead = (chatId: any, userId: any, index: any) => {
-    historyList[index].chatHistory = historyList[index].chatHistory.filter(element => element.isRead === true);
+    // historyList[index].chatHistory = historyList[index].chatHistory.filter(element => element.isRead === true);
     if (stompClient) {
       var chatMessage = {
         type: "text",
@@ -642,11 +637,13 @@ const handleBlur = () => {
                       onBlur={handleBlur} 
                       onChange={handleMessage}
                       onFocus={handleBlur}
-                       onKeyDown={(e)=> {
-                          if(e.key === 'Enter' && userData.message!="") {
+                      // tagName='article'
+                      onKeyDown={(e)=> {
+                          if(e.key === 'Enter') {
+                            console.log('hi')
                             sendPrivateValue(tab.chatId, userData)
                           }
-                        }} />
+                      }} />
                     </div>
                     <div className="ml-[4px]">
                       <button className="relative"
