@@ -58,7 +58,6 @@ const Chat = () => {
 
   useEffect(() => {
     const handleRouteChange = (url, { shallow }) => {
-      localStorage.removeItem("chatId")
       closeConnection()
     }
 
@@ -114,32 +113,27 @@ const Chat = () => {
   };
 
   const showHistory = (chatId: any) => {
-    
     if (historyList) {
-      console.log('history list' , historyList)
+      var temp = historyList;
       var data;
-      historyList.map((item, index) => {
+      temp = temp.map((item, index) => {
         if (item.chatId === chatId) {
           data = item;
         }
       });
-      
+
       if (data) {
-        console.log('show history check private chat = ',privateChats.get(data.chatId))
         if (data.chatHistory.length > 0) {
           let list = [];
           for (let history of data.chatHistory) { // แยก sender กับ reciever
             history["displayName"] = history.senderName == ("admin") ? "admin" : data.displayName; 
             list.push(history);
           }
-          if (privateChats.get(data.chatId)) {
-            privateChats.set(data.chatId, list);
-            setPrivateChats(new Map(privateChats));
-          }else{
-            privateChats.set(data.chatId, list);
-          }
-        } 
-        else {
+          // if (privateChats.get(data.chatId)) {
+          //   privateChats.delete(data.chatId);
+          // }
+          privateChats.set(data.chatId, list);
+        } else {
           privateChats.set(data.chatId, []);
         }
         setPrivateChats(new Map(privateChats));
@@ -163,7 +157,6 @@ const Chat = () => {
       const res = temp.slice(0).sort((a, b) =>
         b.date.localeCompare(a.date) || b.time.localeCompare(a.time));
       historyList = res
-      countIsRead = res
     }
 
     for (let i = 0; i < payloadData.length; i++) {
@@ -194,71 +187,26 @@ const Chat = () => {
   };
 
   const onPrivateMessage = (payload) => {
-    // var payloadData = JSON.parse(payload.body);
-
-    // let temp = historyList.filter(element => element.chatId === payloadData.chatId)
-    // temp[0].chatHistory.push(payloadData)
-    // let test = historyList.filter(element => element.chatId !== payloadData.chatId)
-    // test.unshift(temp[0])
-    // // historyList.push(payloadData)
-
-    // if (privateChats.get(payloadData.chatId)) {
-    //   privateChats.get(payloadData.chatId).push(payloadData);
-    //   setPrivateChats(new Map(privateChats));
-    // } else {
-    //   let list = [];
-    //   list.push(payloadData);
-    //   privateChats.set(payloadData.chatId, list);
-    //   setPrivateChats(new Map(privateChats));
-    // }
-    // console.log('private message = ', privateChats)
-    // historyList = test
-    // updateAllHistory(payloadData);
-    const chatId = localStorage.getItem('chatId');
     var payloadData = JSON.parse(payload.body);
-    if(chatId == payloadData.chatId){
-       payloadData = {...payloadData,isRead:true}
-    }else{
-       payloadData = {...payloadData}
+
+    let temp = historyList.filter(element => element.chatId === payloadData.chatId)
+    temp[0].chatHistory.push(payloadData)
+    let test = historyList.filter(element => element.chatId !== payloadData.chatId)
+    test.unshift(temp[0])
+    // historyList.push(payloadData)
+
+    if (privateChats.get(payloadData.chatId)) {
+      privateChats.get(payloadData.chatId).push(payloadData);
+      setPrivateChats(new Map(privateChats));
+    } else {
+      let list = [];
+      list.push(payloadData);
+      privateChats.set(payloadData.chatId, list);
+      setPrivateChats(new Map(privateChats));
     }
-    // if(historyList){
-      for (let history of historyList) {
-        if (history) {
-          privateChats.set(history.chatId,history.chatHistory)
-        }
-      }
-      // console.log('check history in private,', historyList.filter((history)=> history.chatId == payloadData.chatId))
-      // console.log('private message all = ' , privateChats)
-      // console.log('private message = ' , privateChats.get(payloadData.chatId))
-      let temp = historyList.filter(element => element.chatId === payloadData.chatId)
-      temp[0].chatHistory.push(payloadData)
-      let test = historyList.filter(element => element.chatId !== payloadData.chatId)
-      test.unshift(temp[0])
-      
-      if (privateChats.get(payloadData.chatId)) {
-         let list = [];
-         let items = [];
-         list = historyList.filter((history)=> history.chatId == payloadData.chatId)
-         items = list[0].chatHistory.map((history)=>{
-          if(history.isRead === false){
-            return {...history,isRead:true}
-          }
-          return history
-         })
-        privateChats.set(payloadData.chatId,items)
-        // privateChats.get(payloadData.chatId).push(payloadData)
-        setPrivateChats(new Map(privateChats));
-      }
-       else { 
-        let list = [];
-        list.push(payloadData);
-        privateChats.set(payloadData.chatId, list);
-        setPrivateChats(new Map(privateChats));
-      }
-      console.log('private message = ', payloadData)
-      historyList = test
-    // }
-    console.log('payload from private =',payloadData)
+    console.log('private message = ', privateChats)
+    historyList = test
+    updateAllHistory(payloadData);
   };
 
   const updateAllHistory = (payload) => {
@@ -266,8 +214,8 @@ const Chat = () => {
       if (history.chatId === payload.chatId) {
         let data = {
           senderName: payload.senderName,
-          receiverName : payload.receiverName,
           message: payload.message,
+          sentDate: payload.sentDate,
         };
         history.chatHistory.push(data);
       }
@@ -301,51 +249,22 @@ const Chat = () => {
     if (stompClient) {
       if (data.type == "sticker") {
         let chatMessage = {
+          type: data.type,
           chatId: chatId,
           senderName: "admin",
-          receiverName : tab.userId,
-          originalContentUrl: null,
-          previewImageUrl: null,
-          type: "sticker",
+          receiverName: tab.userId, //change to uId
           message: `${data.packageId},${data.stickerId}`,
           date: new Date(),
-          isRead: true,
           status: "MESSAGE",
-          displayName : "admin"
+          displayName: "admin",
         };
-   
-        for (let history of historyList) {
-          if (history.chatId === chatId) {
-            history.chatHistory.push(chatMessage);
-          }
-        }
-             if (privateChats.get(chatId)) {
-          let list = [];
-          list = historyList.filter((history)=> history.chatId == chatId)
-          privateChats.set(chatId,list[0].chatHistory)
+        if (privateChats.get(chatId)) {
+          privateChats.get(chatId).push(chatMessage);
           setPrivateChats(new Map(privateChats));
         }
         stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
         setUserData({ ...userData, message: "" });
       }else if(data.type == "image"){
-        let imageHistory = {
-          chatId: chatId,
-          senderName: "admin",
-          receiverName : tab.userId,
-          originalContentUrl: data.message,
-          previewImageUrl: data.message,
-          type: data.type,
-          message: data.message,
-          date: new Date(),
-          isRead: true,
-          status: "MESSAGE",
-          displayName : "admin"
-        };
-        for (let history of historyList) {
-          if (history.chatId === chatId) {
-            history.chatHistory.push(imageHistory);
-          }
-        }
         let chatMessage = {
           type: data.type,
           chatId: chatId,
@@ -356,10 +275,9 @@ const Chat = () => {
           status: "MESSAGE",
           displayName: "admin",
         };
+        console.log(chatMessage)
         if (privateChats.get(chatId)) {
-          let list = [];
-          list = historyList.filter((history)=> history.chatId == chatId)
-          privateChats.set(chatId,list[0].chatHistory)
+          privateChats.get(chatId).push(chatMessage);
           setPrivateChats(new Map(privateChats));
         }
         stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
@@ -367,34 +285,22 @@ const Chat = () => {
       }
       else {
         let chatMessage = {
+          type: "text",
           chatId: chatId,
           senderName: "admin",
-          receiverName : tab.userId,
-          originalContentUrl: null,
-          previewImageUrl: null,
-          type: "text",
+          receiverName: tab.userId, //change to uId
           message: userData.message,
           date: new Date(),
-          isRead: true,
           status: "MESSAGE",
-          displayName : "admin"
+          displayName: "admin",
         };
-        for (let history of historyList) {
-          if (history.chatId === chatId) {
-            history.chatHistory.push(chatMessage);
-          }
-        }
-        setAllHistory(historyList)
         if (privateChats.get(chatId)) {
-          let list = [];
-          list = historyList.filter((history)=> history.chatId == chatId)
-          privateChats.set(chatId,list[0].chatHistory)
-          // privateChats.get(chatId).push(chatMessage)
+          privateChats.get(chatId).push(chatMessage);
           setPrivateChats(new Map(privateChats));
-          console.log('send alls private =', privateChats.get(chatId))
         }
         stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
         setUserData({ ...userData, message: "" });
+        // console.log('send private = ', privateChats)
       }
       // }
     }
@@ -402,14 +308,6 @@ const Chat = () => {
 
   const sendIsRead = (chatId: any, userId: any, index: any) => {
     // historyList[index].chatHistory = historyList[index].chatHistory.filter(element => element.isRead === true);
-    historyList[index].chatHistory = historyList[index].chatHistory.map(element => {
-      if(element.isRead === false){
-        return {...element,isRead:true}
-      }
-      return element
-      // element.isRead === true
-    });
-    console.log('after read' ,historyList[index].chatHistory)
     if (stompClient) {
       var chatMessage = {
         type: "text",
@@ -426,7 +324,6 @@ const Chat = () => {
 
   const tabName = (userId: any, name: any, chatId: any, index: any) => {
     console.log("chatId from tabName = ", chatId)
-    localStorage.setItem('chatId', chatId)
     showHistory(chatId);
     sendIsRead(chatId, userId, index);
     setTab({
@@ -520,9 +417,8 @@ const Chat = () => {
                   </div>
                 )}
                 {isOpen && (
-                  <div className="flex lg:hidden items-center justify-between px-[20px] pt-[30px] h-[40px] ">
-                    <p className="text-[18px] font-medium ">{tab.name && tab.name}</p>
-                    <button onClick={()=>{setTab({userId: "",name: "CHATROOM",chatId: 0,}),setIsOpen(false),localStorage.removeItem("chatId")}}>close</button>
+                  <div className="flex lg:hidden items-center px-[30px] pt-[20px] h-[40px] ">
+                    {tab.name && tab.name}
                   </div>
                 )}
                 <div className=" hidden space-y-[20px] lg:flex flex-col overflow-y-scroll overflow-x-hidden h-[680px]">
@@ -541,12 +437,12 @@ const Chat = () => {
                             );
                           }}
                           className={`w-full member ${tab.chatId === history.chatId && "active"
-                            } text-left relative`}
+                            } text-center relative`}
                           key={index}
                         >
                           {
                             historyList[index].chatHistory.filter(element => element.isRead === false && element.senderName !== "admin").length > 0 &&
-                            <div className={tab.chatId === history.chatId ? "hidden" : "rounded-full bg-[#336699] p-3 h-[4px] w-[14px] absolute right-2 top-2 flex justify-center items-center"}>
+                            <div className="rounded-full bg-[#336699] p-3 h-[4px] w-[14px] absolute right-2 top-2 flex justify-center items-center">
                               <p className="text-white">
                                 {historyList[index].chatHistory.filter(element => element.isRead === false && element.senderName !== "admin").length}
                               </p>
@@ -579,7 +475,7 @@ const Chat = () => {
                           >
                             {
                               historyList[index].chatHistory.filter(element => element.isRead === false && element.senderName !== "admin").length > 0 &&
-                              <div className={tab.chatId === history.chatId ? "hidden" : "rounded-full bg-[#336699] p-3 h-[4px] w-[14px] absolute right-2 top-2 flex justify-center items-center"}>
+                              <div className="rounded-full bg-[#336699] p-3 h-[4px] w-[14px] absolute right-2 top-2 flex justify-center items-center">
                                 <p className="text-white">
                                   {historyList[index].chatHistory.filter(element => element.isRead === false && element.senderName !== "admin").length}
                                 </p>
@@ -759,19 +655,38 @@ const Chat = () => {
             </div>
             <div id="desktop" className="hidden lg:w-[70%] lg:block ">
               <div className=" h-[85%] ">
-                <div className={`h-[95%] ${tab.name === "CHATROOM" ? "bg-gray-400/30" : "bg-white"} rounded-3xl drop-shadow-md  px-[20px]`}>
-                  <div className="h-[15%] flex justify-between mx-auto items-center ">
-                    {(tab.name && tab.name != "CHATROOM") && tab.name}
-                    {(tab.name && tab.name != "CHATROOM") && <button onClick={()=>{setTab({userId: "",name: "CHATROOM",chatId: 0,}),setIsOpen(false)}}>close</button>}
+                <div className="h-[95%] bg-white rounded-3xl drop-shadow-md  px-[20px]">
+                  <div className="h-[15%] mx-auto flex items-center">
+                    {tab.name && tab.name}
                   </div>
                   {tab.name === "CHATROOM" && (
-                    <div className="h-[470px] flex flex-col justify-center items-center">
-                         <div className="text-center flex justify-center bg-[#336699] w-[72px] h-[72px] items-center "><img src="/images/logo.png" alt="" /></div>
-                    <div>
-                          <p className="text-black pt-[14px] cursor-default">
-                            Welcome to Chat Service please select any users to start chating
-                          </p>
-                    </div>
+                    <div className="h-[470px]">
+                      <ul className="overflow-y-auto h-[90%] border-[1px] border-[#336699] rounded-[15px]">
+                        {publicChats.map((chat, index) => (
+                          <li
+                            className={`message ${chat.senderName === userData.username && "self"
+                              }`}
+                            key={index}
+                          >
+                            {chat.senderName !== userData.username && (
+                              <div className="avatar">{chat.senderName}</div>
+                            )}
+                            <div
+                              className={`message-data w-[280px] break-words ${chat.senderName === userData.username && "self"
+                                ? "text-right"
+                                : "text-left"
+                                }`}
+                            >
+                              {chat.message}
+                            </div>
+                            {chat.senderName === userData.username && (
+                              <div className="avatar self">
+                                {chat.senderName}
+                              </div>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   )}
                   {tab.name !== "CHATROOM" && (
@@ -844,7 +759,8 @@ const Chat = () => {
                     className="text-[14px] pl-[24px] ml-[12px]  border border-solid border-gray-300 rounded-full w-[78%] py-3 px-3 text-gray-700 leading-tight focus:shadow-outline bg-gray-100 bg-clip-padding transition ease-in-out focus:text-gray-700 focus:border-blue-600 focus:outline-none"
                     type="text"
                     placeholder="ข้อความ ....."
-                    disabled={true}
+                    value={userData.message}
+                    onChange={handleMessage}
                   />
                   <div className="ml-[10px]">
                     <button >
