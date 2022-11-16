@@ -196,12 +196,14 @@ const Chat = () => {
   const onPrivateMessage = (payload) => {
     const chatId = localStorage.getItem('chatId');
     var payloadData = JSON.parse(payload.body);
+    
     if(chatId == payloadData.chatId){
        payloadData = {...payloadData,isRead:true}
     }else{
        payloadData = {...payloadData}
     }
-    // if(historyList){
+    console.log('payload = ',payloadData)
+    if(historyList){
       for (let history of historyList) {
         if (history) {
           privateChats.set(history.chatId,history.chatHistory)
@@ -210,24 +212,52 @@ const Chat = () => {
       // console.log('check history in private,', historyList.filter((history)=> history.chatId == payloadData.chatId))
       // console.log('private message all = ' , privateChats)
       // console.log('private message = ' , privateChats.get(payloadData.chatId))
-      let temp = historyList.filter(element => element.chatId === payloadData.chatId)
-      temp[0].chatHistory.push(payloadData)
-      let test = historyList.filter(element => element.chatId !== payloadData.chatId)
-      test.unshift(temp[0])
+
+      // let temp = historyList.filter(element => element.chatId === payloadData.message.chatId)
+      // temp[0].chatHistory.push(payloadData)
+      // let test = historyList.filter(element => element.chatId !== payloadData.message.chatId)
+      // test.unshift(temp[0])
       
       if (privateChats.get(payloadData.chatId)) {
          let list = [];
-         let items = [];
-         list = historyList.filter((history)=> history.chatId == payloadData.chatId)
-         items = list[0].chatHistory.map((history)=>{
-          if(history.isRead === false){
-            return {...history,isRead:true}
+        //  let items = [];
+        //  list = historyList.filter((history)=> history.chatId == payloadData.chatId)
+        //  items = list[0].chatHistory.map((history)=>{
+        //   if(history.isRead === false){
+        //     return {...history,isRead:true}
+        //   }
+        //   return history
+        //  })
+        list = payloadData.history.map((items)=>{
+          let data = {
+            chatId: items.chatId,
+            senderName: items.senderName,
+            receiverName: items.receiverName,
+            type: items.type,
+            message: items.message,
+            date: items.sentDate,
+            status: "MESSAGE",
+            displayName: items.senderName,
+            isRead: items.isRead == 0 ? false : true,
+            originalContentUrl : items.originalContentUrl,
+            previewImageUrl : items.previewImageUrl
           }
-          return history
-         })
-        privateChats.set(payloadData.chatId,items)
+          if(items){
+            return {...data}
+          }
+          return items
+        })
+        privateChats.set(payloadData.message.chatId,list)
         // privateChats.get(payloadData.chatId).push(payloadData)
         setPrivateChats(new Map(privateChats));
+        if(historyList){
+          for(let history of historyList){
+            if(history.chatId === payloadData.message.chatId){
+              history.chatHistory = list
+              console.log('after set private',history.chatHistory)
+            }
+          }
+         }
       }
        else { 
         let list = [];
@@ -236,8 +266,9 @@ const Chat = () => {
         setPrivateChats(new Map(privateChats));
       }
       console.log('private message = ', payloadData)
-      historyList = test
-    // }
+      // historyList = test
+    }
+    
     console.log('payload from private =',payloadData)
   };
 
@@ -359,22 +390,21 @@ const Chat = () => {
           status: "MESSAGE",
           displayName : "admin"
         };
-        for (let history of historyList) {
-          if (history.chatId === chatId) {
-            history.chatHistory.push(chatMessage);
-          }
-        }
+        // for (let history of historyList) {
+        //   if (history.chatId === chatId) {
+        //     history.chatHistory.push(chatMessage);
+        //   }
+        // }
         setAllHistory(historyList)
-        if (privateChats.get(chatId)) {
-          let list = [];
-          list = historyList.filter((history)=> history.chatId == chatId)
-          privateChats.set(chatId,list[0].chatHistory)
-          // privateChats.get(chatId).push(chatMessage)
-          setPrivateChats(new Map(privateChats));
-          console.log('send alls private =', privateChats.get(chatId))
-        }
+        // if (privateChats.get(chatId)) {
+        //   let list = [];
+        //   list = historyList.filter((history)=> history.chatId == chatId)
+        //   privateChats.set(chatId,list[0].chatHistory)
+        //   // privateChats.get(chatId).push(chatMessage)
+        //   setPrivateChats(new Map(privateChats));
+        //   console.log('send alls private =', privateChats.get(chatId))
+        // }
         stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
-        stompClient.subscribe("/chatroom/public", onMessageReceived);
         setUserData({ ...userData, message: "" });
       }
       // }
