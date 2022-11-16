@@ -217,9 +217,37 @@ const Chat = () => {
       // temp[0].chatHistory.push(payloadData)
       // let test = historyList.filter(element => element.chatId !== payloadData.message.chatId)
       // test.unshift(temp[0])
-      
+      let list = [];
+      list = payloadData.history.map((items)=>{
+        let data = {
+          chatId: items.chatId,
+          senderName: items.senderName,
+          receiverName: items.receiverName,
+          type: items.type,
+          message: items.message,
+          date: items.sentDate,
+          status: "MESSAGE",
+          displayName: payloadData.message.displayName,
+          isRead: items.isRead == 0 ? false : true,
+          originalContentUrl : items.originalContentUrl,
+          previewImageUrl : items.previewImageUrl
+        }
+        if(items){
+          return {...data}
+        }
+        return items
+      })
+      if(historyList){
+        for(let history of historyList){
+          if(history.chatId === payloadData.message.chatId){
+            history.chatHistory = list
+            console.log('after set private',history.chatHistory)
+          }
+        }
+       }
       if (privateChats.get(payloadData.chatId)) {
-         let list = [];
+        privateChats.set(payloadData.message.chatId,list)
+        setPrivateChats(new Map(privateChats));
         //  let items = [];
         //  list = historyList.filter((history)=> history.chatId == payloadData.chatId)
         //  items = list[0].chatHistory.map((history)=>{
@@ -228,36 +256,7 @@ const Chat = () => {
         //   }
         //   return history
         //  })
-        list = payloadData.history.map((items)=>{
-          let data = {
-            chatId: items.chatId,
-            senderName: items.senderName,
-            receiverName: items.receiverName,
-            type: items.type,
-            message: items.message,
-            date: items.sentDate,
-            status: "MESSAGE",
-            displayName: items.senderName,
-            isRead: items.isRead == 0 ? false : true,
-            originalContentUrl : items.originalContentUrl,
-            previewImageUrl : items.previewImageUrl
-          }
-          if(items){
-            return {...data}
-          }
-          return items
-        })
-        privateChats.set(payloadData.message.chatId,list)
         // privateChats.get(payloadData.chatId).push(payloadData)
-        setPrivateChats(new Map(privateChats));
-        if(historyList){
-          for(let history of historyList){
-            if(history.chatId === payloadData.message.chatId){
-              history.chatHistory = list
-              // console.log('after set private',history.chatHistory)
-            }
-          }
-         }
       }
        else { 
         let list = [];
@@ -269,7 +268,6 @@ const Chat = () => {
       // historyList = test
     }
     
-    // console.log('payload from private =',payloadData)
   };
 
   const updateAllHistory = (payload) => {
@@ -396,14 +394,14 @@ const Chat = () => {
         //   }
         // }
         setAllHistory(historyList)
-        // if (privateChats.get(chatId)) {
-        //   let list = [];
-        //   list = historyList.filter((history)=> history.chatId == chatId)
-        //   privateChats.set(chatId,list[0].chatHistory)
-        //   // privateChats.get(chatId).push(chatMessage)
-        //   setPrivateChats(new Map(privateChats));
-        //   console.log('send alls private =', privateChats.get(chatId))
-        // }
+        if (privateChats.get(chatId)) {
+          let list = [];
+          list = historyList.filter((history)=> history.chatId == chatId)
+          privateChats.set(chatId,list[0].chatHistory)
+          // privateChats.get(chatId).push(chatMessage)
+          setPrivateChats(new Map(privateChats));
+          console.log('send alls private =', privateChats.get(chatId))
+        }
         stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
         setUserData({ ...userData, message: "" });
       }
