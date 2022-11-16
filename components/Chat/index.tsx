@@ -202,7 +202,7 @@ const Chat = () => {
     }else{
        payloadData = {...payloadData}
     }
-    console.log('payload = ',payloadData)
+    // console.log('payload = ',payloadData)
     if(historyList){
       for (let history of historyList) {
         if (history) {
