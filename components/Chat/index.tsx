@@ -116,7 +116,7 @@ const Chat = () => {
   const showHistory = (chatId: any) => {
     
     if (historyList) {
-      console.log('history list' , historyList)
+      // console.log('history list' , historyList)
       var data;
       historyList.map((item, index) => {
         if (item.chatId === chatId) {
@@ -125,7 +125,7 @@ const Chat = () => {
       });
       
       if (data) {
-        console.log('show history check private chat = ',privateChats.get(data.chatId))
+        // console.log('show history check private chat = ',privateChats.get(data.chatId))
         if (data.chatHistory.length > 0) {
           let list = [];
           for (let history of data.chatHistory) { // แยก sender กับ reciever
@@ -145,7 +145,7 @@ const Chat = () => {
         setPrivateChats(new Map(privateChats));
       }
     }
-    console.log('click tab private = ', privateChats)
+    // console.log('click tab private = ', privateChats)
   };
 
   const onMessageReceived = (payload: any) => {
@@ -190,7 +190,7 @@ const Chat = () => {
       );
       privateChats.set(payloadData[i].chatId, tempList);
     }
-    console.log('show history = ', privateChats)
+    // console.log('show history = ', privateChats)
   };
 
   const onPrivateMessage = (payload) => {
@@ -254,7 +254,7 @@ const Chat = () => {
           for(let history of historyList){
             if(history.chatId === payloadData.message.chatId){
               history.chatHistory = list
-              console.log('after set private',history.chatHistory)
+              // console.log('after set private',history.chatHistory)
             }
           }
          }
@@ -265,11 +265,11 @@ const Chat = () => {
         privateChats.set(payloadData.chatId, list);
         setPrivateChats(new Map(privateChats));
       }
-      console.log('private message = ', payloadData)
+      // console.log('private message = ', payloadData)
       // historyList = test
     }
     
-    console.log('payload from private =',payloadData)
+    // console.log('payload from private =',payloadData)
   };
 
   const updateAllHistory = (payload) => {
