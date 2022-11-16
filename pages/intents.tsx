@@ -72,10 +72,6 @@ const Intents = () => {
   });
   const [seq, setSeq] = useState(0);
 
-  useEffect(()=>{
-    
-  },[])
-
   useEffect(() => {
   //   axios.get("/api/bot/getAllBot", { headers:headers })
   // .then((response => {
@@ -279,7 +275,7 @@ const Intents = () => {
     const removeItem = response.filter((rs) => {
       return rs.seq !== seq;
     });
-    setIsEditingExpression(false);
+    setIsEditingResponse(false);
     setResponse(removeItem);
   };
   const handleExpressionDelete = (name) => {
@@ -362,6 +358,9 @@ const Intents = () => {
     setResponseInput(e.target.value);
   };
   const handleFormNewCommands = (e: any) => {
+    setIsEditingExpression(false);
+    setIsEditingResponse(false);
+    setIsEditingCommand(false);
     setErrorCommand({ status: false, msg: "" });
     e.preventDefault();
     if (topic !== "") {

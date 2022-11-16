@@ -209,7 +209,7 @@ const CreateEdit = ({ setIsOpen, isOpen, editData, setIsEdit, isEdit }) => {
         </div>
         <form onSubmit={handleSubmit(onSubmit)}>
         <div className="bg-white w-full min-h-[380px] mt-[20px] rounded-[5px]">
-          <div className="border-b-[1.4px] h-[40px] rounded-[5px] pl-[30px] md:pl-[100px] pt-[10px] text-[#919191]">
+          <div className="border-b-[1.4px] min-h-[40px] rounded-[5px] pl-[30px] md:pl-[100px] pt-[10px] text-[#919191]">
             <h1>รายละเอียดข่าว</h1>
               <div>
                 <input
@@ -224,25 +224,29 @@ const CreateEdit = ({ setIsOpen, isOpen, editData, setIsEdit, isEdit }) => {
                   <label className="text-black font-bold tracking-wider flex w-[120px]">
                     หัวข้อข่าว <span className="text-red-400">*</span>
                   </label>
+                  <div className="w-full flex flex-col">
                   <input
                     className="text-body mt-[6px] shadow appearance-none border border-black  rounded w-[80%] mx-auto py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     type="text"
                     placeholder="กรอกหัวข้อข่าว"
                     {...register("title", {
                       value: isEdit ? editData.title : "",
-                      required: "Title is Required",
+                      required: "กรุณากรอกหัวข้อข่าว",
                     })}
                   />
                   {errors.title && (
-                    <small className="text-red-500">
+                    <small className="text-red-500 flex justify-center pt-[10px]">
                       {errors.title.message}
                     </small>
                   )}
+                  </div>
+                 
                 </div>
                 <div className="pb-[20px] flex">
                   <label className="text-black font-bold tracking-wider flex w-[120px]">
                     รายละเอียด <span className="text-red-400">*</span>
                   </label>
+                  <div className="w-full flex flex-col">
                   <textarea
                     className=" text-body mt-[10px] tracking-wider shadow appearance-none border border-black rounded w-[80%] mx-auto py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline "
                     rows={8}
@@ -253,10 +257,12 @@ const CreateEdit = ({ setIsOpen, isOpen, editData, setIsEdit, isEdit }) => {
                     })}
                   />
                   {errors.detail && (
-                    <small className="text-red-500">
+                    <small className="text-red-500 flex justify-center pt-[10px]">
                       {errors.detail.message}
                     </small>
                   )}
+                  </div>
+                  
                 </div>
               </div>
             

@@ -195,13 +195,8 @@ const Chat = () => {
 
   const onPrivateMessage = (payload) => {
     const chatId = localStorage.getItem('chatId');
+    const userId = localStorage.getItem('userId');
     var payloadData = JSON.parse(payload.body);
-    
-    if(chatId == payloadData.chatId){
-       payloadData = {...payloadData,isRead:true}
-    }else{
-       payloadData = {...payloadData}
-    }
     console.log('payload = ',payloadData)
     if(historyList){
       for (let history of historyList) {
@@ -209,14 +204,6 @@ const Chat = () => {
           privateChats.set(history.chatId,history.chatHistory)
         }
       }
-      // console.log('check history in private,', historyList.filter((history)=> history.chatId == payloadData.chatId))
-      // console.log('private message all = ' , privateChats)
-      // console.log('private message = ' , privateChats.get(payloadData.chatId))
-
-      // let temp = historyList.filter(element => element.chatId === payloadData.message.chatId)
-      // temp[0].chatHistory.push(payloadData)
-      // let test = historyList.filter(element => element.chatId !== payloadData.message.chatId)
-      // test.unshift(temp[0])
       let list = [];
       list = payloadData.history.map((items)=>{
         let data = {
@@ -228,7 +215,7 @@ const Chat = () => {
           date: items.sentDate,
           status: "MESSAGE",
           displayName: payloadData.message.displayName,
-          isRead: items.isRead == 0 ? false : true,
+          isRead: chatId == payloadData.message.chatId ? true : (items.isRead == 0 ? false : true),
           originalContentUrl : items.originalContentUrl,
           previewImageUrl : items.previewImageUrl
         }
@@ -237,26 +224,28 @@ const Chat = () => {
         }
         return items
       })
-      if(historyList){
+      // if(chatId == payloadData.message.chatId){
+      //   sendIsRead(chatId,userId,0)
+      // }
+      // if(historyList){
         for(let history of historyList){
           if(history.chatId === payloadData.message.chatId){
-            history.chatHistory = list
+            console.log('list',list)
+             let temp = historyList.filter(element => element.chatId === payloadData.message.chatId)
+             temp[0].chatHistory = list
+             let test = historyList.filter(element => element.chatId !== payloadData.message.chatId)
+             test.unshift(temp[0])
+            historyList = test
             console.log('after set private',history.chatHistory)
           }
         }
-       }
+      //  } 
+      if(chatId == payloadData.message.chatId){
+        sendIsRead(chatId,userId,0)
+      }
       if (privateChats.get(payloadData.chatId)) {
         privateChats.set(payloadData.message.chatId,list)
         setPrivateChats(new Map(privateChats));
-        //  let items = [];
-        //  list = historyList.filter((history)=> history.chatId == payloadData.chatId)
-        //  items = list[0].chatHistory.map((history)=>{
-        //   if(history.isRead === false){
-        //     return {...history,isRead:true}
-        //   }
-        //   return history
-        //  })
-        // privateChats.get(payloadData.chatId).push(payloadData)
       }
        else { 
         let list = [];
@@ -410,13 +399,11 @@ const Chat = () => {
   };
 
   const sendIsRead = (chatId: any, userId: any, index: any) => {
-    // historyList[index].chatHistory = historyList[index].chatHistory.filter(element => element.isRead === true);
     historyList[index].chatHistory = historyList[index].chatHistory.map(element => {
       if(element.isRead === false){
         return {...element,isRead:true}
       }
       return element
-      // element.isRead === true
     });
     console.log('after read' ,historyList[index].chatHistory)
     if (stompClient) {
@@ -436,6 +423,7 @@ const Chat = () => {
   const tabName = (userId: any, name: any, chatId: any, index: any) => {
     console.log("chatId from tabName = ", chatId)
     localStorage.setItem('chatId', chatId)
+    localStorage.setItem('userId', userId)
     showHistory(chatId);
     sendIsRead(chatId, userId, index);
     setTab({
@@ -634,8 +622,8 @@ const Chat = () => {
                                 >
                                   {(chat.type==="image" && chat.originalContentUrl == null) && <img id="image" className="cursor-pointer" onClick={()=>openFullscreen(chat.message)} src={`${chat.message}`} alt="image"/>}
                                   {(chat.type==="image" && chat.originalContentUrl != null) && <img id="image" className="cursor-pointer" onClick={()=>openFullscreen(chat.originalContentUrl)} src={`${chat.originalContentUrl}`} alt="image"/>}
-                                  {(chat.type === "message" || chat.type === "text") &&  <span className={`myEmoji flex ${chat.senderName === userData.username ? 'float-right' : '' }`} dangerouslySetInnerHTML={{__html: chat.message}}></span>}
-                                  {chat.type === "sticker" && <img onError={e=>{e.currentTarget.src = "/sticker/sorry.jpg";}} src={`/sticker/${packageId}/${stickerId}.${packageId === "446" ? 'png' : 'jpg'}`} className={`${chat.senderName === userData.username ? 'float-right' : ''}`} alt="sticker"></img>}
+                                  {(chat.type === "message" || chat.type === "text") &&  <span className={`myEmoji pointer-events-none flex ${chat.senderName === userData.username ? 'float-right' : '' }`} dangerouslySetInnerHTML={{__html: chat.message}}></span>}
+                                  {chat.type === "sticker" && <img onError={e=>{e.currentTarget.src = "/sticker/sorry.jpg";}} src={`/sticker/${packageId}/${stickerId}.${packageId === "446" ? 'png' : 'jpg'}`} className={` pointer-events-none ${chat.senderName === userData.username ? 'float-right' : ''}`} alt="sticker"></img>}
 
                                 </div>
                                 {chat.senderName === userData.username && (
@@ -811,10 +799,10 @@ const Chat = () => {
                                     : "text-left"
                                     }`}
                                 >
-                                  {(chat.type==="image" && chat.originalContentUrl == null) && <img id="image" className="cursor-pointer" onClick={()=>openFullscreen(chat.message)} src={`${chat.message}`} alt="image"/>}
-                                  {(chat.type==="image" && chat.originalContentUrl != null) && <img id="image" className="cursor-pointer" onClick={()=>openFullscreen(chat.originalContentUrl)} src={`${chat.originalContentUrl}`} alt="image"/>}
-                                  {(chat.type === "message" || chat.type === "text") &&  <span className={`myEmoji flex ${chat.senderName === userData.username ? 'float-right' : '' }`} dangerouslySetInnerHTML={{__html: chat.message}}></span>}
-                                  {chat.type === "sticker" && <img onError={e=>{e.currentTarget.src = "/sticker/sorry.jpg";}} src={`/sticker/${packageId}/${stickerId}.${packageId === "446" ? 'png' : 'jpg'}`} className={`${chat.senderName === userData.username ? 'float-right' : ''}`} alt="sticker"></img>}
+                                  {(chat.type==="image" && chat.originalContentUrl == null) && <img id="image" className="cursor-pointer flex float-right" onClick={()=>openFullscreen(chat.message)} src={`${chat.message}`} alt="image"/>}
+                                  {(chat.type==="image" && chat.originalContentUrl != null) && <img id="image" className="cursor-pointer flex float-right " onClick={()=>openFullscreen(chat.originalContentUrl)} src={`${chat.originalContentUrl}`} alt="image"/>}
+                                  {(chat.type === "message" || chat.type === "text") &&  <span className={`myEmoji pointer-events-none flex ${chat.senderName === userData.username ? 'float-right' : '' }`} dangerouslySetInnerHTML={{__html: chat.message}}></span>}
+                                  {chat.type === "sticker" && <img onError={e=>{e.currentTarget.src = "/sticker/sorry.jpg";}} src={`/sticker/${packageId}/${stickerId}.${packageId === "446" ? 'png' : 'jpg'}`} className={`pointer-events-none ${chat.senderName === userData.username ? 'float-right' : ''}`} alt="sticker"></img>}
 
                                 </div>
                                 {(chat.senderName === userData.username && (chat.message != "" || chat.message != null)) && (
@@ -919,17 +907,14 @@ const Chat = () => {
                       {openDes && count === 2 && <div className="absolute truncate w-[80px] rounded-[6px] top-[-40px] left-[-20px] bg-[#336699] text-white py-[4px] text-center">image</div>}
                     </button>
                   </div>
-                  <div className="overflow-y-scroll text-[14px] relative pl-[24px] ml-[12px] flex  border border-solid border-gray-300 rounded-full w-[78%] py-2 px-2 text-gray-700 leading-tight focus:shadow-outline bg-gray-100 bg-clip-padding transition ease-in-out focus:text-gray-700 focus:border-blue-600 focus:outline-none">
+                  <div className=" text-[14px] relative pl-[24px] ml-[12px] flex  border border-solid border-gray-300 rounded-full w-[78%] py-2 px-2 text-gray-700 leading-tight focus:shadow-outline bg-gray-100 bg-clip-padding transition ease-in-out focus:text-gray-700 focus:border-blue-600 focus:outline-none">
                     {/* markup */}
                     <ContentEditable 
                     placeholder="ข้อความ ....."  className="textBox text-[14px] rounded-full w-full py-3 px-3 text-gray-700 leading-tight focus:shadow-outline bg-gray-100 bg-clip-padding transition ease-in-out focus:text-gray-700 focus:border-blue-600 focus:outline-none" 
                     html={userData.message} 
                     onChange={handleMessage}
-                     onKeyDown={(e)=> {
-                        if(e.key === 'Enter' && userData.message!="") {
-                          sendPrivateValue(tab.chatId, userData)
-                        }
-                      }} 
+                    onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault() }}
+                    onKeyDown={(e)=>{e.code === 'Space' && e.preventDefault()}}
                       />
                   </div>
                   <div className="ml-[10px]">
