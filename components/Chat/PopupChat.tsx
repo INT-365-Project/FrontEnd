@@ -92,7 +92,7 @@ const PopupChat = ({
   };
 
   return (
-    <Popup isChat={true} >
+    <Popup isImage={false} isChat={true} >
       <div className="w-full">
         <div className="bg-[#53a1f0] h-[56px] flex items-center">
           {isHasImage &&

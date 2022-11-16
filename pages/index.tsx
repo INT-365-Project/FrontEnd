@@ -3,8 +3,6 @@ import InsiderNews from '../components/InsiderNews'
 import Logs from '../components/Logs'
 import Reports from '../components/Reports'
 import { useAppContext } from './_app'
-
-
 export default function Home() {
   const {adminUser} = useAppContext()
   return (
