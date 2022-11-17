@@ -2,6 +2,7 @@ import axios from "axios";
 import Head from "next/head";
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import FlexMessage from "../components/common/FlexMessage";
 import BotServices from "../services/bot";
 
 let getToken = null
@@ -36,6 +37,9 @@ const Intents = () => {
       topic: "นักศึกษาใหม่",
     },
   ];
+  const [bubbleJson,setBubbleJson] = useState(null)
+  const [bubbleText,setBubbleText] = useState({topic:"",content:"",button:""})
+  const [index,setIndex] = useState(1)
   const [editCommandInput, setEditCommandInput] = useState("");
   const [newCommand, setNewCommand] = useState("");
   const [isAddCommand, setIsAddCommand] = useState(false);
@@ -73,13 +77,6 @@ const Intents = () => {
   const [seq, setSeq] = useState(0);
 
   useEffect(() => {
-  //   axios.get("/api/bot/getAllBot", { headers:headers })
-  // .then((response => {
-  //   console.log(response.data);
-  // })
-  // .catch((error) => {
-  //   console.log(error);
-  // })
     BotServices.getAllBot()
       .then((res) => {
         setAllBot(res.data.responseData.commands);
@@ -118,6 +115,177 @@ const Intents = () => {
     setIsFinish(false);
   }, [isFinish]);
 
+  // const handleFormBubbleText = (e: any) => {
+  //   e.preventDefault();
+  //   if (bubbleText.topic !== "" && bubbleText.content !== "" && bubbleText.button !== "") {
+  //     const data ={
+  //         line: {
+  //           type: "flex",
+  //           altText: "Flex Message",
+  //           contents: {
+  //             type: "bubble",
+  //             hero: {
+  //               type: "image",
+  //               url: "https://www.sit.kmutt.ac.th/wp-content/uploads/2018/03/IMG_3452.jpg",
+  //               size: "full",
+  //               aspectRatio: "20:13",
+  //               aspectMode: "cover"
+  //             },
+  //             body: {
+  //               type: "box",
+  //               layout: "vertical",
+  //               spacing: "sm",
+  //               contents: [
+  //                 {
+  //                   type: "text",
+  //                   text: bubbleText.topic,
+  //                   weight: "bold",
+  //                   size: "md",
+  //                   wrap: true,
+  //                   contents: []
+  //                 },
+  //                 {
+  //                   type: "text",
+  //                   text: bubbleText.content,
+  //                   weight: "regular",
+  //                   wrap: true,
+  //                   contents: []
+  //                 }
+  //               ]
+  //             },
+  //             footer: {
+  //               type: "box",
+  //               layout: "vertical",
+  //               spacing: "sm",
+  //               contents: [
+  //                 {
+  //                   type: "button",
+  //                   action: {
+  //                     type: "message",
+  //                     label: bubbleText.button,
+  //                     text: bubbleText.button
+  //                   },
+  //                   style: "primary"
+  //                 }
+  //               ]
+  //             }
+  //           }
+  //         }
+  //     }
+  //     setBubbleJson(data)
+  //   }
+
+  //   setBubbleText({topic:"",content:"",button:""});
+  // };
+
+  const handlerBubbleTopicResponse = (e:any) =>{
+      setBubbleText({...bubbleText,topic:e.target.value});
+  }
+  const handlerBubbleContentResponse = (e:any) =>{
+      setBubbleText({...bubbleText,content:e.target.value});
+  }
+
+  const handlerBubbleButtonResponse = (e:any) =>{
+      setBubbleText({...bubbleText,button:e.target.value});
+  }
+
+  const sendIntentsWithBubble =  () =>{
+    if (bubbleText.topic !== "" && bubbleText.content !== "" && bubbleText.button !== "") {
+      const data ={
+          line: {
+            type: "flex",
+            altText: "Flex Message",
+            contents: {
+              type: "bubble",
+              hero: {
+                type: "image",
+                url: "https://www.sit.kmutt.ac.th/wp-content/uploads/2018/03/IMG_3452.jpg",
+                size: "full",
+                aspectRatio: "20:13",
+                aspectMode: "cover"
+              },
+              body: {
+                type: "box",
+                layout: "vertical",
+                spacing: "sm",
+                contents: [
+                  {
+                    type: "text",
+                    text: bubbleText.topic,
+                    weight: "bold",
+                    size: "md",
+                    wrap: true,
+                    contents: []
+                  },
+                  {
+                    type: "text",
+                    text: bubbleText.content,
+                    weight: "regular",
+                    wrap: true,
+                    contents: []
+                  }
+                ]
+              },
+              footer: {
+                type: "box",
+                layout: "vertical",
+                spacing: "sm",
+                contents: [
+                  {
+                    type: "button",
+                    action: {
+                      type: "message",
+                      label: bubbleText.button,
+                      text: bubbleText.button
+                    },
+                    style: "primary"
+                  }
+                ]
+              }
+            }
+          }
+      }
+      Swal.fire({
+        title: "ยืนยันการเพิ่มแก้ไข Bot Detect",
+        text: "เมื่อทำการยืนยัน ระบบจะทำการส่งข้อมูล",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonColor: "#d33",
+        confirmButtonColor: "#3085d6",
+        cancelButtonText: "ยกเลิก",
+        confirmButtonText: "ยืนยัน",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const items = {
+            topic: newCommand != "" ? newCommand : topic,
+            name: name != "" ? name : "",
+            expressions: expressions,
+            responses:  data,
+          };
+          commands.push(items);
+          if (commands != null) {
+            const intents = {
+              commands: commands,
+            };
+            console.log(intents);
+            setCommands([]);
+            setBubbleText({topic:"",content:"",button:""});
+            setExpressionInput("")
+            setTopic("");
+          }
+          Swal.fire(
+            "ระบบดำเนินการเสร็จสิ้น",
+            "ข้อมูลของคุณได้ถูกเพิ่มหรือแก้ไข้แล้ว",
+            "success"
+          );
+          // location.reload();
+        }
+      })
+   
+    }
+    
+  }
+
   const sendIntents = () => {
     if (expressions.length > 0 && response.length > 0 && topic != "") {
       if (expressions.length != 0 || response.length != 0) {
@@ -140,7 +308,7 @@ const Intents = () => {
                 topic: newCommand != "" ? newCommand : topic,
                 name: name != "" ? name : "",
                 expressions: expressions,
-                responses: response,
+                responses: index === 1 ? response : bubbleJson,
               };
               commands.push(data);
               if (commands != null) {
@@ -148,16 +316,6 @@ const Intents = () => {
                   commands: commands,
                 };
                 console.log(intents);
-                // axios.post('/api/bot/createOrUpdateBot', {data:intents},{
-                //   headers:headers
-                // }
-                // )
-                // .then(function (response) {
-                //   console.log(response);
-                // })
-                // .catch(function (error) {
-                //   console.log(error);
-                // });
                 BotServices.storeCommand(intents)
                   .then((res) => {
                     console.log(res);
@@ -756,15 +914,53 @@ const Intents = () => {
         </div>
         <div className="flex min-h-[80px]  bg-white rounded-[10px] shadow-lg mt-[30px] pb-[30px]">
           <div className=" pt-[15px] w-full">
-            <h1 className="text-[14px] text-black pl-[40px] border-b border-gray-300 pb-[10px]">
-              <span className="border-b border-[#336699] uppercase">
+            <h1 className="text-[14px] text-black pl-[40px] border-b border-gray-300 pb-[10px] space-x-4">
+              <button onClick={()=>setIndex(1)} className={`border-b ${index==1 && "border-[#336699]"}  uppercase`}>
                 Default
-              </span>
+              </button>
+              {/* <button onClick={()=>setIndex(2)} className={`border-b ${index==2 && "border-[#336699]"}  uppercase`}>
+                Bubble
+              </button> */}
             </h1>
+            {
+            index == 2 && <div className="mx-[20px]  md:mx-[40px]">
+            <FlexMessage bubbleText={bubbleText} />
+            </div>
+            }
             <div className="min-h-[40px] mx-[20px]  md:mx-[40px] border border-[#919191] mt-[20px] ">
               <div className="w-full h-[46px] bg-[#EBEBEB] px-[24px] flex items-center">
-                <p className="text-[16px]">Text Response</p>
+                 <p className="text-[16px]">Text Response</p>
+                {/* {index == 2 && <p className="text-[16px]">Custom Payload</p>} */}
               </div>
+              {/* {
+                index == 2 && 
+                <>
+                <form onSubmit={handleFormBubbleText} >
+                <input
+                  type="text"
+                  className="pl-[10px] pt-[10px]  w-full appearance-none focus:outline-none focus:shadow-outline text-gray-900 "
+                  placeholder="Enter Topic Response"
+                  value={bubbleText.topic}
+                  onChange={handlerBubbleTopicResponse}
+                />
+                <input
+                  type="text"
+                  className="pl-[10px] pt-[10px]  w-full appearance-none focus:outline-none focus:shadow-outline text-gray-900 "
+                  placeholder="Enter Content Response"
+                  value={bubbleText.content}
+                  onChange={handlerBubbleContentResponse}
+                />
+                <input
+                  type="text"
+                  className="pl-[10px] pt-[10px]  w-full appearance-none focus:outline-none focus:shadow-outline text-gray-900 "
+                  placeholder="Enter Button Response"
+                  value={bubbleText.button}
+                  onChange={handlerBubbleButtonResponse}
+                />
+                </form> 
+                </>
+              } */}
+              <>
               <form onSubmit={handleFormResponse} className="flex">
                 <span className="flex items-center justify-center mx-auto h-[40px] bg-[#EBEBEB] w-[40px]">
                   1
@@ -874,6 +1070,7 @@ const Intents = () => {
                   }
                 })}
               </ul>
+              </>
             </div>
             {errorResponse.status && (
               <p className="text-red-400 pt-[10px] pl-[20px]">
@@ -882,7 +1079,7 @@ const Intents = () => {
             )}
           </div>
         </div>
-
+        
         <button
           onClick={() => sendIntents()}
           className=" flex justify-between items-center space-x-[10px] text-white border-[2px] md:px-[14px] py-[18px] transition-all duration-300 bg-[#336699] rounded-[5px] h-[50%] p-1 mt-[30px]"

@@ -549,8 +549,39 @@ const Chat = () => {
                               </p>
                             </div>
                           }
-
-                          {history.displayName}
+                          <div>
+                            <p className="font-bold"> 
+                            {history.displayName}
+                            </p>
+                          <p className="truncate w-[90%]  text-[14px]">{(historyList[index].chatHistory[historyList[index].chatHistory.length-1].type == "text" && !historyList[index].chatHistory[historyList[index].chatHistory.length-1].message.includes('img')) && 
+                          <>
+                          {historyList[index].chatHistory[historyList[index].chatHistory.length-1].senderName === "admin" && <span>คุณ:</span>  }
+                          <span>{historyList[index].chatHistory[historyList[index].chatHistory.length-1].message}</span>
+                          </>
+                          }
+                           </p>
+                           <p className="truncate  text-[14px]">{(historyList[index].chatHistory[historyList[index].chatHistory.length-1].type == "image") && 
+                          <>
+                          {historyList[index].chatHistory[historyList[index].chatHistory.length-1].senderName === "admin" && <span>คุณ:</span> }
+                          รูปภาพ
+                          </>
+                          }
+                           </p>
+                           <p className="truncate text-[14px]">{(historyList[index].chatHistory[historyList[index].chatHistory.length-1].type == "sticker") && 
+                          <>
+                          {historyList[index].chatHistory[historyList[index].chatHistory.length-1].senderName === "admin" && <span>คุณ:</span> }
+                          สติ๊กเกอร์
+                          </>
+                          }
+                           </p>
+                           <p className="truncate text-[14px]">{(historyList[index].chatHistory[historyList[index].chatHistory.length-1].type == "text" && historyList[index].chatHistory[historyList[index].chatHistory.length-1].message.includes('img')) && 
+                          <>
+                          {historyList[index].chatHistory[historyList[index].chatHistory.length-1].senderName === "admin" && <span>คุณ:</span> }
+                          อีโมจิ
+                          </>
+                          }
+                           </p>
+                          </div>
                         </button>
                       );
                     })}
@@ -571,18 +602,51 @@ const Chat = () => {
                               );
                             }}
                             className={`member relative ${tab.chatId === history.chatId && "active"
-                              } text-center`}
+                              } `}
                             key={index}
                           >
                             {
                               historyList[index].chatHistory.filter(element => element.isRead === false && element.senderName !== "admin").length > 0 &&
                               <div className={tab.chatId === history.chatId ? "hidden" : "rounded-full bg-[#336699] p-3 h-[4px] w-[14px] absolute right-2 top-2 flex justify-center items-center"}>
                                 <p className="text-white">
+
                                   {historyList[index].chatHistory.filter(element => element.isRead === false && element.senderName !== "admin").length}
                                 </p>
                               </div>
                             }
+                             <div>
+                            <p className="font-bold"> 
                             {history.displayName}
+                            </p>
+                          <p className="truncate w-[90%]  text-[14px]">{(historyList[index].chatHistory[historyList[index].chatHistory.length-1].type == "text" && !historyList[index].chatHistory[historyList[index].chatHistory.length-1].message.includes('img')) && 
+                          <>
+                          {historyList[index].chatHistory[historyList[index].chatHistory.length-1].senderName === "admin" && <span>คุณ:</span>  }
+                          <span>{historyList[index].chatHistory[historyList[index].chatHistory.length-1].message}</span>
+                          </>
+                          }
+                           </p>
+                           <p className="truncate  text-[14px]">{(historyList[index].chatHistory[historyList[index].chatHistory.length-1].type == "image") && 
+                          <>
+                          {historyList[index].chatHistory[historyList[index].chatHistory.length-1].senderName === "admin" && <span>คุณ:</span> }
+                          รูปภาพ
+                          </>
+                          }
+                           </p>
+                           <p className="truncate text-[14px]">{(historyList[index].chatHistory[historyList[index].chatHistory.length-1].type == "sticker") && 
+                          <>
+                          {historyList[index].chatHistory[historyList[index].chatHistory.length-1].senderName === "admin" && <span>คุณ:</span> }
+                          สติ๊กเกอร์
+                          </>
+                          }
+                           </p>
+                           <p className="truncate text-[14px]">{(historyList[index].chatHistory[historyList[index].chatHistory.length-1].type == "text" && historyList[index].chatHistory[historyList[index].chatHistory.length-1].message.includes('img')) && 
+                          <>
+                          {historyList[index].chatHistory[historyList[index].chatHistory.length-1].senderName === "admin" && <span>คุณ:</span> }
+                          อีโมจิ
+                          </>
+                          }
+                           </p>
+                          </div>
                           </li>
                         );
                       })}
@@ -711,14 +775,10 @@ const Chat = () => {
                       <ContentEditable 
                       placeholder="ข้อความ ....."  className="textBox text-[14px] rounded-full w-full py-2 px-2 text-gray-700 leading-tight focus:shadow-outline bg-gray-100 bg-clip-padding transition ease-in-out focus:text-gray-700 focus:border-blue-600 focus:outline-none" 
                       html={userData.message} 
-                      // onBlur={handleBlur} 
                       onChange={handleMessage}
-                      // onFocus={handleBlur}
-                       onKeyDown={(e)=> {
-                          if(e.key === 'Enter' && userData.message!="") {
-                            sendPrivateValue(tab.chatId, userData)
-                          }
-                      }} />
+                      onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault() }}
+                      onKeyDown={(e)=>{e.code === 'Space' && e.preventDefault()}}
+                       />
                     </div>
                     <div className="ml-[4px]">
                       <button className="relative"

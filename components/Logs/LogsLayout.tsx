@@ -8,9 +8,9 @@ const LogsLayout = ({logs,setData,setOpenEyes}) => {
   return (
     <div> {logs.map((p: any, index: any) => {
       return (
-        <div key={p.reportId} onClick={()=>eyesDetail(p)} className=" cursor-pointer hidden md:flex bg-white md:h-[50px]  justify-between rounded-[10px] border-b-[2px] pl-[15px] md:px-[40px] pb-[20px]  shadow-lg">
-          <p className="pt-[10px] "> {p.topic}</p>
-          <div className="my-auto md:ml-[110px]  flex">
+        <div key={p.reportId} onClick={()=>eyesDetail(p)} className=" cursor-pointer min-h-[110px] md:min-h-[50px] flex bg-white   justify-between rounded-[10px] border-b-[2px] pl-[15px] md:px-[40px] pb-[20px]  shadow-lg">
+          <p className="pt-[10px] w-auto md:w-[200px] flex items-center"> {p.topic}</p>
+          <div className="my-auto flex">
           <p className='pt-[10px]  pl-[25px] '>{p.createDate.slice(0, 10)}</p> 
           </div>
           <div className="my-auto md:ml-[120px] pb-[6px] flex pt-[10px] "> <p className='pl-[25px]'>mock up person</p> </div>
