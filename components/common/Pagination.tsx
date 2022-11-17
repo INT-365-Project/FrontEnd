@@ -18,8 +18,8 @@ const Pagination = ({ items, pageSize, currentPage, onPageChange }) => {
     <div className="flex items-center justify-center py-10 lg:px-0 sm:px-6 px-4">
       <div className="lg:w-full w-full  flex items-center justify-between  border-gray-200 dark:border-gray-700">
 
-        <div className="sm:flex hidden text-[#8F90A6]">
-          <p>Result {currentPage} of {pageCount}</p>
+        <div className="flex text-[#8F90A6]">
+          <p>Result {pageSize} of {items}</p>
           {/* {pages.map((page) => {
             return (
               <p

@@ -24,7 +24,7 @@ const Box = ({ children, styles, className ,isChat,isImage}) => {
     </div>
     :
     <div
-      className={`relative bg-white md:w-auto h-auto md:h-[80%] w-[90%]  ${className}`}
+      className={`relative bg-white md:w-auto h-auto md:h-[70%] w-[90%]  ${className}`}
       style={{
         ...styles,
         transition: "2s",
