@@ -253,13 +253,13 @@ const Intents = () => {
                   commands: commands,
                 };
                 console.log(intents);
-                // BotServices.storeCommand(intents)
-                //   .then((res) => {
-                //     console.log(res);
-                //   })
-                //   .catch((err) => {
-                //     console.log(err.response);
-                //   });
+                BotServices.storeCommand(intents)
+                  .then((res) => {
+                    console.log(res);
+                  })
+                  .catch((err) => {
+                    console.log(err.response);
+                  });
                 setCommands([]);
                 setExpressionInput("");
                 setResponseInput("");
