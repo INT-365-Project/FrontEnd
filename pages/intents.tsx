@@ -581,7 +581,8 @@ const Intents = () => {
     }else{
       if (responseInput == "") {
         console.log('2')
-          let sameImage = response.map(res=>{
+          let list = []
+          list = response.map(res=>{
           if(res.type === 'image'){
             return {...res,content:"",type:"image"}
           }
@@ -589,12 +590,12 @@ const Intents = () => {
         })
         if(imgSrc != null){
           console.log('3')
-          sameImage.push({ type: "image", content: imgSrc, seq: response.length+1 })
-          setResponse(sameImage)
-          console.log('3 check',sameImage)
+          list.push({ type: "image", content: imgSrc, seq: response.length+1 })
+          console.log('3 check',list)
           console.log('3 check',response)
-        sendIntents()
         }
+        setResponse(list)
+        console.log('2 check',list)
         console.log('2 check',response)
         sendIntents()
         setIndex(1);
