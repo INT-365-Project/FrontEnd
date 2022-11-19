@@ -166,7 +166,7 @@ const Intents = () => {
               topic: newCommand != "" ? newCommand : topic,
               name: name != "" ? name : "",
               expressions: expressions,
-              responses: responseImage,
+              responses: [responseImage],
             };
             commands.push(data);
             if (commands != null) {
@@ -174,13 +174,13 @@ const Intents = () => {
                 commands: commands,
               };
               console.log(intents);
-              // BotServices.storeCommand(intents)
-              //   .then((res) => {
-              //     console.log(res);
-              //   })
-              //   .catch((err) => {
-              //     console.log(err.response);
-              //   });
+              BotServices.storeCommand(intents)
+                .then((res) => {
+                  console.log(res);
+                })
+                .catch((err) => {
+                  console.log(err.response);
+                });
               setCommands([]);
               setExpressionInput("");
               setResponseInput("");

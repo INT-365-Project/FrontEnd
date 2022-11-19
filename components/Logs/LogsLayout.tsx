@@ -13,7 +13,7 @@ const LogsLayout = ({logs,setData,setOpenEyes}) => {
           <div className="my-auto flex">
           <p className='pt-[10px]  pl-[25px] '>{p.createDate.slice(0, 10)}</p> 
           </div>
-          <div className="my-auto md:ml-[120px] pb-[6px] flex pt-[10px] "> <p className='pl-[25px]'>mock up person</p> </div>
+          <div className="my-auto md:ml-[120px] pb-[6px] flex pt-[10px] "> <p className='pl-[25px]'>users</p> </div>
           <button
             onClick={() => eyesDetail(p)}
             className="hidden mt-[10px]  border-[#919191] border-[1.7px] w-[30px] h-[30px]  rounded-[5px] md:flex justify-center items-center my-auto ml-[80px]"

@@ -156,14 +156,6 @@ const News = () => {
     setData(p);
     setIsPreview(true);
   };
-  // useEffect(() => {
-  //   if (isOpen) {
-  //     document.body.style.overflow = "hidden";
-  //     goToTop();
-  //   } else {
-  //     document.body.style.overflow = "unset";
-  //   }
-  // }, [isOpen]);
 
   const editNews = (item: any) => {
     setEditData(item);

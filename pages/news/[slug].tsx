@@ -61,9 +61,11 @@ const Detail = () => {
     formState: { errors },
   } = useForm<FormData>();
   if (query.slug != undefined) {
+    // console.log(query)
     localStorage.setItem("pId", query.slug.toString());
   }
   useEffect(() => {
+    // console.log(router)
     const pId = JSON.parse(localStorage.getItem("pId"));
     if (pId) {
       setPageId(pId);
