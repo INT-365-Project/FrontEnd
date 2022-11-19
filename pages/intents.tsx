@@ -44,7 +44,7 @@ const Intents = () => {
   const [file, setFile] = useState([]);
   const [isNewImage,setIsNewImage] = useState(false) 
   const [oldImage,setOldImage] = useState("");
-
+  let reponseData = []
 
   const [imageBase64, setImageBase64] = useState([]);
   const [index, setIndex] = useState(1);
@@ -76,8 +76,8 @@ const Intents = () => {
   const [isEditingCommand, setIsEditingCommand] = useState(false);
   const [expressionInput, setExpressionInput] = useState("");
   const [expressions, setExpressions] = useState([]);
-  const [responseInput, setResponseInput] = useState("");
-  const [response, setResponse] = useState([]);
+  let [responseInput, setResponseInput] = useState("");
+  let [response, setResponse] = useState([]);
   const [errorCommand, setErrorCommand] = useState({ status: false, msg: "" });
   const [errorExpress, setErrorExpress] = useState({ status: false, msg: "" });
   const [errorResponse, setErrorResponse] = useState({
@@ -581,8 +581,7 @@ const Intents = () => {
     }else{
       if (responseInput == "") {
         console.log('2')
-          let list = []
-          list = response.map(res=>{
+          let sameImage = response.map(res=>{
           if(res.type === 'image'){
             return {...res,content:"",type:"image"}
           }
@@ -590,12 +589,12 @@ const Intents = () => {
         })
         if(imgSrc != null){
           console.log('3')
-          list.push({ type: "image", content: imgSrc, seq: response.length+1 })
-          console.log('3 check',list)
-          console.log('3 check',response)
+          sameImage.push({ type: "image", content: imgSrc, seq: response.length+1 })
+          response = sameImage
+          console.log('3 check',sameImage)
+          console.log('3 check response',response)
+          sendIntents()
         }
-        setResponse(list)
-        console.log('2 check',list)
         console.log('2 check',response)
         sendIntents()
         setIndex(1);
@@ -618,14 +617,20 @@ const Intents = () => {
           })
           const checked = response.some((item) => item.content === responseInput);
           if (!checked) {
-            setResponse([
-              ...sameImage,
-              {
-                type: "text",
-                content: responseInput.trim(),
-                seq: response.length + 1,
-              },
-            ]);
+            sameImage.push( {
+              type: "text",
+              content: responseInput.trim(),
+              seq: response.length + 1,
+            },)
+            response = sameImage
+            // setResponse([
+            //   ...sameImage,
+            //   {
+            //     type: "text",
+            //     content: responseInput.trim(),
+            //     seq: response.length + 1,
+            //   },
+            // ]);
             console.log('5 check',response)
           } else {
             setResponseInput("");
