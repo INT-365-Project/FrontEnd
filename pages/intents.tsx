@@ -43,6 +43,8 @@ const Intents = () => {
   const [imgSrc, setImgSrc] = useState(null);
   const [file, setFile] = useState([]);
   const [isNewImage,setIsNewImage] = useState(false) 
+  const [oldImage,setOldImage] = useState("");
+
 
   const [imageBase64, setImageBase64] = useState([]);
   const [index, setIndex] = useState(1);
@@ -160,6 +162,7 @@ const Intents = () => {
           setErrorCommand({ status: false, msg: "" });
           setErrorExpress({ status: false, msg: "" });
           setErrorResponse({ status: false, msg: "" });
+          
           Swal.fire({
             title: "ยืนยันการเพิ่มแก้ไข Bot Detect",
             text: "เมื่อทำการยืนยัน ระบบจะทำการส่งข้อมูล",
@@ -475,6 +478,7 @@ const Intents = () => {
 
   const handleEditResponseImage = (res) =>{
     console.log('all response',response)
+    setOldImage(res.content)
     setCurrentResponse({...res})
     setIsEditImage(true);
     setIsEditingResponse(true);
@@ -504,6 +508,13 @@ const Intents = () => {
     console.log('hi')
     if(isEditingResponse) {
       if(isEditImage && isEditingResponse){
+        const sameImage = response.map(res=>{
+          if(res.type === 'image'){
+            return {...currentResponse,content:"",type:"image"}
+          }
+          return res
+        })
+        setResponse(sameImage)
         const sameItem = response.map((res)=>{
           if(res.seq === currentResponse.seq){
             return {...currentResponse,content:"",type:"image"}
@@ -515,7 +526,15 @@ const Intents = () => {
         setResponse(sameItem)
         setIsEditingResponse(false)
         setIsEditImage(false)
+        sendIntents()
       }else if(!isEditImage && isEditingResponse){
+        const sameImage = response.map(res=>{
+          if(res.type === 'image'){
+            return {...currentResponse,content:"",type:"image"}
+          }
+          return res
+        })
+        setResponse(sameImage)
         const updateItem = response.map((res)=>{
           if(res.seq === currentResponse.seq){
             return {...currentResponse,content:imgSrc,type:"image"}
@@ -531,6 +550,13 @@ const Intents = () => {
     
     }else{
       if (responseInput == "") {
+        const sameImage = response.map(res=>{
+          if(res.type === 'image'){
+            return {...currentResponse,content:"",type:"image"}
+          }
+          return res
+        })
+        setResponse(sameImage)
         if(imgSrc != null){
         // if (index == 2) {
           setResponse([
@@ -539,10 +565,18 @@ const Intents = () => {
           ]);
         // }
         }
+        sendIntents()
         setIndex(1);
         // setIsNewImage(false);
         setImgSrc(null);
       } else if (responseInput !== "") {
+        const sameImage = response.map(res=>{
+          if(res.type === 'image'){
+            return {...currentResponse,content:"",type:"image"}
+          }
+          return res
+        })
+        setResponse(sameImage)
         if (response.length == 0) {
           setResponse([
             ...response,
@@ -909,11 +943,13 @@ const Intents = () => {
                     className="mx-auto cursor-pointer w-full"
                   />
                   :
+                  (
                   <img
                     src={isEditImage ? `${currentResponse.content}` : imgSrc}
                     alt="Thumb"
                     className="mx-auto cursor-pointer w-full"
                   />
+                  )
                 }
                 
                 <input
