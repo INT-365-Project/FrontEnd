@@ -56,7 +56,7 @@ const ReportForm = () => {
     reset({ topic: "", description: "" });
   };
   return (
-    <div className="bg-[#F8F8F8]  lg:pl-[220px]  pt-[120px] lg:pt-[40px] lg:pr-[170px] mx-auto w-[90%] lg:w-full min-h-screen ">
+    <div className="bg-[#F8F8F8]  lg:pl-[220px]  pt-[80px] lg:pt-[10px] lg:pr-[170px] mx-auto w-[90%] lg:w-full min-h-screen ">
       {!isSuccess && (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-[30px]">
           <div className="bg-white rounded-lg h-[70vh] md:h-[70vh] px-[30px] pt-[60px] md:pt-[30px] md:mt-[80px]">

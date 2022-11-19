@@ -220,7 +220,6 @@ const Intents = () => {
               response = response.splice(-1)
               location.reload();
             }
-            location.reload();
           });
         }
       }
@@ -1084,7 +1083,7 @@ const Intents = () => {
                   >
                     {response.map((res, index) => {
                       if (!isEditingResponse) {
-                        if (res.type == "image") {
+                        if (res.type == "image" && imgSrc == null) {
                           return (
                             <li
                               className="flex justify-between w-full"
@@ -1095,8 +1094,8 @@ const Intents = () => {
                                   {index + 2}
                                 </span>
                                       <span className="pl-[10px] pt-[10px] flex flex-row space-x-[10px]">
-                                      <img src={`/api/viewImage/${res.name}` } className="w-full h-[200px]" alt="img" />
-                                      {res.content !== "" && <img src={res.content} alt="img" />}
+                                      {imgSrc === null && <img src={`/api/viewImage/${res.name}` } className="w-full h-[200px]" alt="img" />}
+                                      {imgSrc != null && <img src={res.content} className="w-full h-[200px]" alt="img" />}
                                       </span>
                               </p>
                               <div className="space-x-[15px]">
@@ -1150,12 +1149,8 @@ const Intents = () => {
                                 {res.type === "image" && (
                                   <div className="flex flex-col">
                                           <span className="pl-[10px] pt-[10px] flex flex-row space-x-[10px]">
-                                            {/* <img
-                                              src={res.content}
-                                              alt="img"
-                                              className="w-full h-[200px]"
-                                            /> */}
-                                            <img src={`/api/viewImage/${res.name}`} className="w-full h-[200px]" alt="img" />
+                                          {imgSrc === null && <img src={`/api/viewImage/${res.name}` } className="w-full h-[200px]" alt="img" />}
+                                      {imgSrc != null && <img src={res.content} className="w-full h-[200px]" alt="img" />}
                                           </span>
                                   </div>
                                 )}
@@ -1242,12 +1237,8 @@ const Intents = () => {
                               {res.type === "image" && (
                                 <div className="flex flex-row">
                                       <span className="pl-[10px] pt-[10px] flex flex-row space-x-[10px]">
-                                        {/* <img
-                                          src={res.content}
-                                          alt="img"
-                                          className="w-full h-[200px]"
-                                        /> */}
-                                        <img src={`/api/viewImage/${res.name}`} className="w-full h-[200px]" alt="img" />
+                                      {imgSrc === null && <img src={`/api/viewImage/${res.name}` } className="w-full h-[200px]" alt="img" />}
+                                      {imgSrc != null && <img src={res.content} className="w-full h-[200px]" alt="img" />}
                                       </span>
                                 </div>
                               )}
