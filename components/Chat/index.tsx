@@ -22,6 +22,8 @@ const Chat = () => {
   const [showPreviewImage,setShowPreviewImage] = useState(false)
   const [previewUrl,setPreviewUrl] = useState (null)
   
+  const [openToggleAnswer,setOpenToggleAnswer] = useState(false)
+
   const [selectedImage, setSelectedImage] = useState(false);
   const [imgSrc, setImgSrc] = useState(null);
   const [base64,setBase64] = useState("")
@@ -88,7 +90,7 @@ const Chat = () => {
   const filterHistory = (event) =>{
     // event.target.value
     console.log(event.target.value)
-    if(event.target.value === 'unRead'){{
+    if(event.target.value === 'read'){{
       let temp = []
       console.log(historyList)
       historyList.map((history,index)=>{
@@ -103,7 +105,7 @@ const Chat = () => {
     setReadButton(0)
     setAllHistory(temp)
     }}
-    if(event.target.value === 'read'){
+    if(event.target.value === 'unRead'){
       let temp = []
     console.log(historyList)
     historyList.map((history,index)=>{
@@ -1104,9 +1106,10 @@ const Chat = () => {
                         }} />
                       {openDes && count === 3 && <div className="absolute truncate w-[80px] rounded-[6px] top-[-40px] left-[-20px] bg-[#336699] text-white py-[4px] text-center">emoji</div>}
                     </button>
-                    <button className="relative"
+                    {!openToggleAnswer && <button className="relative"
                       onClick={() => {
-                        sendManualMode(tab.chatId,tab.userId)
+                        sendManualMode(tab.chatId,tab.userId),
+                        setOpenToggleAnswer(false)
                       }}
                       onMouseEnter={() => {
                         setOpenDes(true);
@@ -1122,10 +1125,11 @@ const Chat = () => {
                             "invert(41%) sepia(20%) saturate(1448%) hue-rotate(169deg) brightness(83%) contrast(91%)",
                         }} />
                       {openDes && count === 4 && <div className="absolute truncate w-[140px] rounded-[6px] top-[-40px] left-[-20px] bg-[#336699] text-white py-[4px] text-center">Manual Answer</div>}
-                    </button>
-                    <button className="relative"
+                    </button>}
+                    {openToggleAnswer && <button className="relative"
                       onClick={() => {
-                        sendAutoMode(tab.chatId,tab.userId)
+                        sendAutoMode(tab.chatId,tab.userId),
+                        setOpenToggleAnswer(true)
                       }}
                       onMouseEnter={() => {
                         setOpenDes(true);
@@ -1141,7 +1145,7 @@ const Chat = () => {
                             "invert(41%) sepia(20%) saturate(1448%) hue-rotate(169deg) brightness(83%) contrast(91%)",
                         }} />
                       {openDes && count === 5 && <div className="absolute truncate w-[120px] rounded-[6px] top-[-40px] left-[-20px] bg-[#336699] text-white py-[4px] text-center">Auto Answer</div>}
-                    </button>
+                    </button>}
                   </div>
                   <button
                     onClick={() => sendPrivateValue(tab.chatId, userData)}
