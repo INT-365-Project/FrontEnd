@@ -107,16 +107,24 @@ const Intents = () => {
   useEffect(() => {
     if (name) {
       for (let i = 0; i < allBot.length; i++) {
+        let list = []
         console.log(allBot[i].responses);
         if (name === allBot[i].name) {
           setTopic(allBot[i].topic);
           setTopicName(allBot[i].name);
           setExpressions(allBot[i].expressions);
-          for (let reponse of allBot[i].responses) {
-            console.log(reponse);
-          }
+          
+          let list = allBot[i].responses.map((item,index)=>{
+            if(item.type === "image"){
+              return {...item,content:""}
+            }
+            return item
+          })
+          response = list
+          console.log(response)
           // if(allBot[i].responses[0].type == "text"){
-          setResponse(allBot[i].responses);
+          setResponse(list);
+          console.log(response)
           // }else if(allBot[i].responses[0].type == "image"){
           //   setImgSrc(allBot[i].responses)
           // }
@@ -312,16 +320,18 @@ const Intents = () => {
   };
 
   const handleResponseDelete = (seq) => {
-    const removeItem = response.filter((rs) => {
-      return rs.seq !== seq;
-    });
     const previousItem = response.map(res=>{
       if(res.type === 'image'){
         return {...res,content:"",type:"image"}
       }
       return res
     })
-    setResponse(previousItem)
+    
+    const removeItem = previousItem.filter((rs) => {
+      return rs.seq !== seq;
+    });
+    response = removeItem
+    setResponse(removeItem)
     setIsEditingResponse(false);
     setResponse(removeItem);
   };
@@ -593,6 +603,7 @@ const Intents = () => {
           response = sameImage
           console.log('3 check',sameImage)
           console.log('3 check response',response)
+          setResponse(sameImage)
           sendIntents()
         }
         console.log('2 check',response)
@@ -602,10 +613,19 @@ const Intents = () => {
       } else if (responseInput !== "") {
         if (response.length == 0) {
           console.log('4')
-          setResponse([
-            ...response,
-            { type: "text", content: responseInput.trim(), seq: response.length },
-          ]);
+          let sameImage = response.map(res=>{
+            if(res.type === 'image'){
+              return {...res,content:"",type:"image"}
+            }
+            return res
+          })
+          sameImage.push({ type: "text", content: responseInput.trim(), seq: response.length },)
+          response = sameImage
+          setResponse(sameImage)
+          // setResponse([
+          //   ...response,
+          //   { type: "text", content: responseInput.trim(), seq: response.length },
+          // ]);
           console.log('4 check',response)
         } else {
           console.log('5')
@@ -631,6 +651,7 @@ const Intents = () => {
             //     seq: response.length + 1,
             //   },
             // ]);
+            setResponse(sameImage)
             console.log('5 check',response)
           } else {
             setResponseInput("");
