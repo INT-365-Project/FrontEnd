@@ -330,10 +330,12 @@ const Intents = () => {
     const removeItem = previousItem.filter((rs) => {
       return rs.seq !== seq;
     });
-    response = removeItem
-    setResponse(removeItem)
+    const reorder =  removeItem.map((item,index)=>{
+      return {...item,seq:index}
+    })
+    response = reorder
+    setResponse(reorder)
     setIsEditingResponse(false);
-    setResponse(removeItem);
   };
   const handleExpressionDelete = (name) => {
     const removeItem = expressions.filter((ex) => {
