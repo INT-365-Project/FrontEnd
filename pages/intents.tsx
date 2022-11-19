@@ -65,6 +65,8 @@ const Intents = () => {
   const [currentResponse, setCurrentResponse] = useState({
     seq: 0,
     content: "",
+    name:"",
+    type:""
   });
   const [oldTopic, setOldTopic] = useState("");
   const [isEditingExpression, setIsEditingExpression] = useState(false);
@@ -130,21 +132,10 @@ const Intents = () => {
     setIsFinish(false);
   }, [isFinish]);
 
-  const checkImageLength = (list) => {
-    if (list.length <= 2) {
-      let temp = [];
-      for (let img of list) {
-        temp.push(img.base64);
-      }
-      setImageBase64(temp);
-      console.log(temp);
-      console.log(imageBase64);
-    } else {
-      alert("ไม่สามารถอัพ response image มากกว่า 2 รูปได้");
-    }
-  };
-
   const uploadImage = (e: any) => {
+    // if(isEditingResponse){
+      setIsEditImage(false)
+    // }
     let file = e.target.files[0];
     let reader = new FileReader();
     let endCode64 = null;
@@ -163,67 +154,6 @@ const Intents = () => {
   };
 
   const sendIntents = () => {
-    // if(imageBase64.length>0){
-    //   if (!isEditingExpression && !isEditingResponse) {
-    //     const responseImage = {
-    //       type: "image",
-    //       content: imageBase64,
-    //       seq: response.length
-    //     }
-    //     setErrorCommand({ status: false, msg: "" });
-    //     setErrorExpress({ status: false, msg: "" });
-    //     setErrorResponse({ status: false, msg: "" });
-    //     Swal.fire({
-    //       title: "ยืนยันการเพิ่มแก้ไข Bot Detect",
-    //       text: "เมื่อทำการยืนยัน ระบบจะทำการส่งข้อมูล",
-    //       icon: "warning",
-    //       showCancelButton: true,
-    //       cancelButtonColor: "#d33",
-    //       confirmButtonColor: "#3085d6",
-    //       cancelButtonText: "ยกเลิก",
-    //       confirmButtonText: "ยืนยัน",
-    //     }).then((result) => {
-    //       if (result.isConfirmed) {
-    //         const data = {
-    //           topic: newCommand != "" ? newCommand : topic,
-    //           name: name != "" ? name : "",
-    //           expressions: expressions,
-    //           responses: [responseImage],
-    //         };
-    //         commands.push(data);
-    //         if (commands != null) {
-    //           const intents = {
-    //             commands: commands,
-    //           };
-    //           console.log(intents);
-    //           // BotServices.storeCommand(intents)
-    //           //   .then((res) => {
-    //           //     console.log(res);
-    //           //   })
-    //           //   .catch((err) => {
-    //           //     console.log(err.response);
-    //           //   });
-    //           setCommands([]);
-    //           setExpressionInput("");
-    //           setResponseInput("");
-    //           setTopic("");
-    //         }
-    //         Swal.fire(
-    //           "ระบบดำเนินการเสร็จสิ้น",
-    //           "ข้อมูลของคุณได้ถูกเพิ่มหรือแก้ไข้แล้ว",
-    //           "success"
-    //         );
-    //         setCommands([]);
-    //         setExpressionInput("");
-    //         setResponseInput("");
-    //         setTopic("");
-    //         // location.reload();
-    //       } else if (result.isDismissed) {
-    //         // location.reload();
-    //       }
-    //     });
-    //   }
-    // }
     if (expressions.length > 0 && response.length > 0 && topic != "") {
       if (expressions.length != 0 || response.length != 0) {
         if (!isEditingExpression && !isEditingResponse) {
@@ -316,17 +246,23 @@ const Intents = () => {
   };
 
   const deleteTopic = () => {
-    const items = allBot.filter((item) => item.topic != topic);
-    items.push({
-      name: name,
-      topic: "",
-      expressions: [],
-      responses: [],
+    const items = allBot.map((item) =>{
+      if(item.topic == topic){
+        return {name : item.name , topic:item.topic , expressions:[] , responses:[]}
+      }
+     return item
     });
-    console.log(items);
+    console.log(items)
+    // items.push({
+    //   name: name,
+    //   topic: "",
+    //   expressions: [],
+    //   responses: [],
+    // });
     const data = {
       commands: items,
     };
+    console.log('data',data)
     Swal.fire({
       title: "ยืนยันการลบ Bot Detect",
       text: "เมื่อทำการยืนยัน ระบบจะทำการส่งข้อมูล",
@@ -358,9 +294,9 @@ const Intents = () => {
         setExpressionInput("");
         setResponseInput("");
         setTopic("");
-        location.reload();
+        // location.reload();
       } else if (result.isDismissed) {
-        location.reload();
+        // location.reload();
       }
     });
     BotServices.storeCommand(data)
@@ -390,28 +326,19 @@ const Intents = () => {
     e.preventDefault();
     handleUpdateResponse(currentResponse.seq, currentResponse);
   };
+
+  // const handleEditResponseClick = (response: any) => {
+  //   setIsEditingResponse(true);
+  //   setCurrentResponse({ ...response });
+  // };
+  // const handlerEditResponseInputChange = (e: any) => {
+  //   setCurrentResponse({ ...currentResponse, content: e.target.value });
+  // };
   const handleEditFormSubmit = (e) => {
     e.preventDefault();
     handleUpdateExpression(currentExpression.name, currentExpression);
   };
-  const handleUpdateResponse = (seq, updatedResponse) => {
-    if (currentResponse.content != "") {
-      const updatedItem = response.map((res) => {
-        return res.seq === seq ? updatedResponse : res;
-      });
-      const checked = response.some(
-        (item) => item.content === currentResponse.content
-      );
-      if (!checked) {
-        setIsEditingResponse(false);
-        setResponse(updatedItem);
-      } else {
-        setIsEditingResponse(false);
-      }
-    } else {
-      setIsEditingResponse(false);
-    }
-  };
+
   const handleUpdateExpression = (name, updatedExpression) => {
     if (currentExpression.text != "") {
       const updatedItem = expressions.map((ex) => {
@@ -545,43 +472,100 @@ const Intents = () => {
     }
     setExpressionInput("");
   };
+
+  const handleEditResponseImage = (res) =>{
+    console.log('all response',response)
+    setCurrentResponse({...res})
+    setIsEditImage(true);
+    setIsEditingResponse(true);
+    setIndex(2)
+} 
+  const handleUpdateResponse = (seq, updatedResponse) => {
+    if (currentResponse.content != "") {
+      const updatedItem = response.map((res) => {
+        return res.seq === seq ? updatedResponse : res;
+      });
+      const checked = response.some(
+        (item) => item.content === currentResponse.content
+      );
+      if (!checked) {
+        setIsEditingResponse(false);
+        setResponse(updatedItem);
+      } else {
+        setIsEditingResponse(false);
+      }
+    } else {
+      setIsEditingResponse(false);
+    }
+  };
+
   const handleFormResponse = (e: any) => {
     e.preventDefault();
     console.log('hi')
-    if (responseInput == "") {
-      if(imgSrc != null){
-      if (index == 2) {
-        setResponse([
-          ...response,
-          { type: "image", content: imgSrc, seq: response.length+1 },
-        ]);
+    if(isEditingResponse) {
+      if(isEditImage && isEditingResponse){
+        const sameItem = response.map((res)=>{
+          if(res.seq === currentResponse.seq){
+            return {...currentResponse,content:"",type:"image"}
+          }
+          return res
+        })
+        console.log('check same image',sameItem)
+        setIndex(1);
+        setResponse(sameItem)
+        setIsEditingResponse(false)
+        setIsEditImage(false)
+      }else if(!isEditImage && isEditingResponse){
+        const updateItem = response.map((res)=>{
+          if(res.seq === currentResponse.seq){
+            return {...currentResponse,content:imgSrc,type:"image"}
+          }
+          return res
+        })
+        console.log('not same image updateItem',updateItem)
+        setIndex(1);
+        setResponse(updateItem)
+        setIsEditingResponse(false)
+        console.log(response)
       }
-      }
-      setIndex(1);
-      // setIsNewImage(false);
-      setImgSrc(null);
-    } else if (responseInput !== "") {
-      if (response.length == 0) {
-        setResponse([
-          ...response,
-          { type: "text", content: responseInput.trim(), seq: response.length },
-        ]);
-      } else {
-        const checked = response.some((item) => item.content === responseInput);
-        if (!checked) {
+    
+    }else{
+      if (responseInput == "") {
+        if(imgSrc != null){
+        // if (index == 2) {
           setResponse([
             ...response,
-            {
-              type: "text",
-              content: responseInput.trim(),
-              seq: response.length + 1,
-            },
+            { type: "image", content: imgSrc, seq: response.length+1 },
+          ]);
+        // }
+        }
+        setIndex(1);
+        // setIsNewImage(false);
+        setImgSrc(null);
+      } else if (responseInput !== "") {
+        if (response.length == 0) {
+          setResponse([
+            ...response,
+            { type: "text", content: responseInput.trim(), seq: response.length },
           ]);
         } else {
-          setResponseInput("");
+          const checked = response.some((item) => item.content === responseInput);
+          if (!checked) {
+            setResponse([
+              ...response,
+              {
+                type: "text",
+                content: responseInput.trim(),
+                seq: response.length + 1,
+              },
+            ]);
+          } else {
+            setResponseInput("");
+          }
         }
       }
     }
+    
     setResponseInput("");
   };
 
@@ -926,12 +910,12 @@ const Intents = () => {
                   />
                   :
                   <img
-                    src={imgSrc}
+                    src={isEditImage ? `${currentResponse.content}` : imgSrc}
                     alt="Thumb"
                     className="mx-auto cursor-pointer w-full"
                   />
                 }
-              
+                
                 <input
                   className="mt-[20px] hidden"
                   id="inputFileToLoad"
@@ -953,6 +937,7 @@ const Intents = () => {
                 </button>
               }
               {selectedImage && <button onClick={() => {
+                isEditingResponse && handleResponseDelete(currentResponse.seq)
                 setImgSrc(null)
                 setSelectedImage(false)
               }} className={`w-[105px] h-[30px] mb-[30px] cursor-pointer flex justify-center items-center  bg-red-600 rounded-[5px] text-white`}>
@@ -1010,7 +995,11 @@ const Intents = () => {
                             <li
                               className="flex justify-between w-full"
                               key={index}
-                              // onClick={() => handleEditResponseClick(res)}
+                              onClick={() => {
+                                res.type === "text"
+                                  ? handleEditResponseClick(res)
+                                  : handleEditResponseImage(res);
+                              }}
                             >
                               <p className="flex">
                                 <span className="flex items-center justify-center mx-auto h-[40px] bg-[#EBEBEB] w-[40px]">
@@ -1052,7 +1041,7 @@ const Intents = () => {
                               onClick={() => {
                                 res.type === "text"
                                   ? handleEditResponseClick(res)
-                                  : console.log("hi");
+                                  : handleEditResponseImage(res);
                               }}
                             >
                               <p className="flex">
@@ -1080,7 +1069,9 @@ const Intents = () => {
                               <div className="space-x-[15px]">
                                 <button
                                   className="pr-[10px]"
-                                  onClick={() => handleResponseDelete(res.seq)}
+                                  onClick={() => {
+                                     handleResponseDelete(res.seq);
+                                  }}
                                 >
                                   <img
                                     src={`/images/delete.svg`}
@@ -1126,7 +1117,7 @@ const Intents = () => {
                             onClick={() => {
                               res.type === "text"
                                 ? handleEditResponseClick(res)
-                                : console.log("hi");
+                                : handleEditResponseImage(res);
                             }}
                           >
                             <p className="flex">
