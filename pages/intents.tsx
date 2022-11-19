@@ -539,23 +539,22 @@ const Intents = () => {
       if(isEditImage && isEditingResponse){
         const previousItem = response.map(res=>{
           if(res.type === 'image'){
-            return {...previousItem,content:"",type:"image"}
+            return {...res,content:"",type:"image"}
           }
           return res
         })
-        setResponse(previousItem)
-        const sameItem = response.map((res)=>{
+        const sameItem = previousItem.map((res)=>{
           if(res.seq === currentResponse.seq){
             return {...currentResponse,content:"",type:"image"}
           }
           return res
         })
         console.log('check same image',sameItem)
+        sendIntents()
         setIndex(1);
         setResponse(sameItem)
         setIsEditingResponse(false)
         setIsEditImage(false)
-        sendIntents()
       }else if(!isEditImage && isEditingResponse){
         let sameImage = response.map(res=>{
           if(res.type === 'image'){
@@ -563,14 +562,14 @@ const Intents = () => {
           }
           return res
         })
-        setResponse(sameImage)
-        const updateItem = response.map((res)=>{
+        const updateItem = sameImage.map((res)=>{
           if(res.seq === currentResponse.seq){
             return {...currentResponse,content:imgSrc,type:"image"}
           }
           return res
         })
         console.log('not same image updateItem',updateItem)
+        sendIntents()
         setIndex(1);
         setResponse(updateItem)
         setIsEditingResponse(false)
@@ -585,27 +584,16 @@ const Intents = () => {
           }
           return res
         })
-        // setResponse(sameImage)
         if(imgSrc != null){
-        // if (index == 2) {
           setResponse([
             ...sameImage,
             { type: "image", content: imgSrc, seq: response.length+1 },
           ]);
-        // }
+        sendIntents()
         }
-        // sendIntents()
         setIndex(1);
-        // setIsNewImage(false);
         setImgSrc(null);
       } else if (responseInput !== "") {
-        // const sameImage = response.map(res=>{
-        //   if(res.type === 'image'){
-        //     return {...response,content:"",type:"image"}
-        //   }
-        //   return res
-        // })
-        // setResponse(sameImage)
         if (response.length == 0) {
           setResponse([
             ...response,
@@ -614,7 +602,7 @@ const Intents = () => {
         } else {
           let sameImage = response.map(res=>{
             if(res.type === 'image'){
-              return {...currentResponse,content:"",type:"image"}
+              return {...res,content:"",type:"image"}
             }
             return res
           })
