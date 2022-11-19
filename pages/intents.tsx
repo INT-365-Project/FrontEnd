@@ -215,9 +215,10 @@ const Intents = () => {
               setExpressionInput("");
               setResponseInput("");
               setTopic("");
-              // location.reload();
+              location.reload();
             } else if (result.isDismissed) {
-              // location.reload();
+              response.splice(-1)
+              location.reload();
             }
           });
         }
@@ -1099,7 +1100,8 @@ const Intents = () => {
                                   {index + 2}
                                 </span>
                                       <span className="pl-[10px] pt-[10px] flex flex-row space-x-[10px]">
-                                      <img src={ isNewImage ? res.content :`/api/viewImage/${res.name}` } className="w-full h-[200px]" alt="img" />
+                                      <img src={`/api/viewImage/${res.name}` } className="w-full h-[200px]" alt="img" />
+                                      {<img src={imgSrc} alt="img" />}
                                       </span>
                               </p>
                               <div className="space-x-[15px]">
