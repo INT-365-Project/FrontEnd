@@ -315,6 +315,13 @@ const Intents = () => {
     const removeItem = response.filter((rs) => {
       return rs.seq !== seq;
     });
+    const previousItem = response.map(res=>{
+      if(res.type === 'image'){
+        return {...res,content:"",type:"image"}
+      }
+      return res
+    })
+    setResponse(previousItem)
     setIsEditingResponse(false);
     setResponse(removeItem);
   };
@@ -322,6 +329,13 @@ const Intents = () => {
     const removeItem = expressions.filter((ex) => {
       return ex.name !== name;
     });
+    const previousItem = response.map(res=>{
+      if(res.type === 'image'){
+        return {...res,content:"",type:"image"}
+      }
+      return res
+    })
+    setResponse(previousItem)
     setIsEditingExpression(false);
     setExpressions(removeItem);
   };
@@ -339,6 +353,13 @@ const Intents = () => {
   // };
   const handleEditFormSubmit = (e) => {
     e.preventDefault();
+    const previousItem = response.map(res=>{
+      if(res.type === 'image'){
+        return {...res,content:"",type:"image"}
+      }
+      return res
+    })
+    setResponse(previousItem)
     handleUpdateExpression(currentExpression.name, currentExpression);
   };
 
@@ -536,7 +557,7 @@ const Intents = () => {
         setIsEditImage(false)
         sendIntents()
       }else if(!isEditImage && isEditingResponse){
-        const sameImage = response.map(res=>{
+        let sameImage = response.map(res=>{
           if(res.type === 'image'){
             return {...res,content:"",type:"image"}
           }
@@ -558,17 +579,17 @@ const Intents = () => {
     
     }else{
       if (responseInput == "") {
-          const sameImage = response.map(res=>{
+          let sameImage = response.map(res=>{
           if(res.type === 'image'){
             return {...res,content:"",type:"image"}
           }
           return res
         })
-        setResponse(sameImage)
+        // setResponse(sameImage)
         if(imgSrc != null){
         // if (index == 2) {
           setResponse([
-            ...response,
+            ...sameImage,
             { type: "image", content: imgSrc, seq: response.length+1 },
           ]);
         // }
@@ -578,30 +599,29 @@ const Intents = () => {
         // setIsNewImage(false);
         setImgSrc(null);
       } else if (responseInput !== "") {
-        const sameImage = response.map(res=>{
-          if(res.type === 'image'){
-            return {...currentResponse,content:"",type:"image"}
-          }
-          return res
-        })
-        setResponse(sameImage)
+        // const sameImage = response.map(res=>{
+        //   if(res.type === 'image'){
+        //     return {...response,content:"",type:"image"}
+        //   }
+        //   return res
+        // })
+        // setResponse(sameImage)
         if (response.length == 0) {
           setResponse([
             ...response,
             { type: "text", content: responseInput.trim(), seq: response.length },
           ]);
         } else {
-          const sameImage = response.map(res=>{
+          let sameImage = response.map(res=>{
             if(res.type === 'image'){
               return {...currentResponse,content:"",type:"image"}
             }
             return res
           })
-          setResponse(sameImage)
           const checked = response.some((item) => item.content === responseInput);
           if (!checked) {
             setResponse([
-              ...response,
+              ...sameImage,
               {
                 type: "text",
                 content: responseInput.trim(),
@@ -1046,11 +1066,6 @@ const Intents = () => {
                             <li
                               className="flex justify-between w-full"
                               key={index}
-                              onClick={() => {
-                                res.type === "text"
-                                  ? handleEditResponseClick(res)
-                                  : handleEditResponseImage(res);
-                              }}
                             >
                               <p className="flex">
                                 <span className="flex items-center justify-center mx-auto h-[40px] bg-[#EBEBEB] w-[40px]">
@@ -1061,6 +1076,21 @@ const Intents = () => {
                                       </span>
                               </p>
                               <div className="space-x-[15px]">
+                                <button className="" onClick={() => {
+                                res.type === "text"
+                                  ? handleEditResponseClick(res)
+                                  : handleEditResponseImage(res);
+                              }}>
+                                   <img
+                                    src={`/images/edit.svg`}
+                                    className="iconic"
+                                    alt="delete"
+                                    style={{
+                                      filter:
+                                        "invert(50%) sepia(30%) saturate(100%) hue-rotate(356deg) brightness(96%) contrast(111%)",
+                                    }}
+                                  />
+                                  </button>
                                 <button
                                   className="pr-[10px]"
                                   onClick={() => handleResponseDelete(res.seq)}
@@ -1083,11 +1113,6 @@ const Intents = () => {
                             <li
                               className="flex justify-between w-full"
                               key={index}
-                              onClick={() => {
-                                res.type === "text"
-                                  ? handleEditResponseClick(res)
-                                  : handleEditResponseImage(res);
-                              }}
                             >
                               <p className="flex">
                                 <span className="flex items-center justify-center mx-auto h-[40px] bg-[#EBEBEB] w-[40px]">
@@ -1111,7 +1136,23 @@ const Intents = () => {
                                   </div>
                                 )}
                               </p>
+                          
                               <div className="space-x-[15px]">
+                              <button className="" onClick={() => {
+                                res.type === "text"
+                                  ? handleEditResponseClick(res)
+                                  : handleEditResponseImage(res);
+                              }}>
+                                   <img
+                                    src={`/images/edit.svg`}
+                                    className="iconic"
+                                    alt="delete"
+                                    style={{
+                                      filter:
+                                        "invert(50%) sepia(30%) saturate(100%) hue-rotate(356deg) brightness(96%) contrast(111%)",
+                                    }}
+                                  />
+                                  </button>
                                 <button
                                   className="pr-[10px]"
                                   onClick={() => {
@@ -1188,6 +1229,21 @@ const Intents = () => {
                               )}
                             </p>
                             <div className="space-x-[15px]">
+                            <button className="" onClick={() => {
+                                res.type === "text"
+                                  ? handleEditResponseClick(res)
+                                  : handleEditResponseImage(res);
+                              }}>
+                                   <img
+                                    src={`/images/edit.svg`}
+                                    className="iconic"
+                                    alt="delete"
+                                    style={{
+                                      filter:
+                                        "invert(50%) sepia(30%) saturate(100%) hue-rotate(356deg) brightness(96%) contrast(111%)",
+                                    }}
+                                  />
+                                  </button>
                               <button
                                 className="pr-[10px]"
                                 onClick={() => handleResponseDelete(res.seq)}
