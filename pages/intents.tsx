@@ -218,8 +218,9 @@ const Intents = () => {
               // location.reload();
             } else if (result.isDismissed) {
               response = response.splice(-1)
-              // location.reload();
+              location.reload();
             }
+            location.reload();
           });
         }
       }
@@ -306,10 +307,10 @@ const Intents = () => {
         setExpressionInput("");
         setResponseInput("");
         setTopic("");
-        // location.reload();
       } else if (result.isDismissed) {
-        // location.reload();
+        location.reload();
       }
+      location.reload();
     });
     BotServices.storeCommand(data)
       .then((res) => {
