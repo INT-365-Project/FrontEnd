@@ -24,6 +24,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   },[router])
 
   useEffect(()=>{
+    console.log(router)
     if(router.pathname=='/'){
       if(!isLogin){
         Router.push('/signin')
