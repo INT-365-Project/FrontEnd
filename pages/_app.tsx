@@ -5,80 +5,80 @@ import Head from "next/head";
 import Layout from "../components/common/Layout";
 import "../styles/globals.scss";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import  Router ,{ useRouter } from "next/router";
+import Router, { useRouter } from "next/router";
 const AppContext = createContext(null);
-export function useAppContext(){
+export function useAppContext() {
   return useContext(AppContext)
 }
 function MyApp({ Component, pageProps }: AppProps) {
-  const [adminUser,setAdminUser] = useState(null);
-  const [isLogin,setIsLogin] = useState(false);
+  const [adminUser, setAdminUser] = useState(null);
+  const [isLogin, setIsLogin] = useState(false);
   const router = useRouter();
 
-  useEffect(()=>{
+  useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"))
-    if(user){
+    if (user) {
       setAdminUser(user)
       setIsLogin(true)
     }
-  },[router])
+  }, [router])
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log(router)
-    if(router.pathname=='/'){
-      if(!isLogin){
+    /* isLogin == true */
+    if (router.pathname == '/') {
+      if (!isLogin) {
         Router.push('/signin')
-      }else{
-        Router.push('/')
-      } 
-    }
-    if(router.pathname=='/report'){
-      if(!isLogin){
-        Router.push('/signin')
-      }else{
+      } else {
         Router.push('/')
       }
     }
-    if(router.pathname =="/news"){
+    if (router.pathname == '/report') {
+      if (!isLogin) {
+        Router.push('/signin')
+      } else {
+        Router.push('/')
+      }
+    }
+    if (router.pathname == '/chat') {
+      if (!isLogin) {
+        Router.push('/signin')
+      } else {
+        Router.push('/')
+      }
+    }
+    if (router.pathname == '/intents') {
+      if (!isLogin) {
+        Router.push('/signin')
+      } else {
+        Router.push('/')
+      }
+    }
+    /* isLogin == false*/
+    if (router.pathname == "/news") {
       Router.push('/news')
     }
-    if(router.pathname == "/form"){
+    if (router.pathname == "/form") {
       Router.push("/form")
     }
-    
-    // if(router.pathname=='/chat'){
-    //   if(!isLogin){
-    //     Router.push('/signin')
-    //   }else{
-    //     Router.push('/')
-    //   }
-    // }
-    // if(router.pathname=='/intents'){
-    //   if(!isLogin){
-    //     Router.push('/signin')
-    //   }else{
-    //     Router.push('/')
-    //   }
-      
-    // }
-  },[isLogin])
+  }, [isLogin])
 
 
-  
+
 
   return (
-      <>
-      <AppContext.Provider value={{adminUser,isLogin,setIsLogin}}>
-      <Head>
-        <link rel="icon" href="/favicon.ico" />
-        <title>SIT-CHATBOT</title>
-      </Head>
-      <Layout>
-        <Component {...pageProps}/>
-      </Layout>
+    <>
+      <AppContext.Provider value={{ adminUser, isLogin, setIsLogin }}>
+        <Head>
+          <link rel="icon" href="/favicon.ico" />
+          <title>SIT-CHATBOT</title>
+        </Head>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
       </AppContext.Provider>
-      </>
-  
+    </>
+
   );
 }
 
