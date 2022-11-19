@@ -16,6 +16,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
 
   useEffect(() => {
+    // console.log(pId)
     const user = JSON.parse(localStorage.getItem("user"))
     if (user) {
       setAdminUser(user)
@@ -24,34 +25,35 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, [router])
 
   useEffect(() => {
-    console.log(router)
+    const user = JSON.parse(localStorage.getItem("user"))
+    console.log(JSON.parse(localStorage.getItem("user")))
     /* isLogin == true */
     if (router.pathname == '/') {
-      if (!isLogin) {
+      if (!user) {
         Router.push('/signin')
       } else {
         Router.push('/')
       }
     }
     if (router.pathname == '/report') {
-      if (!isLogin) {
+      if (!user) {
         Router.push('/signin')
       } else {
-        Router.push('/')
+        Router.push('/report')
       }
     }
     if (router.pathname == '/chat') {
-      if (!isLogin) {
+      if (!user) {
         Router.push('/signin')
       } else {
-        Router.push('/')
+        Router.push('/chat')
       }
     }
     if (router.pathname == '/intents') {
-      if (!isLogin) {
+      if (!user) {
         Router.push('/signin')
       } else {
-        Router.push('/')
+        Router.push('/intents')
       }
     }
     /* isLogin == false*/
@@ -83,3 +85,11 @@ function MyApp({ Component, pageProps }: AppProps) {
 }
 
 export default MyApp;
+
+
+export async function getServerSideProps() {
+  const pId = JSON.parse(localStorage.getItem("pId"));
+  return {
+      props: {pId},
+  };
+}

@@ -54,7 +54,7 @@ const UsersLayout = ({ search, sort, useData,isConvert}) => {
             <Link key={n.newId} 
             href={{
               pathname: `/news/${n.newId}`,
-              query: { query: n.newId },
+              query: n.newId ,
             }}
             passHref
           >
