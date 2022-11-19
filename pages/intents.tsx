@@ -37,6 +37,11 @@ const Intents = () => {
       topic: "นักศึกษาใหม่",
     },
   ];
+  const [selectedImage,setSelectedImage] = useState(false);
+  const [isEditImage,setIsEditImage] = useState(false);
+  const [imgSrc,setImgSrc] = useState(null)
+  const [base64,setBase64] = useState(null)
+
   const [bubbleJson,setBubbleJson] = useState(null)
   const [bubbleText,setBubbleText] = useState({topic:"",content:"",button:""})
   const [index,setIndex] = useState(1)
@@ -97,15 +102,21 @@ const Intents = () => {
   useEffect(() => {
     if (name) {
       for (let i = 0; i < allBot.length; i++) {
+        console.log(allBot[i].responses[0].type)
         if (name === allBot[i].name) {
           setTopic(allBot[i].topic);
           setTopicName(allBot[i].name);
           setExpressions(allBot[i].expressions);
-          setResponse(allBot[i].responses);
+          if(allBot[i].responses[0].type == "text"){
+            setResponse(allBot[i].responses);
+          }else if(allBot[i].responses[0].type == "image"){
+            setImgSrc(allBot[i].responses)
+          }
         }
       }
     } else {
       if (name === "") {
+        setImgSrc("");
         setTopic("");
         setTopicName("");
         setExpressions([]);
@@ -115,178 +126,82 @@ const Intents = () => {
     setIsFinish(false);
   }, [isFinish]);
 
-  // const handleFormBubbleText = (e: any) => {
-  //   e.preventDefault();
-  //   if (bubbleText.topic !== "" && bubbleText.content !== "" && bubbleText.button !== "") {
-  //     const data ={
-  //         line: {
-  //           type: "flex",
-  //           altText: "Flex Message",
-  //           contents: {
-  //             type: "bubble",
-  //             hero: {
-  //               type: "image",
-  //               url: "https://www.sit.kmutt.ac.th/wp-content/uploads/2018/03/IMG_3452.jpg",
-  //               size: "full",
-  //               aspectRatio: "20:13",
-  //               aspectMode: "cover"
-  //             },
-  //             body: {
-  //               type: "box",
-  //               layout: "vertical",
-  //               spacing: "sm",
-  //               contents: [
-  //                 {
-  //                   type: "text",
-  //                   text: bubbleText.topic,
-  //                   weight: "bold",
-  //                   size: "md",
-  //                   wrap: true,
-  //                   contents: []
-  //                 },
-  //                 {
-  //                   type: "text",
-  //                   text: bubbleText.content,
-  //                   weight: "regular",
-  //                   wrap: true,
-  //                   contents: []
-  //                 }
-  //               ]
-  //             },
-  //             footer: {
-  //               type: "box",
-  //               layout: "vertical",
-  //               spacing: "sm",
-  //               contents: [
-  //                 {
-  //                   type: "button",
-  //                   action: {
-  //                     type: "message",
-  //                     label: bubbleText.button,
-  //                     text: bubbleText.button
-  //                   },
-  //                   style: "primary"
-  //                 }
-  //               ]
-  //             }
-  //           }
-  //         }
-  //     }
-  //     setBubbleJson(data)
-  //   }
+  const uploadImage = (e: any) => {
+    let file = e.target.files[0];
+    let reader = new FileReader();
+    let endCode64 = null;
+    reader.onloadend = function () {
+      endCode64 = reader.result;
+      setBase64(reader)
+      setSelectedImage(true);
+      setImgSrc(endCode64)
+    };
 
-  //   setBubbleText({topic:"",content:"",button:""});
-  // };
-
-  const handlerBubbleTopicResponse = (e:any) =>{
-      setBubbleText({...bubbleText,topic:e.target.value});
-  }
-  const handlerBubbleContentResponse = (e:any) =>{
-      setBubbleText({...bubbleText,content:e.target.value});
-  }
-
-  const handlerBubbleButtonResponse = (e:any) =>{
-      setBubbleText({...bubbleText,button:e.target.value});
-  }
-
-  const sendIntentsWithBubble =  () =>{
-    if (bubbleText.topic !== "" && bubbleText.content !== "" && bubbleText.button !== "") {
-      const data ={
-          line: {
-            type: "flex",
-            altText: "Flex Message",
-            contents: {
-              type: "bubble",
-              hero: {
-                type: "image",
-                url: "https://www.sit.kmutt.ac.th/wp-content/uploads/2018/03/IMG_3452.jpg",
-                size: "full",
-                aspectRatio: "20:13",
-                aspectMode: "cover"
-              },
-              body: {
-                type: "box",
-                layout: "vertical",
-                spacing: "sm",
-                contents: [
-                  {
-                    type: "text",
-                    text: bubbleText.topic,
-                    weight: "bold",
-                    size: "md",
-                    wrap: true,
-                    contents: []
-                  },
-                  {
-                    type: "text",
-                    text: bubbleText.content,
-                    weight: "regular",
-                    wrap: true,
-                    contents: []
-                  }
-                ]
-              },
-              footer: {
-                type: "box",
-                layout: "vertical",
-                spacing: "sm",
-                contents: [
-                  {
-                    type: "button",
-                    action: {
-                      type: "message",
-                      label: bubbleText.button,
-                      text: bubbleText.button
-                    },
-                    style: "primary"
-                  }
-                ]
-              }
-            }
-          }
-      }
-      Swal.fire({
-        title: "ยืนยันการเพิ่มแก้ไข Bot Detect",
-        text: "เมื่อทำการยืนยัน ระบบจะทำการส่งข้อมูล",
-        icon: "warning",
-        showCancelButton: true,
-        cancelButtonColor: "#d33",
-        confirmButtonColor: "#3085d6",
-        cancelButtonText: "ยกเลิก",
-        confirmButtonText: "ยืนยัน",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          const items = {
-            topic: newCommand != "" ? newCommand : topic,
-            name: name != "" ? name : "",
-            expressions: expressions,
-            responses:  data,
-          };
-          commands.push(items);
-          if (commands != null) {
-            const intents = {
-              commands: commands,
-            };
-            console.log(intents);
-            setCommands([]);
-            setBubbleText({topic:"",content:"",button:""});
-            setExpressionInput("")
-            setTopic("");
-          }
-          Swal.fire(
-            "ระบบดำเนินการเสร็จสิ้น",
-            "ข้อมูลของคุณได้ถูกเพิ่มหรือแก้ไข้แล้ว",
-            "success"
-          );
-          // location.reload();
-        }
-      })
-   
-    }
-    
-  }
+    reader.readAsDataURL(file);
+  };
 
   const sendIntents = () => {
+    if(selectedImage){
+      if (!isEditingExpression && !isEditingResponse) {
+        const responseImage = {
+          type: "image",
+          content: imgSrc,
+          seq: response.length
+        }
+        setErrorCommand({ status: false, msg: "" });
+        setErrorExpress({ status: false, msg: "" });
+        setErrorResponse({ status: false, msg: "" });
+        Swal.fire({
+          title: "ยืนยันการเพิ่มแก้ไข Bot Detect",
+          text: "เมื่อทำการยืนยัน ระบบจะทำการส่งข้อมูล",
+          icon: "warning",
+          showCancelButton: true,
+          cancelButtonColor: "#d33",
+          confirmButtonColor: "#3085d6",
+          cancelButtonText: "ยกเลิก",
+          confirmButtonText: "ยืนยัน",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            const data = {
+              topic: newCommand != "" ? newCommand : topic,
+              name: name != "" ? name : "",
+              expressions: expressions,
+              responses: responseImage,
+            };
+            commands.push(data);
+            if (commands != null) {
+              const intents = {
+                commands: commands,
+              };
+              console.log(intents);
+              // BotServices.storeCommand(intents)
+              //   .then((res) => {
+              //     console.log(res);
+              //   })
+              //   .catch((err) => {
+              //     console.log(err.response);
+              //   });
+              setCommands([]);
+              setExpressionInput("");
+              setResponseInput("");
+              setTopic("");
+            }
+            Swal.fire(
+              "ระบบดำเนินการเสร็จสิ้น",
+              "ข้อมูลของคุณได้ถูกเพิ่มหรือแก้ไข้แล้ว",
+              "success"
+            );
+            setCommands([]);
+            setExpressionInput("");
+            setResponseInput("");
+            setTopic("");
+            // location.reload();
+          } else if (result.isDismissed) {
+            // location.reload();
+          }
+        });
+      }
+    }
     if (expressions.length > 0 && response.length > 0 && topic != "") {
       if (expressions.length != 0 || response.length != 0) {
         if (!isEditingExpression && !isEditingResponse) {
@@ -308,7 +223,7 @@ const Intents = () => {
                 topic: newCommand != "" ? newCommand : topic,
                 name: name != "" ? name : "",
                 expressions: expressions,
-                responses: index === 1 ? response : bubbleJson,
+                responses: response,
               };
               commands.push(data);
               if (commands != null) {
@@ -366,6 +281,8 @@ const Intents = () => {
       setExpressions([]);
       setResponse([]);
     } else {
+      setImgSrc(null);
+      setSelectedImage(false);
       setIsFinish(true);
       setName(tp);
       // setTopic(tp)
@@ -570,6 +487,8 @@ const Intents = () => {
     setOldTopic(topic);
   };
   const cancelNewCommands = () => {
+    setImgSrc(null)
+    setSelectedImage(false)
     setTopic("");
     setNewCommand("");
     setOldTopic("");
@@ -793,6 +712,7 @@ const Intents = () => {
             </p>
             <form onSubmit={handleFormExpression}>
               <input
+                disabled={topic == ""}
                 type="text"
                 className="pl-[20px] pt-[10px] border w-full border-[#919191] text-gray-900 rounded-[10px] py-[4px] md:py-[8px] mt-[8px] focus:outline-none focus:shadow-outline"
                 placeholder="Add user expression"
@@ -918,54 +838,76 @@ const Intents = () => {
               <button onClick={()=>setIndex(1)} className={`border-b ${index==1 && "border-[#336699]"}  uppercase`}>
                 Default
               </button>
-              {/* <button onClick={()=>setIndex(2)} className={`border-b ${index==2 && "border-[#336699]"}  uppercase`}>
-                Bubble
-              </button> */}
+              <button onClick={()=>setIndex(2)} className={`border-b ${index==2 && "border-[#336699]"}  uppercase`}>
+                Image 
+              </button>
             </h1>
             {
             index == 2 && <div className="mx-[20px]  md:mx-[40px]">
-            <FlexMessage bubbleText={bubbleText} />
+            {/* <FlexMessage bubbleText={bubbleText} /> */}
             </div>
             }
             <div className="min-h-[40px] mx-[20px]  md:mx-[40px] border border-[#919191] mt-[20px] ">
               <div className="w-full h-[46px] bg-[#EBEBEB] px-[24px] flex items-center">
-                 <p className="text-[16px]">Text Response</p>
-                {/* {index == 2 && <p className="text-[16px]">Custom Payload</p>} */}
+                {index == 1 && <p className="text-[16px]">Text Response</p>}
+                {index == 2 && <p className="text-[16px]">Custom Payload</p>}
               </div>
-              {/* {
+              {
                 index == 2 && 
                 <>
-                <form onSubmit={handleFormBubbleText} >
+                <div className="h-[490px] overflow-y-scroll flex flex-col items-center justify-center">
+            <div className="border-dashed border-[2px] w-[260px] min-h-[220px] flex items-center flex-col justify-center">
+              <label htmlFor="inputFileToLoad">
+                {!selectedImage ?
+                  <img
+                    src={`${isEditImage ? imgSrc : 'images/upload.png'}`}
+                    alt="Thumb"
+                    className="mx-auto cursor-pointer w-full"
+                  />
+                  :
+                  <img
+                    src={imgSrc}
+                    alt="Thumb"
+                    className="mx-auto cursor-pointer w-full"
+                  />
+                }
                 <input
-                  type="text"
-                  className="pl-[10px] pt-[10px]  w-full appearance-none focus:outline-none focus:shadow-outline text-gray-900 "
-                  placeholder="Enter Topic Response"
-                  value={bubbleText.topic}
-                  onChange={handlerBubbleTopicResponse}
+                  disabled={topic === ""}
+                  className="mt-[20px] hidden"
+                  id="inputFileToLoad"
+                  accept="image/*"
+                  type="file"
+                  onChange={uploadImage}
                 />
-                <input
-                  type="text"
-                  className="pl-[10px] pt-[10px]  w-full appearance-none focus:outline-none focus:shadow-outline text-gray-900 "
-                  placeholder="Enter Content Response"
-                  value={bubbleText.content}
-                  onChange={handlerBubbleContentResponse}
-                />
-                <input
-                  type="text"
-                  className="pl-[10px] pt-[10px]  w-full appearance-none focus:outline-none focus:shadow-outline text-gray-900 "
-                  placeholder="Enter Button Response"
-                  value={bubbleText.button}
-                  onChange={handlerBubbleButtonResponse}
-                />
-                </form> 
+              </label>
+              <label htmlFor="inputFileToLoad" className="text-[12px] text-[#919191] flex justify-center pt-[10px] cursor-pointer">
+                คลิก เลือกรูปภาพ เพื่ออัพโหลดรูปภาพ
+              </label>
+            </div>
+            <div className="flex justify-center pt-[20px] space-x-4">
+              {!selectedImage && <label htmlFor="inputFileToLoad" className={`w-[105px] h-[30px] mb-[30px] cursor-pointer flex justify-center items-center  bg-[#53a1f0] rounded-[5px] text-white`}>
+                เลือกรูปภาพ
+              </label> 
+              }
+              {selectedImage && <button onClick={() => {
+                setImgSrc(null)
+                setSelectedImage(false)
+              }} className={`w-[105px] h-[30px] mb-[30px] cursor-pointer flex justify-center items-center  bg-red-600 rounded-[5px] text-white`}>
+                ลบรูปภาพ
+              </button>}
+            </div>
+          </div>
                 </>
-              } */}
+              }
               <>
+              {
+                index == 1 && 
               <form onSubmit={handleFormResponse} className="flex">
                 <span className="flex items-center justify-center mx-auto h-[40px] bg-[#EBEBEB] w-[40px]">
                   1
                 </span>
                 <input
+                  disabled={topic == ""}
                   type="text"
                   className="pl-[10px] pt-[10px]  w-full appearance-none focus:outline-none focus:shadow-outline text-gray-900 "
                   placeholder="Enter Text response"
@@ -973,6 +915,8 @@ const Intents = () => {
                   onChange={handlerResponseInputChange}
                 />
               </form>
+              }
+              {index == 1 && 
               <ul
                 className={` ${
                   response.length >= 10 ? "h-[370px] overflow-y-scroll" : ""
@@ -1070,6 +1014,7 @@ const Intents = () => {
                   }
                 })}
               </ul>
+              }
               </>
             </div>
             {errorResponse.status && (

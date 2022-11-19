@@ -17,6 +17,8 @@ let countIsRead = [];
 const Chat = () => {
   const { adminUser } = useAppContext();
   const router = useRouter();
+  const [readButton,setReadButton] = useState(0)
+
   const [showPreviewImage,setShowPreviewImage] = useState(false)
   const [previewUrl,setPreviewUrl] = useState (null)
   
@@ -57,6 +59,18 @@ const Chat = () => {
   }, []);
 
   useEffect(() => {
+    window.onbeforeunload = function() {
+      localStorage.removeItem("chatId")
+      localStorage.removeItem("userId")
+      closeConnection()
+    };
+
+    return () => {
+        window.onbeforeunload = null;
+    };
+}, []);
+
+  useEffect(() => {
     const handleRouteChange = (url, { shallow }) => {
       localStorage.removeItem("chatId")
       closeConnection()
@@ -70,6 +84,42 @@ const Chat = () => {
       router.events.off('routeChangeStart', handleRouteChange)
     }
   }, [])
+
+  const filterHistory = (event) =>{
+    // event.target.value
+    console.log(event.target.value)
+    if(event.target.value === 'unRead'){{
+      let temp = []
+      console.log(historyList)
+      historyList.map((history,index)=>{
+      if(history.chatHistory[history.chatHistory.length-1].isRead === true){
+        console.log('list not read',history)
+        temp.unshift(history)
+      }else{
+        temp.push(history)
+      }
+    })
+    historyList = temp
+    setReadButton(0)
+    setAllHistory(temp)
+    }}
+    if(event.target.value === 'read'){
+      let temp = []
+    console.log(historyList)
+    historyList.map((history,index)=>{
+      if(history.chatHistory[history.chatHistory.length-1].isRead === false){
+        console.log('list not read',history)
+        temp.unshift(history)
+      }else{
+        temp.push(history)
+      }
+    })
+    historyList = temp
+    setReadButton(1)
+    setAllHistory(temp)
+    }
+  }
+
 
   const closeConnection = () =>{
     if (stompClient != null) {
@@ -151,7 +201,7 @@ const Chat = () => {
   const onMessageReceived = (payload: any) => {
     var payloadData = JSON.parse(payload.body);
     // historyList = payloadData
-    setAllHistory(payloadData);
+    
     const temp = []
     if (payloadData.length > 0) {
       payloadData.map((chat, index) => {
@@ -160,12 +210,21 @@ const Chat = () => {
           { timeStyle: 'short', hour12: false, timeZone: 'UTC' });
         temp.push({ ...chat, date: date.toLocaleDateString(), time: time, message: chat.chatHistory[chat.chatHistory.length - 1].message })
       })
-      const res = temp.slice(0).sort((a, b) =>
+        let res = temp.slice(0).sort((a, b) =>
         b.date.localeCompare(a.date) || b.time.localeCompare(a.time));
-      historyList = res
-      countIsRead = res
+        console.log(res)
+        let result = []
+        res.map((history,index)=>{
+          if(history.chatHistory[history.chatHistory.length-1].isRead === false){
+            console.log('list not read',history)
+            result.unshift(history)
+          }else{
+            result.push(history)
+          }
+        })
+      historyList = result
     }
-
+    setAllHistory(payloadData);
     for (let i = 0; i < payloadData.length; i++) {
       let tempList = []
       for (let j = 0; j < payloadData[i].chatHistory.length; j++) {
@@ -398,6 +457,39 @@ const Chat = () => {
     }
   };
 
+  const sendAutoMode = (chatId: any, userId: any) => {
+    if (stompClient) {
+      var chatMessage = {
+        type: "text",
+        chatId: chatId,
+        senderName: "admin",
+        receiverName: userId, //change to uId
+        status: 1,
+        displayName: "admin",
+      };
+      console.log(chatMessage)
+      stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
+      // setUserData({ ...userData, message: "" });
+    }   
+  };
+
+  
+  const sendManualMode = (chatId: any, userId: any) => {
+    if (stompClient) {
+      var chatMessage = {
+        type: "text",
+        chatId: chatId,
+        senderName: "admin",
+        receiverName: userId, //change to uId
+        status: 0,
+        displayName: "admin",
+      };
+      console.log(chatMessage)
+      stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
+      // setUserData({ ...userData, message: "" });
+    }   
+  };
+
   const sendIsRead = (chatId: any, userId: any, index: any) => {
     historyList[index].chatHistory = historyList[index].chatHistory.map(element => {
       if(element.isRead === false){
@@ -501,11 +593,23 @@ const Chat = () => {
                 className="w-full lg:w-[93%] lg:h-full bg-white rounded-3xl drop-shadow-md"
               >
                 <div className="lg:flex hidden justify-center px-[30px] pb-[10px] h-[60px]  border-b border-[#919191]-[0.8px]">
+                <div className={`${"border-t-4 flex justify-between space-x-[6px] text-[#336699]"} border-[#336699] w-full `}>
+                <select className="block py-2.5 px-0 text-sm text-[#336699] bg-transparent appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer" onChange={filterHistory} name="cars" id="cars">
+                    <option selected>Filter</option>
+                    <option value="read">Read</option>
+                    <option value="unRead">Unread</option>
+                </select>
                   <button
-                    className={`${"border-t-4 text-[#336699]"} border-[#336699] w-full `}
+                    // className={`${"border-t-4 text-[#336699]"} border-[#336699] w-full `}
                   >
                     Contact {historyList.length}
                   </button>
+                  <p className="text-white cursor-default">
+                    t
+                  </p>
+                  </div>
+                
+                 
                 </div>
                 {!isOpen && (
                   <div className="flex lg:hidden justify-center items-center px-[30px] pb-[10px] h-[40px] ">
@@ -967,7 +1071,7 @@ const Chat = () => {
                       {openDes && count === 2 && <div className="absolute truncate w-[80px] rounded-[6px] top-[-40px] left-[-20px] bg-[#336699] text-white py-[4px] text-center">image</div>}
                     </button>
                   </div>
-                  <div className=" text-[14px] relative pl-[24px] ml-[12px] flex  border border-solid border-gray-300 rounded-full w-[78%] py-2 px-2 text-gray-700 leading-tight focus:shadow-outline bg-gray-100 bg-clip-padding transition ease-in-out focus:text-gray-700 focus:border-blue-600 focus:outline-none">
+                  <div className=" text-[14px] relative pl-[24px] ml-[12px] flex  border border-solid border-gray-300 rounded-full w-[72%] py-2 px-2 text-gray-700 leading-tight focus:shadow-outline bg-gray-100 bg-clip-padding transition ease-in-out focus:text-gray-700 focus:border-blue-600 focus:outline-none">
                     {/* markup */}
                     <ContentEditable 
                     placeholder="ข้อความ ....."  className="textBox text-[14px] rounded-full w-full py-3 px-3 text-gray-700 leading-tight focus:shadow-outline bg-gray-100 bg-clip-padding transition ease-in-out focus:text-gray-700 focus:border-blue-600 focus:outline-none" 
@@ -977,7 +1081,7 @@ const Chat = () => {
                     onKeyDown={(e)=>{e.code === 'Space' && e.preventDefault()}}
                       />
                   </div>
-                  <div className="ml-[10px]">
+                  <div className="ml-[10px] space-x-4">
                     <button className="relative"
                       onClick={() => {
                         setOpenPopup(true);
@@ -997,6 +1101,44 @@ const Chat = () => {
                             "invert(41%) sepia(20%) saturate(1448%) hue-rotate(169deg) brightness(83%) contrast(91%)",
                         }} />
                       {openDes && count === 3 && <div className="absolute truncate w-[80px] rounded-[6px] top-[-40px] left-[-20px] bg-[#336699] text-white py-[4px] text-center">emoji</div>}
+                    </button>
+                    <button className="relative"
+                      onClick={() => {
+                        sendManualMode(tab.chatId,tab.userId)
+                      }}
+                      onMouseEnter={() => {
+                        setOpenDes(true);
+                        setCount(4);
+                      }}
+                      onMouseLeave={() => {
+                        setOpenDes(false);
+                        setCount(0);
+                      }}>
+                      <img src="/images/not-approved.png" className="w-[24px]"  alt="image"
+                        style={{
+                          filter:
+                            "invert(41%) sepia(20%) saturate(1448%) hue-rotate(169deg) brightness(83%) contrast(91%)",
+                        }} />
+                      {openDes && count === 4 && <div className="absolute truncate w-[140px] rounded-[6px] top-[-40px] left-[-20px] bg-[#336699] text-white py-[4px] text-center">Manual Answer</div>}
+                    </button>
+                    <button className="relative"
+                      onClick={() => {
+                        sendAutoMode(tab.chatId,tab.userId)
+                      }}
+                      onMouseEnter={() => {
+                        setOpenDes(true);
+                        setCount(5);  
+                      }}
+                      onMouseLeave={() => {
+                        setOpenDes(false);
+                        setCount(0);
+                      }}>
+                        <img src="/images/chat.png" className="w-[24px]" alt="image"
+                        style={{
+                          filter:
+                            "invert(41%) sepia(20%) saturate(1448%) hue-rotate(169deg) brightness(83%) contrast(91%)",
+                        }} />
+                      {openDes && count === 5 && <div className="absolute truncate w-[120px] rounded-[6px] top-[-40px] left-[-20px] bg-[#336699] text-white py-[4px] text-center">Auto Answer</div>}
                     </button>
                   </div>
                   <button
