@@ -460,6 +460,13 @@ const Intents = () => {
   const handleFormExpression = (e: any) => {
     e.preventDefault();
     if (expressionInput !== "") {
+      const sameImage = response.map(res=>{
+        if(res.type === 'image'){
+          return {...res,content:"",type:"image"}
+        }
+        return res
+      })
+      setResponse(sameImage)
       if (expressions.length == 0) {
         setExpressions([...expressions, { text: expressionInput.trim() }]);
       } else {
@@ -508,13 +515,13 @@ const Intents = () => {
     console.log('hi')
     if(isEditingResponse) {
       if(isEditImage && isEditingResponse){
-        const sameImage = response.map(res=>{
+        const previousItem = response.map(res=>{
           if(res.type === 'image'){
-            return {...currentResponse,content:"",type:"image"}
+            return {...previousItem,content:"",type:"image"}
           }
           return res
         })
-        setResponse(sameImage)
+        setResponse(previousItem)
         const sameItem = response.map((res)=>{
           if(res.seq === currentResponse.seq){
             return {...currentResponse,content:"",type:"image"}
@@ -530,7 +537,7 @@ const Intents = () => {
       }else if(!isEditImage && isEditingResponse){
         const sameImage = response.map(res=>{
           if(res.type === 'image'){
-            return {...currentResponse,content:"",type:"image"}
+            return {...res,content:"",type:"image"}
           }
           return res
         })
@@ -550,9 +557,9 @@ const Intents = () => {
     
     }else{
       if (responseInput == "") {
-        const sameImage = response.map(res=>{
+          const sameImage = response.map(res=>{
           if(res.type === 'image'){
-            return {...currentResponse,content:"",type:"image"}
+            return {...res,content:"",type:"image"}
           }
           return res
         })
@@ -567,7 +574,7 @@ const Intents = () => {
         }
         sendIntents()
         setIndex(1);
-        setIsNewImage(false);
+        // setIsNewImage(false);
         setImgSrc(null);
       } else if (responseInput !== "") {
         const sameImage = response.map(res=>{
@@ -583,6 +590,13 @@ const Intents = () => {
             { type: "text", content: responseInput.trim(), seq: response.length },
           ]);
         } else {
+          const sameImage = response.map(res=>{
+            if(res.type === 'image'){
+              return {...currentResponse,content:"",type:"image"}
+            }
+            return res
+          })
+          setResponse(sameImage)
           const checked = response.some((item) => item.content === responseInput);
           if (!checked) {
             setResponse([
@@ -945,7 +959,7 @@ const Intents = () => {
                   :
                   (
                   <img
-                    src={isEditImage ? `${currentResponse.content}` : imgSrc}
+                    src={isEditImage ? `/api/viewImage/${currentResponse.name}` : imgSrc}
                     alt="Thumb"
                     className="mx-auto cursor-pointer w-full"
                   />
@@ -1042,13 +1056,7 @@ const Intents = () => {
                                   {index + 2}
                                 </span>
                                       <span className="pl-[10px] pt-[10px] flex flex-row space-x-[10px]">
-                                      <img src={`/api/viewImage/${res.name}`} className="w-full h-[200px]" alt="img" />
-                                        {isNewImage && <img
-                                          src={res.content}
-                                          alt="img"
-                                          className="w-full h-[200px]"
-                                        />}
-                                        {/* <img src={`/api/viewImage/${res.name}`} className="w-full h-[200px]" alt="img" /> */}
+                                      <img src={ isNewImage ? res.content :`/api/viewImage/${res.name}` } className="w-full h-[200px]" alt="img" />
                                       </span>
                               </p>
                               <div className="space-x-[15px]">
