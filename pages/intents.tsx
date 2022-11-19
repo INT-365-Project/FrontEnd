@@ -102,7 +102,7 @@ const Intents = () => {
   useEffect(() => {
     if (name) {
       for (let i = 0; i < allBot.length; i++) {
-        console.log(allBot[i].responses[0].type)
+        console.log(allBot[i].responses)
         if (name === allBot[i].name) {
           setTopic(allBot[i].topic);
           setTopicName(allBot[i].name);
