@@ -465,7 +465,7 @@ const Chat = () => {
         senderName: "admin",
         receiverName: userId, //change to uId
         status: "BOT",
-        message: 1,
+        message: "1",
         displayName: "admin",
       };
       console.log(chatMessage)
@@ -483,7 +483,7 @@ const Chat = () => {
         senderName: "admin",
         receiverName: userId, //change to uId
         status: "BOT",
-        message:0,
+        message:'0',
         displayName: "admin",
       };
       console.log(chatMessage)
