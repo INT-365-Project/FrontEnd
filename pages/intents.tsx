@@ -589,10 +589,9 @@ const Intents = () => {
         })
         if(imgSrc != null){
           console.log('3')
-          setResponse([
-            ...sameImage,
-            { type: "image", content: imgSrc, seq: response.length+1 },
-          ]);
+          sameImage.push({ type: "image", content: imgSrc, seq: response.length+1 })
+          setResponse(sameImage)
+          console.log('3 check',sameImage)
           console.log('3 check',response)
         sendIntents()
         }
