@@ -567,7 +567,7 @@ const Intents = () => {
         }
         sendIntents()
         setIndex(1);
-        // setIsNewImage(false);
+        setIsNewImage(false);
         setImgSrc(null);
       } else if (responseInput !== "") {
         const sameImage = response.map(res=>{
@@ -1042,7 +1042,7 @@ const Intents = () => {
                                   {index + 2}
                                 </span>
                                       <span className="pl-[10px] pt-[10px] flex flex-row space-x-[10px]">
-                                      {!isNewImage && <img src={`/api/viewImage/${res.name}`} className="w-full h-[200px]" alt="img" />}
+                                      <img src={`/api/viewImage/${res.name}`} className="w-full h-[200px]" alt="img" />
                                         {isNewImage && <img
                                           src={res.content}
                                           alt="img"
