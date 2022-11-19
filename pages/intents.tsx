@@ -215,10 +215,10 @@ const Intents = () => {
               setExpressionInput("");
               setResponseInput("");
               setTopic("");
-              location.reload();
+              // location.reload();
             } else if (result.isDismissed) {
-              response.splice(-1)
-              location.reload();
+              response = response.splice(-1)
+              // location.reload();
             }
           });
         }
@@ -357,13 +357,6 @@ const Intents = () => {
     handleUpdateResponse(currentResponse.seq, currentResponse);
   };
 
-  // const handleEditResponseClick = (response: any) => {
-  //   setIsEditingResponse(true);
-  //   setCurrentResponse({ ...response });
-  // };
-  // const handlerEditResponseInputChange = (e: any) => {
-  //   setCurrentResponse({ ...currentResponse, content: e.target.value });
-  // };
   const handleEditFormSubmit = (e) => {
     e.preventDefault();
     const previousItem = response.map(res=>{
@@ -564,11 +557,12 @@ const Intents = () => {
           return res
         })
         console.log('check same image',sameItem)
+        sendIntents()
         setIndex(1);
         setResponse(sameItem)
         setIsEditingResponse(false)
         setIsEditImage(false)
-        sendIntents()
+       
       }else if(!isEditImage && isEditingResponse){
         console.log('edit not same image')
         let sameImage = response.map(res=>{
@@ -583,11 +577,11 @@ const Intents = () => {
           }
           return res
         })
+        sendIntents()
         console.log('not same image updateItem',updateItem)
         setIndex(1);
         setResponse(updateItem)
         setIsEditingResponse(false)
-        sendIntents()
         console.log(response)
       }
     
@@ -1101,7 +1095,7 @@ const Intents = () => {
                                 </span>
                                       <span className="pl-[10px] pt-[10px] flex flex-row space-x-[10px]">
                                       <img src={`/api/viewImage/${res.name}` } className="w-full h-[200px]" alt="img" />
-                                      {<img src={imgSrc} alt="img" />}
+                                      {res.content !== "" && <img src={res.content} alt="img" />}
                                       </span>
                               </p>
                               <div className="space-x-[15px]">
