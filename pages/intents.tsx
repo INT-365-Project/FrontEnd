@@ -489,6 +489,7 @@ const Intents = () => {
     setCurrentResponse({...res})
     setIsEditImage(true);
     setIsEditingResponse(true);
+    setSelectedImage(true);
     setIndex(2)
 } 
   const handleUpdateResponse = (seq, updatedResponse) => {
@@ -572,7 +573,7 @@ const Intents = () => {
           ]);
         // }
         }
-        sendIntents()
+        // sendIntents()
         setIndex(1);
         // setIsNewImage(false);
         setImgSrc(null);
