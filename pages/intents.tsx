@@ -537,6 +537,7 @@ const Intents = () => {
     console.log('hi')
     if(isEditingResponse) {
       if(isEditImage && isEditingResponse){
+        console.log('edit same image')
         const previousItem = response.map(res=>{
           if(res.type === 'image'){
             return {...res,content:"",type:"image"}
@@ -550,12 +551,13 @@ const Intents = () => {
           return res
         })
         console.log('check same image',sameItem)
-        sendIntents()
         setIndex(1);
         setResponse(sameItem)
         setIsEditingResponse(false)
         setIsEditImage(false)
+        sendIntents()
       }else if(!isEditImage && isEditingResponse){
+        console.log('edit not same image')
         let sameImage = response.map(res=>{
           if(res.type === 'image'){
             return {...res,content:"",type:"image"}
@@ -569,15 +571,16 @@ const Intents = () => {
           return res
         })
         console.log('not same image updateItem',updateItem)
-        sendIntents()
         setIndex(1);
         setResponse(updateItem)
         setIsEditingResponse(false)
+        sendIntents()
         console.log(response)
       }
     
     }else{
       if (responseInput == "") {
+        console.log('2')
           let sameImage = response.map(res=>{
           if(res.type === 'image'){
             return {...res,content:"",type:"image"}
@@ -585,21 +588,28 @@ const Intents = () => {
           return res
         })
         if(imgSrc != null){
+          console.log('3')
           setResponse([
             ...sameImage,
             { type: "image", content: imgSrc, seq: response.length+1 },
           ]);
+          console.log('3 check',response)
         sendIntents()
         }
+        console.log('2 check',response)
+        sendIntents()
         setIndex(1);
         setImgSrc(null);
       } else if (responseInput !== "") {
         if (response.length == 0) {
+          console.log('4')
           setResponse([
             ...response,
             { type: "text", content: responseInput.trim(), seq: response.length },
           ]);
+          console.log('4 check',response)
         } else {
+          console.log('5')
           let sameImage = response.map(res=>{
             if(res.type === 'image'){
               return {...res,content:"",type:"image"}
@@ -616,6 +626,7 @@ const Intents = () => {
                 seq: response.length + 1,
               },
             ]);
+            console.log('5 check',response)
           } else {
             setResponseInput("");
           }
