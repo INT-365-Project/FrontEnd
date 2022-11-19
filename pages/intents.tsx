@@ -4,15 +4,16 @@ import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import FlexMessage from "../components/common/FlexMessage";
 import BotServices from "../services/bot";
+import FileBase64 from "react-file-base64";
 
-let getToken = null
-if (typeof window !== 'undefined') {
-  getToken = localStorage.getItem('accessToken')
+let getToken = null;
+if (typeof window !== "undefined") {
+  getToken = localStorage.getItem("accessToken");
 }
 const headers = {
-  'Content-Type': 'application/json',
-  'Authorization': (typeof window !== 'undefined') && getToken 
-}
+  "Content-Type": "application/json",
+  Authorization: typeof window !== "undefined" && getToken,
+};
 
 const Intents = () => {
   const mockGroup = [
@@ -37,14 +38,14 @@ const Intents = () => {
       topic: "นักศึกษาใหม่",
     },
   ];
-  const [selectedImage,setSelectedImage] = useState(false);
-  const [isEditImage,setIsEditImage] = useState(false);
-  const [imgSrc,setImgSrc] = useState(null)
-  const [base64,setBase64] = useState(null)
+  const [selectedImage, setSelectedImage] = useState(false);
+  const [isEditImage, setIsEditImage] = useState(false);
+  const [imgSrc, setImgSrc] = useState(null);
+  const [file, setFile] = useState([]);
+  const [isNewImage,setIsNewImage] = useState(false) 
 
-  const [bubbleJson,setBubbleJson] = useState(null)
-  const [bubbleText,setBubbleText] = useState({topic:"",content:"",button:""})
-  const [index,setIndex] = useState(1)
+  const [imageBase64, setImageBase64] = useState([]);
+  const [index, setIndex] = useState(1);
   const [editCommandInput, setEditCommandInput] = useState("");
   const [newCommand, setNewCommand] = useState("");
   const [isAddCommand, setIsAddCommand] = useState(false);
@@ -102,21 +103,24 @@ const Intents = () => {
   useEffect(() => {
     if (name) {
       for (let i = 0; i < allBot.length; i++) {
-        console.log(allBot[i].responses)
+        console.log(allBot[i].responses);
         if (name === allBot[i].name) {
           setTopic(allBot[i].topic);
           setTopicName(allBot[i].name);
           setExpressions(allBot[i].expressions);
-          if(allBot[i].responses[0].type == "text"){
-            setResponse(allBot[i].responses);
-          }else if(allBot[i].responses[0].type == "image"){
-            setImgSrc(allBot[i].responses)
+          for (let reponse of allBot[i].responses) {
+            console.log(reponse);
           }
+          // if(allBot[i].responses[0].type == "text"){
+          setResponse(allBot[i].responses);
+          // }else if(allBot[i].responses[0].type == "image"){
+          //   setImgSrc(allBot[i].responses)
+          // }
         }
       }
     } else {
       if (name === "") {
-        setImgSrc("");
+        setImgSrc(null)
         setTopic("");
         setTopicName("");
         setExpressions([]);
@@ -126,82 +130,100 @@ const Intents = () => {
     setIsFinish(false);
   }, [isFinish]);
 
+  const checkImageLength = (list) => {
+    if (list.length <= 2) {
+      let temp = [];
+      for (let img of list) {
+        temp.push(img.base64);
+      }
+      setImageBase64(temp);
+      console.log(temp);
+      console.log(imageBase64);
+    } else {
+      alert("ไม่สามารถอัพ response image มากกว่า 2 รูปได้");
+    }
+  };
+
   const uploadImage = (e: any) => {
     let file = e.target.files[0];
     let reader = new FileReader();
     let endCode64 = null;
     reader.onloadend = function () {
       endCode64 = reader.result;
-      setBase64(reader)
+      // console.log(file.name.slice(file.name.length-3,file.name.length))
       setSelectedImage(true);
       setImgSrc(endCode64)
-    };
+      // setBase64(endCode64.slice(
+      //   endCode64.indexOf(",") + 1,
+      //   endCode64.length - 1
+      // ),)
 
+    };
     reader.readAsDataURL(file);
   };
 
   const sendIntents = () => {
-    if(selectedImage){
-      if (!isEditingExpression && !isEditingResponse) {
-        const responseImage = {
-          type: "image",
-          content: imgSrc,
-          seq: response.length
-        }
-        setErrorCommand({ status: false, msg: "" });
-        setErrorExpress({ status: false, msg: "" });
-        setErrorResponse({ status: false, msg: "" });
-        Swal.fire({
-          title: "ยืนยันการเพิ่มแก้ไข Bot Detect",
-          text: "เมื่อทำการยืนยัน ระบบจะทำการส่งข้อมูล",
-          icon: "warning",
-          showCancelButton: true,
-          cancelButtonColor: "#d33",
-          confirmButtonColor: "#3085d6",
-          cancelButtonText: "ยกเลิก",
-          confirmButtonText: "ยืนยัน",
-        }).then((result) => {
-          if (result.isConfirmed) {
-            const data = {
-              topic: newCommand != "" ? newCommand : topic,
-              name: name != "" ? name : "",
-              expressions: expressions,
-              responses: [responseImage],
-            };
-            commands.push(data);
-            if (commands != null) {
-              const intents = {
-                commands: commands,
-              };
-              console.log(intents);
-              BotServices.storeCommand(intents)
-                .then((res) => {
-                  console.log(res);
-                })
-                .catch((err) => {
-                  console.log(err.response);
-                });
-              setCommands([]);
-              setExpressionInput("");
-              setResponseInput("");
-              setTopic("");
-            }
-            Swal.fire(
-              "ระบบดำเนินการเสร็จสิ้น",
-              "ข้อมูลของคุณได้ถูกเพิ่มหรือแก้ไข้แล้ว",
-              "success"
-            );
-            setCommands([]);
-            setExpressionInput("");
-            setResponseInput("");
-            setTopic("");
-            // location.reload();
-          } else if (result.isDismissed) {
-            // location.reload();
-          }
-        });
-      }
-    }
+    // if(imageBase64.length>0){
+    //   if (!isEditingExpression && !isEditingResponse) {
+    //     const responseImage = {
+    //       type: "image",
+    //       content: imageBase64,
+    //       seq: response.length
+    //     }
+    //     setErrorCommand({ status: false, msg: "" });
+    //     setErrorExpress({ status: false, msg: "" });
+    //     setErrorResponse({ status: false, msg: "" });
+    //     Swal.fire({
+    //       title: "ยืนยันการเพิ่มแก้ไข Bot Detect",
+    //       text: "เมื่อทำการยืนยัน ระบบจะทำการส่งข้อมูล",
+    //       icon: "warning",
+    //       showCancelButton: true,
+    //       cancelButtonColor: "#d33",
+    //       confirmButtonColor: "#3085d6",
+    //       cancelButtonText: "ยกเลิก",
+    //       confirmButtonText: "ยืนยัน",
+    //     }).then((result) => {
+    //       if (result.isConfirmed) {
+    //         const data = {
+    //           topic: newCommand != "" ? newCommand : topic,
+    //           name: name != "" ? name : "",
+    //           expressions: expressions,
+    //           responses: [responseImage],
+    //         };
+    //         commands.push(data);
+    //         if (commands != null) {
+    //           const intents = {
+    //             commands: commands,
+    //           };
+    //           console.log(intents);
+    //           // BotServices.storeCommand(intents)
+    //           //   .then((res) => {
+    //           //     console.log(res);
+    //           //   })
+    //           //   .catch((err) => {
+    //           //     console.log(err.response);
+    //           //   });
+    //           setCommands([]);
+    //           setExpressionInput("");
+    //           setResponseInput("");
+    //           setTopic("");
+    //         }
+    //         Swal.fire(
+    //           "ระบบดำเนินการเสร็จสิ้น",
+    //           "ข้อมูลของคุณได้ถูกเพิ่มหรือแก้ไข้แล้ว",
+    //           "success"
+    //         );
+    //         setCommands([]);
+    //         setExpressionInput("");
+    //         setResponseInput("");
+    //         setTopic("");
+    //         // location.reload();
+    //       } else if (result.isDismissed) {
+    //         // location.reload();
+    //       }
+    //     });
+    //   }
+    // }
     if (expressions.length > 0 && response.length > 0 && topic != "") {
       if (expressions.length != 0 || response.length != 0) {
         if (!isEditingExpression && !isEditingResponse) {
@@ -231,13 +253,13 @@ const Intents = () => {
                   commands: commands,
                 };
                 console.log(intents);
-                BotServices.storeCommand(intents)
-                  .then((res) => {
-                    console.log(res);
-                  })
-                  .catch((err) => {
-                    console.log(err.response);
-                  });
+                // BotServices.storeCommand(intents)
+                //   .then((res) => {
+                //     console.log(res);
+                //   })
+                //   .catch((err) => {
+                //     console.log(err.response);
+                //   });
                 setCommands([]);
                 setExpressionInput("");
                 setResponseInput("");
@@ -252,9 +274,9 @@ const Intents = () => {
               setExpressionInput("");
               setResponseInput("");
               setTopic("");
-              location.reload();
+              // location.reload();
             } else if (result.isDismissed) {
-              location.reload();
+              // location.reload();
             }
           });
         }
@@ -279,9 +301,13 @@ const Intents = () => {
       setTopic("");
       setIsAddCommand(true);
       setExpressions([]);
+      setImgSrc(null)
       setResponse([]);
     } else {
+      setImgSrc(null)
       setImgSrc(null);
+      setResponse([]);
+      setExpressions([]);
       setSelectedImage(false);
       setIsFinish(true);
       setName(tp);
@@ -292,15 +318,15 @@ const Intents = () => {
   const deleteTopic = () => {
     const items = allBot.filter((item) => item.topic != topic);
     items.push({
-                name: name,
-                topic: "",
-                expressions: [],
-                responses: [],
-    })
-    console.log(items)
+      name: name,
+      topic: "",
+      expressions: [],
+      responses: [],
+    });
+    console.log(items);
     const data = {
-      commands : items
-    }
+      commands: items,
+    };
     Swal.fire({
       title: "ยืนยันการลบ Bot Detect",
       text: "เมื่อทำการยืนยัน ระบบจะทำการส่งข้อมูล",
@@ -312,17 +338,17 @@ const Intents = () => {
       confirmButtonText: "ยืนยัน",
     }).then((result) => {
       if (result.isConfirmed) {
-          BotServices.storeCommand(data)
-            .then((res) => {
-              console.log(res);
-            })
-            .catch((err) => {
-              console.log(err.response);
-            });
-          setCommands([]);
-          setExpressionInput("");
-          setResponseInput("");
-          setTopic("");
+        BotServices.storeCommand(data)
+          .then((res) => {
+            console.log(res);
+          })
+          .catch((err) => {
+            console.log(err.response);
+          });
+        setCommands([]);
+        setExpressionInput("");
+        setResponseInput("");
+        setTopic("");
         Swal.fire(
           "ระบบดำเนินการเสร็จสิ้น",
           "ข้อมูลของคุณได้ถูกลบแล้ว",
@@ -487,8 +513,8 @@ const Intents = () => {
     setOldTopic(topic);
   };
   const cancelNewCommands = () => {
-    setImgSrc(null)
-    setSelectedImage(false)
+    setImgSrc(null);
+    setSelectedImage(false);
     setTopic("");
     setNewCommand("");
     setOldTopic("");
@@ -521,7 +547,20 @@ const Intents = () => {
   };
   const handleFormResponse = (e: any) => {
     e.preventDefault();
-    if (responseInput !== "") {
+    console.log('hi')
+    if (responseInput == "") {
+      if(imgSrc != null){
+      if (index == 2) {
+        setResponse([
+          ...response,
+          { type: "image", content: imgSrc, seq: response.length+1 },
+        ]);
+      }
+      }
+      setIndex(1);
+      // setIsNewImage(false);
+      setImgSrc(null);
+    } else if (responseInput !== "") {
       if (response.length == 0) {
         setResponse([
           ...response,
@@ -535,7 +574,7 @@ const Intents = () => {
             {
               type: "text",
               content: responseInput.trim(),
-              seq: response.length,
+              seq: response.length + 1,
             },
           ]);
         } else {
@@ -835,32 +874,53 @@ const Intents = () => {
         <div className="flex min-h-[80px]  bg-white rounded-[10px] shadow-lg mt-[30px] pb-[30px]">
           <div className=" pt-[15px] w-full">
             <h1 className="text-[14px] text-black pl-[40px] border-b border-gray-300 pb-[10px] space-x-4">
-              <button onClick={()=>setIndex(1)} className={`border-b ${index==1 && "border-[#336699]"}  uppercase`}>
+              <button
+                disabled={index == 2}
+                onClick={() => setIndex(1)}
+                className={`border-b ${
+                  index == 1 && "border-[#336699]"
+                }  uppercase`}
+              >
                 Default
               </button>
-              <button onClick={()=>setIndex(2)} className={`border-b ${index==2 && "border-[#336699]"}  uppercase`}>
-                Image 
-              </button>
+              {index == 2 && (
+                <button
+                  onClick={() => setIndex(2)}
+                  className={`border-b ${
+                    index == 2 && "border-[#336699]"
+                  }  uppercase`}
+                >
+                  Image
+                </button>
+              )}
             </h1>
-            {
-            index == 2 && <div className="mx-[20px]  md:mx-[40px]">
-            {/* <FlexMessage bubbleText={bubbleText} /> */}
-            </div>
-            }
+            {index == 2 && (
+              <div className="mx-[20px]  md:mx-[40px]">
+                {/* <FlexMessage bubbleText={bubbleText} /> */}
+              </div>
+            )}
             <div className="min-h-[40px] mx-[20px]  md:mx-[40px] border border-[#919191] mt-[20px] ">
-              <div className="w-full h-[46px] bg-[#EBEBEB] px-[24px] flex items-center">
+              <div className="w-full h-[46px] bg-[#EBEBEB] px-[24px] flex justify-between items-center">
                 {index == 1 && <p className="text-[16px]">Text Response</p>}
                 {index == 2 && <p className="text-[16px]">Custom Payload</p>}
+                {index == 2 && (
+                  <button
+                    onClick={() => setIndex(1)}
+                    className="bg-red-600 text-[10px] h-[25px] my-auto w-[100px] rounded-[25px] mr-[10px] text-white"
+                  >
+                    ยกเลิก
+                  </button>
+                )}
               </div>
-              {
-                index == 2 && 
+              {index == 2 && (
                 <>
                 <div className="h-[490px] overflow-y-scroll flex flex-col items-center justify-center">
+                <form onSubmit={handleFormResponse}>
             <div className="border-dashed border-[2px] w-[260px] min-h-[220px] flex items-center flex-col justify-center">
               <label htmlFor="inputFileToLoad">
                 {!selectedImage ?
                   <img
-                    src={`${isEditImage ? imgSrc : 'images/upload.png'}`}
+                    src={`${"/images/upload.png"}`}
                     alt="Thumb"
                     className="mx-auto cursor-pointer w-full"
                   />
@@ -871,8 +931,8 @@ const Intents = () => {
                     className="mx-auto cursor-pointer w-full"
                   />
                 }
+              
                 <input
-                  disabled={topic === ""}
                   className="mt-[20px] hidden"
                   id="inputFileToLoad"
                   accept="image/*"
@@ -885,9 +945,12 @@ const Intents = () => {
               </label>
             </div>
             <div className="flex justify-center pt-[20px] space-x-4">
-              {!selectedImage && <label htmlFor="inputFileToLoad" className={`w-[105px] h-[30px] mb-[30px] cursor-pointer flex justify-center items-center  bg-[#53a1f0] rounded-[5px] text-white`}>
+              {!selectedImage ? <label htmlFor="inputFileToLoad" className={`w-[105px] h-[30px] mb-[30px] cursor-pointer flex justify-center items-center  bg-[#53a1f0] rounded-[5px] text-white`}>
                 เลือกรูปภาพ
-              </label> 
+              </label> :
+                <button type="submit" className={`w-[105px] h-[30px] mb-[30px] cursor-pointer flex justify-center items-center  bg-green-600 rounded-[5px] text-white`}>
+                  ยืนยัน
+                </button>
               }
               {selectedImage && <button onClick={() => {
                 setImgSrc(null)
@@ -896,125 +959,220 @@ const Intents = () => {
                 ลบรูปภาพ
               </button>}
             </div>
+            </form>
           </div>
                 </>
-              }
+              )}
               <>
-              {
-                index == 1 && 
-              <form onSubmit={handleFormResponse} className="flex">
-                <span className="flex items-center justify-center mx-auto h-[40px] bg-[#EBEBEB] w-[40px]">
-                  1
-                </span>
-                <input
-                  disabled={topic == ""}
-                  type="text"
-                  className="pl-[10px] pt-[10px]  w-full appearance-none focus:outline-none focus:shadow-outline text-gray-900 "
-                  placeholder="Enter Text response"
-                  value={responseInput}
-                  onChange={handlerResponseInputChange}
-                />
-              </form>
-              }
-              {index == 1 && 
-              <ul
-                className={` ${
-                  response.length >= 10 ? "h-[370px] overflow-y-scroll" : ""
-                }`}
-              >
-                {response.map((res, index) => {
-                  if (!isEditingResponse) {
-                    return (
-                      <li
-                        className="flex justify-between w-full"
-                        key={index}
-                        onClick={() => handleEditResponseClick(res)}
-                      >
-                        <p className="flex">
-                          <span className="flex items-center justify-center mx-auto h-[40px] bg-[#EBEBEB] w-[40px]">
-                            {index + 2}
-                          </span>
-                          <span className="pl-[10px] pt-[10px]">
-                            {res.content}
-                          </span>
-                        </p>
-                        <div className="space-x-[15px]">
-                          <button
-                            className="pr-[10px]"
-                            onClick={() => handleResponseDelete(res.seq)}
-                          >
-                            <img
-                              src={`/images/delete.svg`}
-                              className="iconic"
-                              alt="delete"
-                              style={{
-                                filter:
-                                  "invert(50%) sepia(30%) saturate(100%) hue-rotate(356deg) brightness(96%) contrast(111%)",
-                              }}
-                            />
-                          </button>
-                        </div>
-                      </li>
-                    );
-                  } else if (currentResponse.seq === res.seq) {
-                    return (
-                      <form
-                        onSubmit={handleEditResponseFormSubmit}
-                        className="flex"
-                      >
-                        <span className="flex items-center justify-center mx-auto h-[40px] bg-[#EBEBEB] w-[50px]">
-                          {index + 2}
+                {index == 1 && (
+                  <>
+                    <div className="flex justify-between">
+                      <form onSubmit={handleFormResponse} className="flex">
+                        <span className="flex items-center justify-center mx-auto h-[60px] bg-[#EBEBEB] w-[40px]">
+                          1
                         </span>
                         <input
+                          disabled={topic == ""}
                           type="text"
-                          className={`${
-                            currentResponse.seq === res.seq
-                              ? "border-l-[#336699] border-l-[4px]"
-                              : ""
-                          } pl-[10px] pt-[10px]  w-full appearance-none focus:outline-none focus:shadow-outline text-gray-900 `}
-                          placeholder="Edit Text response"
-                          value={currentResponse.content}
-                          onChange={handlerEditResponseInputChange}
+                          className="pl-[10px] pt-[10px]  lg:w-[700px] appearance-none focus:outline-none focus:shadow-outline text-gray-900 "
+                          placeholder="Enter Text response"
+                          value={responseInput}
+                          onChange={handlerResponseInputChange}
                         />
                       </form>
-                    );
-                  } else if (currentResponse.seq != res.seq) {
-                    return (
-                      <li
-                        className="flex justify-between w-full"
-                        key={index}
-                        onClick={() => handleEditResponseClick(res)}
+                      <button
+                        disabled={responseInput != "" || topic == ""}
+                        onClick={() => {setIndex(2),setIsNewImage(true)}}
+                        className={`${
+                          responseInput != "" || topic == ""
+                            ? "bg-gray-800"
+                            : "bg-blue-400"
+                        } 
+                 text-[10px] h-[25px] my-auto w-[100px] rounded-[25px] mr-[10px] text-white`}
                       >
-                        <p className="flex">
-                          <span className="flex items-center justify-center mx-auto h-[40px] bg-[#EBEBEB] w-[40px]">
-                            {index + 2}
-                          </span>
-                          <span className="pl-[10px] pt-[10px]">
-                            {res.content}
-                          </span>
-                        </p>
-                        <div className="space-x-[15px]">
-                          <button
-                            className="pr-[10px]"
-                            onClick={() => handleResponseDelete(res.seq)}
-                          >
-                            <img
-                              src={`/images/delete.svg`}
-                              className="iconic"
-                              alt="delete"
-                              style={{
-                                filter:
-                                  "invert(50%) sepia(30%) saturate(100%) hue-rotate(356deg) brightness(96%) contrast(111%)",
+                        อัพโหลดรูป
+                      </button>
+                    </div>
+                  </>
+                )}
+                {index == 1 && (
+                  <ul
+                    className={` ${
+                      response.length >= 10
+                        ? "h-[370px] overflow-y-scroll truncate "
+                        : "truncate "
+                    }`}
+                  >
+                    {response.map((res, index) => {
+                      if (!isEditingResponse) {
+                        if (res.type == "image") {
+                          return (
+                            <li
+                              className="flex justify-between w-full"
+                              key={index}
+                              // onClick={() => handleEditResponseClick(res)}
+                            >
+                              <p className="flex">
+                                <span className="flex items-center justify-center mx-auto h-[40px] bg-[#EBEBEB] w-[40px]">
+                                  {index + 2}
+                                </span>
+                                      <span className="pl-[10px] pt-[10px] flex flex-row space-x-[10px]">
+                                      {!isNewImage && <img src={`/api/viewImage/${res.name}`} className="w-full h-[200px]" alt="img" />}
+                                        {isNewImage && <img
+                                          src={res.content}
+                                          alt="img"
+                                          className="w-full h-[200px]"
+                                        />}
+                                        {/* <img src={`/api/viewImage/${res.name}`} className="w-full h-[200px]" alt="img" /> */}
+                                      </span>
+                              </p>
+                              <div className="space-x-[15px]">
+                                <button
+                                  className="pr-[10px]"
+                                  onClick={() => handleResponseDelete(res.seq)}
+                                >
+                                  <img
+                                    src={`/images/delete.svg`}
+                                    className="iconic"
+                                    alt="delete"
+                                    style={{
+                                      filter:
+                                        "invert(50%) sepia(30%) saturate(100%) hue-rotate(356deg) brightness(96%) contrast(111%)",
+                                    }}
+                                  />
+                                </button>
+                              </div>
+                            </li>
+                          );
+                        } else {
+                          return (
+                            <li
+                              className="flex justify-between w-full"
+                              key={index}
+                              onClick={() => {
+                                res.type === "text"
+                                  ? handleEditResponseClick(res)
+                                  : console.log("hi");
                               }}
+                            >
+                              <p className="flex">
+                                <span className="flex items-center justify-center mx-auto h-[40px] bg-[#EBEBEB] w-[40px]">
+                                  {index + 2}
+                                </span>
+                                {res.type === "text" && (
+                                  <span className="pl-[10px] pt-[10px]">
+                                    {res.content}
+                                  </span>
+                                )}
+                                {res.type === "image" && (
+                                  <div className="flex flex-col">
+                                          <span className="pl-[10px] pt-[10px] flex flex-row space-x-[10px]">
+                                            {/* <img
+                                              src={res.content}
+                                              alt="img"
+                                              className="w-full h-[200px]"
+                                            /> */}
+                                            <img src={`/api/viewImage/${res.name}`} className="w-full h-[200px]" alt="img" />
+                                          </span>
+                                  </div>
+                                )}
+                              </p>
+                              <div className="space-x-[15px]">
+                                <button
+                                  className="pr-[10px]"
+                                  onClick={() => handleResponseDelete(res.seq)}
+                                >
+                                  <img
+                                    src={`/images/delete.svg`}
+                                    className="iconic"
+                                    alt="delete"
+                                    style={{
+                                      filter:
+                                        "invert(50%) sepia(30%) saturate(100%) hue-rotate(356deg) brightness(96%) contrast(111%)",
+                                    }}
+                                  />
+                                </button>
+                              </div>
+                            </li>
+                          );
+                        }
+                      } else if (currentResponse.seq === res.seq) {
+                        return (
+                          <form
+                            onSubmit={handleEditResponseFormSubmit}
+                            className="flex"
+                          >
+                            <span className="flex items-center justify-center mx-auto h-[40px] bg-[#EBEBEB] w-[50px]">
+                              {index + 2}
+                            </span>
+                            <input
+                              type="text"
+                              className={`${
+                                currentResponse.seq === res.seq
+                                  ? "border-l-[#336699] border-l-[4px]"
+                                  : ""
+                              } pl-[10px] pt-[10px]  w-full appearance-none focus:outline-none focus:shadow-outline text-gray-900 `}
+                              placeholder="Edit Text response"
+                              value={currentResponse.content}
+                              onChange={handlerEditResponseInputChange}
                             />
-                          </button>
-                        </div>
-                      </li>
-                    );
-                  }
-                })}
-              </ul>
-              }
+                          </form>
+                        );
+                      } else if (currentResponse.seq != res.seq) {
+                        return (
+                          <li
+                            className="flex justify-between w-full"
+                            key={index}
+                            onClick={() => {
+                              res.type === "text"
+                                ? handleEditResponseClick(res)
+                                : console.log("hi");
+                            }}
+                          >
+                            <p className="flex">
+                              <span className="flex items-center justify-center mx-auto h-[40px] bg-[#EBEBEB] w-[40px]">
+                                {index + 2}
+                              </span>
+                              {res.type === "text" && (
+                                <span className="pl-[10px] pt-[10px]">
+                                  {res.content}
+                                </span>
+                              )}
+                              {res.type === "image" && (
+                                <div className="flex flex-row">
+                                      <span className="pl-[10px] pt-[10px] flex flex-row space-x-[10px]">
+                                        {/* <img
+                                          src={res.content}
+                                          alt="img"
+                                          className="w-full h-[200px]"
+                                        /> */}
+                                        <img src={`/api/viewImage/${res.name}`} className="w-full h-[200px]" alt="img" />
+                                      </span>
+                                </div>
+                              )}
+                            </p>
+                            <div className="space-x-[15px]">
+                              <button
+                                className="pr-[10px]"
+                                onClick={() => handleResponseDelete(res.seq)}
+                              >
+                                <img
+                                  src={`/images/delete.svg`}
+                                  className="iconic"
+                                  alt="delete"
+                                  style={{
+                                    filter:
+                                      "invert(50%) sepia(30%) saturate(100%) hue-rotate(356deg) brightness(96%) contrast(111%)",
+                                  }}
+                                />
+                              </button>
+                            </div>
+                          </li>
+                        );
+                      }
+                    })}
+                  </ul>
+                )}
               </>
             </div>
             {errorResponse.status && (
@@ -1024,7 +1182,7 @@ const Intents = () => {
             )}
           </div>
         </div>
-        
+
         <button
           onClick={() => sendIntents()}
           className=" flex justify-between items-center space-x-[10px] text-white border-[2px] md:px-[14px] py-[18px] transition-all duration-300 bg-[#336699] rounded-[5px] h-[50%] p-1 mt-[30px]"
@@ -1037,4 +1195,3 @@ const Intents = () => {
 };
 
 export default Intents;
-
