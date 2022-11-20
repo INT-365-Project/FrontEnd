@@ -18,7 +18,10 @@ const Chat = () => {
   const { adminUser } = useAppContext();
   const router = useRouter();
   const [readButton,setReadButton] = useState(0)
+  const [isManualToggle,setIsManualToggle] = useState(false)
 
+  const [checkBotResponse,setCheckBotResponse] = useState(false)
+  
   const [showPreviewImage,setShowPreviewImage] = useState(false)
   const [previewUrl,setPreviewUrl] = useState (null)
   
@@ -29,7 +32,7 @@ const Chat = () => {
   const [base64,setBase64] = useState("")
   const [emoji, setEmoji] = useState([]);
   const [sticker, setSticker] = useState(null);
-
+  
   const [isHasSticker, setIsHasSticker] = useState(false);
   const [isHasImage, setIsHasImage] = useState(false);
   const [isHasEmoji, setIsHasEmoji] = useState(false);
@@ -89,10 +92,41 @@ const Chat = () => {
 
   const filterHistory = (event) =>{
     // event.target.value
+    setIsManualToggle(false)
     console.log(event.target.value)
-    if(event.target.value === 'read'){{
+    if(event.target.value === 'AutoMode'){{
+      setIsManualToggle(false)
       let temp = []
-      console.log(historyList)
+      historyList.map((history,index)=>{
+      if(history.isBotResponse === true){
+        temp.unshift(history)
+      }else{
+        temp.push(history)
+      }
+    })
+    console.log(temp)
+    historyList = temp
+    setReadButton(0)
+    setAllHistory(temp)
+    }}
+    if(event.target.value === 'ManualMode'){{
+      let temp = []
+      historyList.map((history,index)=>{
+      if(history.isBotResponse === false){
+        temp.unshift(history)
+      }else{
+        temp.push(history)
+      }
+    })
+    console.log(temp)
+    setIsManualToggle(true)
+    historyList = temp
+    setReadButton(0)
+    setAllHistory(temp)
+    }}
+    if(event.target.value === 'read'){{
+      setIsManualToggle(false)
+      let temp = []
       historyList.map((history,index)=>{
       if(history.chatHistory[history.chatHistory.length-1].isRead === true){
         console.log('list not read',history)
@@ -101,11 +135,13 @@ const Chat = () => {
         temp.push(history)
       }
     })
+    console.log(temp)
     historyList = temp
     setReadButton(0)
     setAllHistory(temp)
     }}
     if(event.target.value === 'unRead'){
+      setIsManualToggle(false)
       let temp = []
     console.log(historyList)
     historyList.map((history,index)=>{
@@ -116,6 +152,7 @@ const Chat = () => {
         temp.push(history)
       }
     })
+    console.log(temp)
     historyList = temp
     setReadButton(1)
     setAllHistory(temp)
@@ -206,6 +243,7 @@ const Chat = () => {
     
     const temp = []
     if (payloadData.length > 0) {
+      console.log(payloadData)
       payloadData.map((chat, index) => {
         const date = new Date(chat.chatHistory[chat.chatHistory.length - 1].sentDate)
         const time = new Date(chat.chatHistory[chat.chatHistory.length - 1].sentDate).toLocaleTimeString('en',
@@ -251,6 +289,7 @@ const Chat = () => {
       );
       privateChats.set(payloadData[i].chatId, tempList);
     }
+    console.log('historylist',historyList)
     // console.log('show history = ', privateChats)
   };
 
@@ -460,6 +499,12 @@ const Chat = () => {
   };
 
   const sendAutoMode = (chatId: any, userId: any) => {
+    historyList = historyList.map((history)=>{
+      if(history.chatId === chatId){
+        return {...history,isBotResponse:true}
+      }
+      return history
+    })
     if (stompClient) {
       var chatMessage = {
         type: "text",
@@ -472,12 +517,19 @@ const Chat = () => {
       };
       console.log(chatMessage)
       stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
+      alert("คุณได้ทำการเปิดโหมด Auto การตอบคำถาม และปิดการตอบคำถามแบบ Manual แล้ว")
       // setUserData({ ...userData, message: "" });
     }   
   };
 
   
   const sendManualMode = (chatId: any, userId: any) => {
+   historyList = historyList.map((history)=>{
+      if(history.chatId === chatId){
+        return {...history,isBotResponse:false}
+      }
+      return history
+    })
     if (stompClient) {
       var chatMessage = {
         type: "text",
@@ -492,6 +544,8 @@ const Chat = () => {
       stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
       // setUserData({ ...userData, message: "" });
     }   
+    setCheckBotResponse(false)
+    alert("คุณได้ทำการเปิดโหมด Manual การตอบคำถามและปิดการตอบคำถามแบบ Auto แล้ว")
   };
 
   const sendIsRead = (chatId: any, userId: any, index: any) => {
@@ -514,10 +568,14 @@ const Chat = () => {
       stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
       setUserData({ ...userData, message: "" });
     }   
+    setCheckBotResponse(true)
   };
 
   const tabName = (userId: any, name: any, chatId: any, index: any) => {
     console.log("chatId from tabName = ", chatId)
+    if(historyList[index].chatId === chatId){
+       setCheckBotResponse(historyList[index].isBotResponse)
+    } 
     localStorage.setItem('chatId', chatId)
     localStorage.setItem('userId', userId)
     showHistory(chatId);
@@ -598,10 +656,13 @@ const Chat = () => {
               >
                 <div className="lg:flex hidden justify-center px-[30px] pb-[10px] h-[60px]  border-b border-[#919191]-[0.8px]">
                 <div className={`${"border-t-4 flex justify-between space-x-[6px] text-[#336699]"} border-[#336699] w-full `}>
-                <select className="block py-2.5 px-0 text-sm text-[#336699] bg-transparent appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer" onChange={filterHistory} name="cars" id="cars">
-                    <option selected>Filter</option>
+                <select className="block py-2.5 px-0 text-sm text-[#336699] bg-transparent appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer" 
+                onChange={filterHistory} name="cars" id="cars">
+                    <option selected>Filter By</option>
                     <option value="read">Read</option>
                     <option value="unRead">Unread</option>
+                    <option value="AutoMode">Auto mode</option>
+                    <option value="ManualMode">Manual Mode</option>
                 </select>
                   <button
                     // className={`${"border-t-4 text-[#336699]"} border-[#336699] w-full `}
@@ -617,12 +678,30 @@ const Chat = () => {
                 </div>
                 {!isOpen && (
                   <div className="flex lg:hidden justify-center items-center px-[30px] pb-[10px] h-[40px] ">
-                    <button
-                      className={`${"border-t-4 text-[#336699]"} border-[#336699] w-full `}
-                    >
-                      Message
-                    </button>
+                    
+                    {/* <div className="flex justify-center px-[30px] pb-[10px] h-[60px]  border-b border-[#919191]-[0.8px]"> */}
+                <div className={`${"border-t-4 flex justify-between space-x-[6px] text-[#336699]"} border-[#336699] w-full `}>
+                <select className="block py-2.5 px-0 text-sm text-[#336699] bg-transparent appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer" 
+                onChange={filterHistory} name="cars" id="cars">
+                    <option selected>Filter By</option>
+                    <option value="read">Read</option>
+                    <option value="unRead">Unread</option>
+                    <option value="AutoMode">Auto mode</option>
+                    <option value="ManualMode">Manual Mode</option>
+                </select>
+                  <button
+                    // className={`${"border-t-4 text-[#336699]"} border-[#336699] w-full `}
+                  >
+                    Contact {historyList.length}
+                  </button>
+                  <p className="text-white cursor-default">
+                    t
+                  </p>
                   </div>
+                
+                 
+                </div>
+                  // </div>
                 )}
                 {isOpen && (
                   <div className="flex lg:hidden items-center justify-between px-[20px] pt-[30px] h-[40px] ">
@@ -650,42 +729,45 @@ const Chat = () => {
                           key={index}
                         >
                           {
-                            historyList[index].chatHistory.filter(element => element.isRead === false && element.senderName !== "admin").length > 0 &&
-                            <div className={tab.chatId === history.chatId ? "hidden" : "rounded-full bg-[#336699] p-3 h-[4px] w-[14px] absolute right-2 top-2 flex justify-center items-center"}>
+                            //css change
+                            historyList[index].chatHistory.filter(element => element.isRead === false && element.senderName !== "admin").length > 0 && (
+                             <div className={tab.chatId === history.chatId ? "hidden" : "rounded-full bg-[#336699] p-3 h-[4px] w-[14px] absolute right-2 top-2 flex justify-center items-center"}>
                               <p className="text-white">
                                 {historyList[index].chatHistory.filter(element => element.isRead === false && element.senderName !== "admin").length}
                               </p>
                             </div>
+                            )
                           }
                           <div>
                             <p className="font-bold"> 
                             {history.displayName}
                             </p>
-                          <p className="truncate w-[90%]  text-[14px]">{(historyList[index].chatHistory[historyList[index].chatHistory.length-1].type == "text" && !historyList[index].chatHistory[historyList[index].chatHistory.length-1].message.includes('img')) && 
+                          <p className={`truncate w-[90%] ${(history.isBotResponse === false && isManualToggle && tab.chatId !== history.chatId) ? ' underline rounded-[4px] ' : ''} text-[14px]`}>{(historyList[index].chatHistory[historyList[index].chatHistory.length-1].type == "text" && !historyList[index].chatHistory[historyList[index].chatHistory.length-1].message.includes('img')) && 
                           <>
                           {historyList[index].chatHistory[historyList[index].chatHistory.length-1].senderName === "admin" && <span>คุณ:</span>  }
-                          <span>{historyList[index].chatHistory[historyList[index].chatHistory.length-1].message}</span>
+                          <span className={`${(history.isBotResponse === false && isManualToggle && tab.chatId !== history.chatId) ? 'bg-orange p-2 rounded-[4px] ' : ''}`}>{historyList[index].chatHistory[historyList[index].chatHistory.length-1].message}</span>
                           </>
                           }
                            </p>
                            <p className="truncate  text-[14px]">{(historyList[index].chatHistory[historyList[index].chatHistory.length-1].type == "image") && 
                           <>
-                          {historyList[index].chatHistory[historyList[index].chatHistory.length-1].senderName === "admin" && <span>คุณ:</span> }
-                          รูปภาพ
+                         <span className={`${(history.isBotResponse === false && isManualToggle && tab.chatId !== history.chatId) ? 'bg-orange p-2 rounded-[4px] ' : ''}`}><span>คุณ:</span>
+                          รูปภาพ</span>
                           </>
                           }
                            </p>
                            <p className="truncate text-[14px]">{(historyList[index].chatHistory[historyList[index].chatHistory.length-1].type == "sticker") && 
                           <>
-                          {historyList[index].chatHistory[historyList[index].chatHistory.length-1].senderName === "admin" && <span>คุณ:</span> }
-                          สติ๊กเกอร์
+                             <span className={`${(history.isBotResponse === false && isManualToggle && tab.chatId !== history.chatId) ? 'bg-orange p-2 rounded-[4px] ' : ''}`}><span>คุณ:</span>
+                          สติ๊กเกอร์</span>
                           </>
                           }
                            </p>
-                           <p className="truncate text-[14px]">{(historyList[index].chatHistory[historyList[index].chatHistory.length-1].type == "text" && historyList[index].chatHistory[historyList[index].chatHistory.length-1].message.includes('img')) && 
+                           <p className="truncate text-[14px]">{(historyList[index].chatHistory[historyList[index].chatHistory.length-1].type == "text" 
+                           && historyList[index].chatHistory[historyList[index].chatHistory.length-1].message.includes('img')) && 
                           <>
-                          {historyList[index].chatHistory[historyList[index].chatHistory.length-1].senderName === "admin" && <span>คุณ:</span> }
-                          อีโมจิ
+                             <span className={`${(history.isBotResponse === false && isManualToggle && tab.chatId !== history.chatId) ? 'bg-orange p-2 rounded-[4px] ' : ''}`}><span>คุณ:</span>
+                          อีโมจิ</span>
                           </>
                           }
                            </p>
@@ -713,44 +795,46 @@ const Chat = () => {
                               } `}
                             key={index}
                           >
-                            {
-                              historyList[index].chatHistory.filter(element => element.isRead === false && element.senderName !== "admin").length > 0 &&
-                              <div className={tab.chatId === history.chatId ? "hidden" : "rounded-full bg-[#336699] p-3 h-[4px] w-[14px] absolute right-2 top-2 flex justify-center items-center"}>
-                                <p className="text-white">
-
-                                  {historyList[index].chatHistory.filter(element => element.isRead === false && element.senderName !== "admin").length}
-                                </p>
-                              </div>
-                            }
-                             <div>
+                          {
+                            //css change
+                            historyList[index].chatHistory.filter(element => element.isRead === false && element.senderName !== "admin").length > 0 && (
+                             <div className={tab.chatId === history.chatId ? "hidden" : "rounded-full bg-[#336699] p-3 h-[4px] w-[14px] absolute right-2 top-2 flex justify-center items-center"}>
+                              <p className="text-white">
+                                {historyList[index].chatHistory.filter(element => element.isRead === false && element.senderName !== "admin").length}
+                              </p>
+                            </div>
+                            )
+                          }
+                          <div>
                             <p className="font-bold"> 
                             {history.displayName}
                             </p>
-                          <p className="truncate w-[90%]  text-[14px]">{(historyList[index].chatHistory[historyList[index].chatHistory.length-1].type == "text" && !historyList[index].chatHistory[historyList[index].chatHistory.length-1].message.includes('img')) && 
+                          <p className={`truncate w-[90%] ${(history.isBotResponse === false && isManualToggle && tab.chatId !== history.chatId) ? ' underline rounded-[4px] ' : ''} text-[14px]`}>{(historyList[index].chatHistory[historyList[index].chatHistory.length-1].type == "text" && !historyList[index].chatHistory[historyList[index].chatHistory.length-1].message.includes('img')) && 
                           <>
                           {historyList[index].chatHistory[historyList[index].chatHistory.length-1].senderName === "admin" && <span>คุณ:</span>  }
-                          <span>{historyList[index].chatHistory[historyList[index].chatHistory.length-1].message}</span>
+                          <span className={`${(history.isBotResponse === false && isManualToggle && tab.chatId !== history.chatId) ? 'bg-orange p-2 rounded-[4px] ' : ''}`}>{historyList[index].chatHistory[historyList[index].chatHistory.length-1].message}</span>
                           </>
                           }
                            </p>
                            <p className="truncate  text-[14px]">{(historyList[index].chatHistory[historyList[index].chatHistory.length-1].type == "image") && 
                           <>
-                          {historyList[index].chatHistory[historyList[index].chatHistory.length-1].senderName === "admin" && <span>คุณ:</span> }
-                          รูปภาพ
+                         <span className={`${(history.isBotResponse === false && isManualToggle && tab.chatId !== history.chatId) ? 'bg-orange p-2 rounded-[4px] ' : ''}`}><span>คุณ:</span>
+                          รูปภาพ</span>
                           </>
                           }
                            </p>
                            <p className="truncate text-[14px]">{(historyList[index].chatHistory[historyList[index].chatHistory.length-1].type == "sticker") && 
                           <>
-                          {historyList[index].chatHistory[historyList[index].chatHistory.length-1].senderName === "admin" && <span>คุณ:</span> }
-                          สติ๊กเกอร์
+                             <span className={`${(history.isBotResponse === false && isManualToggle && tab.chatId !== history.chatId) ? 'bg-orange p-2 rounded-[4px] ' : ''}`}><span>คุณ:</span>
+                          สติ๊กเกอร์</span>
                           </>
                           }
                            </p>
-                           <p className="truncate text-[14px]">{(historyList[index].chatHistory[historyList[index].chatHistory.length-1].type == "text" && historyList[index].chatHistory[historyList[index].chatHistory.length-1].message.includes('img')) && 
+                           <p className="truncate text-[14px]">{(historyList[index].chatHistory[historyList[index].chatHistory.length-1].type == "text" 
+                           && historyList[index].chatHistory[historyList[index].chatHistory.length-1].message.includes('img')) && 
                           <>
-                          {historyList[index].chatHistory[historyList[index].chatHistory.length-1].senderName === "admin" && <span>คุณ:</span> }
-                          อีโมจิ
+                             <span className={`${(history.isBotResponse === false && isManualToggle && tab.chatId !== history.chatId) ? 'bg-orange p-2 rounded-[4px] ' : ''}`}><span>คุณ:</span>
+                          อีโมจิ</span>
                           </>
                           }
                            </p>
@@ -909,6 +993,46 @@ const Chat = () => {
                           }} />
                         {openDes && count === 3 && <div className=" absolute truncate w-[80px] rounded-[6px] top-[-40px] left-[-20px] bg-[#336699] text-white py-[4px] text-center">emoji</div>}
                       </button>
+                      {!openToggleAnswer && <button className="relative"
+                      onClick={() => {
+                        sendManualMode(tab.chatId,tab.userId),
+                        setOpenToggleAnswer(true)
+                      }}
+                      onMouseEnter={() => {
+                        setOpenDes(true);
+                        setCount(4);
+                      }}
+                      onMouseLeave={() => {
+                        setOpenDes(false);
+                        setCount(0);
+                      }}>
+                      <img src="/images/not-approved.png" className="w-[24px]"  alt="image"
+                        style={{
+                          filter:
+                            "invert(41%) sepia(20%) saturate(1448%) hue-rotate(169deg) brightness(83%) contrast(91%)",
+                        }} />
+                      {openDes && count === 4 && <div className="absolute truncate w-[140px] rounded-[6px] top-[-40px] left-[-20px] bg-[#336699] text-white py-[4px] text-center">Manual Answer</div>}
+                    </button>}
+                    {openToggleAnswer && <button className="relative"
+                      onClick={() => {
+                        sendAutoMode(tab.chatId,tab.userId),
+                        setOpenToggleAnswer(false)
+                      }}
+                      onMouseEnter={() => {
+                        setOpenDes(true);
+                        setCount(5);  
+                      }}
+                      onMouseLeave={() => {
+                        setOpenDes(false);
+                        setCount(0);
+                      }}>
+                        <img src="/images/chat.png" className="w-[24px]" alt="image"
+                        style={{
+                          filter:
+                            "invert(41%) sepia(20%) saturate(1448%) hue-rotate(169deg) brightness(83%) contrast(91%)",
+                        }} />
+                      {openDes && count === 5 && <div className="absolute truncate w-[120px] rounded-[6px] top-[-40px] left-[-20px] bg-[#336699] text-white py-[4px] text-center">Auto Answer</div>}
+                    </button>}
                     </div>
                     <button
                       onClick={() => sendPrivateValue(tab.chatId, userData)}
@@ -1106,7 +1230,7 @@ const Chat = () => {
                         }} />
                       {openDes && count === 3 && <div className="absolute truncate w-[80px] rounded-[6px] top-[-40px] left-[-20px] bg-[#336699] text-white py-[4px] text-center">emoji</div>}
                     </button>
-                    {!openToggleAnswer && <button className="relative"
+                    {(!openToggleAnswer )&& <button className="relative"
                       onClick={() => {
                         sendManualMode(tab.chatId,tab.userId),
                         setOpenToggleAnswer(true)
@@ -1126,7 +1250,7 @@ const Chat = () => {
                         }} />
                       {openDes && count === 4 && <div className="absolute truncate w-[140px] rounded-[6px] top-[-40px] left-[-20px] bg-[#336699] text-white py-[4px] text-center">Manual Answer</div>}
                     </button>}
-                    {openToggleAnswer && <button className="relative"
+                    {(openToggleAnswer ) && <button className="relative"
                       onClick={() => {
                         sendAutoMode(tab.chatId,tab.userId),
                         setOpenToggleAnswer(false)
