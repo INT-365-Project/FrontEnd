@@ -35,18 +35,26 @@ const ReportForm = () => {
       });
     console.log(rp);
   };
+
+  const closeTab = () => {
+    window.opener = null;
+    window.open("", "_self");
+    window.close();
+  };
+
   const successAlert = () => {
     Swal.fire({
       title: "Thank you!",
-      text: "you clicked the button for continue or back to home page",
+      text: "",
       icon: "success",
       showCancelButton: true,
-      confirmButtonText: "Back to News",
-      cancelButtonText: `Report other problem`,
+      confirmButtonText: "แจ้งปัญหาเพิ่มเติม",
+      cancelButtonText: `ปิด`,
     }).then((result) => {
       if (result.isConfirmed) {
-        Router.push("/news");
+        location.reload()
       } else if (result.isDismissed) {
+        closeTab()
         resetData();
       }
     });
