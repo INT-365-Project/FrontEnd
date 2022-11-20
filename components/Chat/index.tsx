@@ -1109,7 +1109,7 @@ const Chat = () => {
                     {!openToggleAnswer && <button className="relative"
                       onClick={() => {
                         sendManualMode(tab.chatId,tab.userId),
-                        setOpenToggleAnswer(false)
+                        setOpenToggleAnswer(true)
                       }}
                       onMouseEnter={() => {
                         setOpenDes(true);
@@ -1129,7 +1129,7 @@ const Chat = () => {
                     {openToggleAnswer && <button className="relative"
                       onClick={() => {
                         sendAutoMode(tab.chatId,tab.userId),
-                        setOpenToggleAnswer(true)
+                        setOpenToggleAnswer(false)
                       }}
                       onMouseEnter={() => {
                         setOpenDes(true);

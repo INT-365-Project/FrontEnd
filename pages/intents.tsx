@@ -112,8 +112,7 @@ const Intents = () => {
         if (name === allBot[i].name) {
           setTopic(allBot[i].topic);
           setTopicName(allBot[i].name);
-          setExpressions(allBot[i].expressions);
-          
+          setExpressions(allBot[i].expressions); 
           let list = allBot[i].responses.map((item,index)=>{
             if(item.type === "image"){
               return {...item,content:""}
@@ -122,12 +121,8 @@ const Intents = () => {
           })
           response = list
           console.log(response)
-          // if(allBot[i].responses[0].type == "text"){
           setResponse(list);
           console.log(response)
-          // }else if(allBot[i].responses[0].type == "image"){
-          //   setImgSrc(allBot[i].responses)
-          // }
         }
       }
     } else {
@@ -143,22 +138,14 @@ const Intents = () => {
   }, [isFinish]);
 
   const uploadImage = (e: any) => {
-    // if(isEditingResponse){
-      setIsEditImage(false)
-    // }
+    setIsEditImage(false)
     let file = e.target.files[0];
     let reader = new FileReader();
     let endCode64 = null;
     reader.onloadend = function () {
       endCode64 = reader.result;
-      // console.log(file.name.slice(file.name.length-3,file.name.length))
       setSelectedImage(true);
       setImgSrc(endCode64)
-      // setBase64(endCode64.slice(
-      //   endCode64.indexOf(",") + 1,
-      //   endCode64.length - 1
-      // ),)
-
     };
     reader.readAsDataURL(file);
   };
@@ -216,11 +203,16 @@ const Intents = () => {
               setResponseInput("");
               setTopic("");
               // location.reload();
+              const timeout = setTimeout(() => {
+                location.reload();
+              }, 2000)
+              return () => clearTimeout(timeout)
             } else if (result.isDismissed) {
               response = response.splice(-1)
-              location.reload();
+              // location.reload();
             }
           });
+     
         }
       }
     } else {
@@ -240,14 +232,13 @@ const Intents = () => {
   };
   const selectGroup = (tp: any) => {
     if (tp === "addCommands") {
-      setTopic("");
+      // setTopic("");
       setIsAddCommand(true);
       setExpressions([]);
       setImgSrc(null)
       setResponse([]);
     } else {
       setImgSrc(null)
-      setImgSrc(null);
       setResponse([]);
       setExpressions([]);
       setSelectedImage(false);
@@ -264,7 +255,7 @@ const Intents = () => {
       }
      return item
     });
-    console.log(items)
+    console.log('item',items)
     // items.push({
     //   name: name,
     //   topic: "",
@@ -307,17 +298,14 @@ const Intents = () => {
         setResponseInput("");
         setTopic("");
       } else if (result.isDismissed) {
-        location.reload();
+        // location.reload();
       }
-      location.reload();
+      const timeout = setTimeout(() => {
+        location.reload();
+      }, 1000)
+
+      return () => clearTimeout(timeout)
     });
-    BotServices.storeCommand(data)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err.response);
-      });
   };
 
   const handleResponseDelete = (seq) => {
