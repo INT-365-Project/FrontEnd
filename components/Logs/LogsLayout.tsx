@@ -9,11 +9,12 @@ const LogsLayout = ({logs,setData,setOpenEyes}) => {
     <div> {logs.map((p: any, index: any) => {
       return (
         <div key={p.reportId} onClick={()=>eyesDetail(p)} className=" cursor-pointer min-h-[110px] md:min-h-[50px] flex bg-white   justify-between rounded-[10px] border-b-[2px] pl-[15px] md:px-[40px] pb-[20px]  shadow-lg">
-          <p className="pt-[10px] w-auto md:w-[200px] flex items-center"> {p.topic}</p>
-          <div className="my-auto flex">
-          <p className='pt-[10px] w-[100px] '>{p.createDate.slice(0, 10)}</p> 
+          <p className="pt-[10px] w-full flex items-center"> {p.topic}</p>
+          <div className="my-auto w-full flex">
+          <p className='pt-[10px]  '>{p.createDate.slice(0, 10)}</p> 
           </div>
-          <div className="my-auto md:ml-[120px] pb-[6px] w-[140px] flex pt-[10px] "> <p className='pl-[25px]'>users</p> </div>
+          {/* <div className="my-auto md:ml-[120px] pb-[6px] w-[140px] flex pt-[10px] "> <p className='pl-[25px]'>users</p> </div> */}
+          <div className='w-full'>
           <button
             onClick={() => eyesDetail(p)}
             className="hidden mt-[10px]  border-[#919191] border-[1.7px] w-[30px] h-[30px]  rounded-[5px] md:flex justify-center items-center my-auto ml-[80px]"
@@ -27,6 +28,7 @@ const LogsLayout = ({logs,setData,setOpenEyes}) => {
               }}
             />
           </button>
+          </div>
         </div>
       );
     })}</div>

@@ -8,7 +8,7 @@ const PopupNews = ({ data, setIsPreview }) => {
       <div className="w-full h-[50vh] drop-shadow-lg overflow-y-auto">
         <div className="border-b-[1.6px] w-full h-[40px] flex justify-end">
           <img
-            src="/images/x.png"
+            src="/images/X.png"
             onClick={() => {
               setIsPreview(false);
             }}
@@ -20,7 +20,7 @@ const PopupNews = ({ data, setIsPreview }) => {
           <div className="flex">
             <div className="w-[200px] h-[140px] border-[#919191] border-[1.8px] rounded-[10px] relative">
               {data && (
-                <img src={data.source} className="w-full" alt="default" />
+                <img src={data.source} className="w-full h-[140px] object-contain" alt="default" />
               )}
             </div>
             <div className="pl-[4%]">
@@ -56,9 +56,10 @@ const PopupNews = ({ data, setIsPreview }) => {
             {data && (
               <Link
                 href={{
-                  pathname: `/news/${data.newId}`,
-                  query: { query: data.newId },
+                  pathname: `/news/[slug]`,
+                  // query: { query: data.newId },
                 }}
+                as={`/news/${data.newId}`}
                 passHref
               >
                 <button className="bg-[#336699] rounded-[5px] w-[134px] h-[28px]">
@@ -74,3 +75,4 @@ const PopupNews = ({ data, setIsPreview }) => {
 };
 
 export default PopupNews;
+

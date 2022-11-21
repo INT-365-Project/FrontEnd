@@ -8,7 +8,7 @@ const PopupLogs = ({ setOpenEyes , data }) => {
       <div className="w-full h-[40vh] drop-shadow-lg overflow-y-auto">
         <div className="border-b-[1.6px] w-full h-[40px] flex justify-end">
           <img
-            src="/images/x.png"
+            src="/images/X.png"
             onClick={() => {
               setOpenEyes(false);
             }}
@@ -23,17 +23,17 @@ const PopupLogs = ({ setOpenEyes , data }) => {
           <div className="flex pt-[4%]">
             <h1 className="text-[#919191] w-[100px] text-[16px]">วันที่แจ้ง</h1> <p>{data.createDate.slice(0,10)}</p>
           </div> 
-          <div className="flex pt-[4%]">
+          {/* <div className="flex pt-[4%]">
             <h1 className="text-[#919191] w-[100px] text-[16px]">แจ้งโดย</h1> <p>mock up person</p>
-          </div>
-          <div className="flex pt-[1%] mt-[4%] border-[#919191] border-[1.8px] rounded-[10px] min-h-[130px] overflow-y-scroll overflow-x-hidden">
+          </div> */}
+          <div className="flex pt-[1%] mt-[4%] border-[#919191] border-[1.8px] rounded-[10px] min-h-[180px] overflow-y-scroll overflow-x-hidden">
             <h1 className="text-[#919191] w-[100px] text-[16px]">รายละเอียด</h1> <p className="text-[14px] w-[200px]">{data.description}</p>
           </div>
           <div className="flex justify-center pt-[14px] text-[16px] text-white">
             <Link  href={{
-                        pathname: `/report/${data.reportId}`,
-                        query: {query:data.reportId},
+                        pathname: `/report/[slug]`,        
                       }}
+                      as={`/report/${data.reportId}`}
                       passHref>
             <button className="bg-[#336699] rounded-[5px] w-[134px] h-[28px]">ดูรายละเอียดปัญหา</button>
             </Link>

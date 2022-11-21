@@ -5,6 +5,15 @@ const nextConfig = {
   // eslint : {
   //   ignoreDuringBuilds : true,
   // }
+  // async redirects() {
+  //   return [
+  //     {
+  //       source: '/news/:slug',
+  //       destination: '/news/',
+  //       permanent: false,
+  //     },
+  //   ]
+  // },
 }
 
 module.exports = nextConfig

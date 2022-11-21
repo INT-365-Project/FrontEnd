@@ -134,7 +134,7 @@ const PopupChat = ({
               <label htmlFor="inputFileToLoad">
                 {!selectedImage ?
                   <img
-                    src={`${"images/upload.png"}`}
+                    src={`${"/images/upload.png"}`}
                     alt="Thumb"
                     className="mx-auto cursor-pointer w-full"
                   />
