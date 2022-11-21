@@ -53,9 +53,10 @@ const UsersLayout = ({ search, sort, useData,isConvert}) => {
           return (
             <Link key={n.newId} 
             href={{
-              pathname: `/news/${n.newId}`,
-              query: n.newId ,
+              pathname: `/news/[slug]`,
+              // query: { query: data.newId },
             }}
+            as={`/news/${n.newId}`}
             passHref
           >
             <div data-aos="fade-up" className=" min-h-[246px] w-full lg:w-[31%] overflow-hidden shadow-lg rounded-[15px] mt-[14px] lg:mr-[18px] bg-white">

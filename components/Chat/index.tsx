@@ -19,7 +19,8 @@ const Chat = () => {
   const router = useRouter();
   const [readButton,setReadButton] = useState(0)
   const [isManualToggle,setIsManualToggle] = useState(false)
-
+  let [manualToggle,setManualToggle] = useState(false)
+  let [autoToggle,setAutoggle] = useState(false)
   const [checkBotResponse,setCheckBotResponse] = useState(false)
   
   const [showPreviewImage,setShowPreviewImage] = useState(false)
@@ -505,6 +506,7 @@ const Chat = () => {
       }
       return history
     })
+    setAllHistory(historyList)
     if (stompClient) {
       var chatMessage = {
         type: "text",
@@ -517,9 +519,9 @@ const Chat = () => {
       };
       console.log(chatMessage)
       stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
-      alert("คุณได้ทำการเปิดโหมด Auto การตอบคำถาม และปิดการตอบคำถามแบบ Manual แล้ว")
       // setUserData({ ...userData, message: "" });
     }   
+    alert("คุณได้ทำการเปิดโหมด Auto การตอบคำถาม และปิดการตอบคำถามแบบ Manual แล้ว")
   };
 
   
@@ -530,6 +532,8 @@ const Chat = () => {
       }
       return history
     })
+    console.log('sendManual',historyList)
+    setAllHistory(historyList)
     if (stompClient) {
       var chatMessage = {
         type: "text",
@@ -544,7 +548,6 @@ const Chat = () => {
       stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
       // setUserData({ ...userData, message: "" });
     }   
-    setCheckBotResponse(false)
     alert("คุณได้ทำการเปิดโหมด Manual การตอบคำถามและปิดการตอบคำถามแบบ Auto แล้ว")
   };
 
@@ -573,9 +576,16 @@ const Chat = () => {
 
   const tabName = (userId: any, name: any, chatId: any, index: any) => {
     console.log("chatId from tabName = ", chatId)
-    if(historyList[index].chatId === chatId){
-       setCheckBotResponse(historyList[index].isBotResponse)
-    } 
+    if(historyList[index].isBotResponse === true){
+      console.log('hi')
+      setAutoggle(true)
+      setManualToggle(false)
+    } else if (historyList[index].isBotResponse === false){
+      console.log('eiei')
+      setAutoggle(false)
+      setManualToggle(true)
+    }
+
     localStorage.setItem('chatId', chatId)
     localStorage.setItem('userId', userId)
     showHistory(chatId);
@@ -1230,10 +1240,12 @@ const Chat = () => {
                         }} />
                       {openDes && count === 3 && <div className="absolute truncate w-[80px] rounded-[6px] top-[-40px] left-[-20px] bg-[#336699] text-white py-[4px] text-center">emoji</div>}
                     </button>
-                    {(!openToggleAnswer )&& <button className="relative"
+                    {autoToggle && <button className="relative"
                       onClick={() => {
                         sendManualMode(tab.chatId,tab.userId),
-                        setOpenToggleAnswer(true)
+                        setOpenToggleAnswer(true),
+                        setManualToggle(true),
+                        setAutoggle(false)
                       }}
                       onMouseEnter={() => {
                         setOpenDes(true);
@@ -1250,10 +1262,12 @@ const Chat = () => {
                         }} />
                       {openDes && count === 4 && <div className="absolute truncate w-[140px] rounded-[6px] top-[-40px] left-[-20px] bg-[#336699] text-white py-[4px] text-center">Manual Answer</div>}
                     </button>}
-                    {(openToggleAnswer ) && <button className="relative"
+                    {manualToggle && <button className="relative"
                       onClick={() => {
                         sendAutoMode(tab.chatId,tab.userId),
-                        setOpenToggleAnswer(false)
+                        setOpenToggleAnswer(false),
+                        setManualToggle(false),
+                        setAutoggle(true)
                       }}
                       onMouseEnter={() => {
                         setOpenDes(true);

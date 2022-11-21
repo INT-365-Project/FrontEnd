@@ -35,11 +35,6 @@ const { query } = router;
   }
   return (
     <div className="bg-[#F8F8F8] w-full min-h-screen px-[10px] lg:pl-[140px] pt-[120px]">
-      {/* <Head>
-        <title>Problems-Detail</title>
-        <meta name="Detail" content="Detail" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head> */}
       <main className="min-h-screen relative w-full">
         <div className="md:w-[90%]">
           <div className="flex space-x-[15px]">
@@ -62,7 +57,7 @@ const { query } = router;
             <div className="border-b-[1.4px] h-[40px] rounded-[5px] md:pl-[100px] pl-[30px] pt-[10px] text-[#919191]">
               <h1>รายละเอียดปัญหา</h1>
               <div>
-                <div className="text-body pb-[20px] pt-[40px] flex">
+                <div className="text-body pb-[20px] pt-[75px] flex">
                   <label className="text-[#919191]  md:w-[20%]  tracking-wider ">
                     หัวข้อปัญหา
                   </label>
@@ -82,14 +77,6 @@ const { query } = router;
                   </label>
                   <h1 className="text-black w-full pl-[20px] md:pl-[200px] pt-[10px] ">
                     {reportData && reportData.createDate.slice(0,10)}
-                  </h1>
-                </div>
-                <div className="pb-[20px] flex items-center">
-                  <label className="text-[#919191] md:w-[20%]  tracking-wider pt-[20px]">
-                    แจ้งโดย
-                  </label>
-                  <h1 className="text-black w-full pl-[20px] md:pl-[200px] pt-[10px] ">
-                    test
                   </h1>
                 </div>
               </div>

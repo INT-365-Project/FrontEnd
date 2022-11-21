@@ -181,7 +181,7 @@ const CreateEdit = ({ setIsOpen, isOpen, editData, setIsEdit, isEdit }) => {
               {!selectedImage && (
                 <label htmlFor="inputFileToLoad">
                   <img
-                    src={`${isEdit ? imgSrc : 'images/upload.png'}`}
+                    src={`${isEdit ? imgSrc : '/images/upload.png'}`}
                     alt="Thumb"
                     className="mx-auto cursor-pointer"
                   />
