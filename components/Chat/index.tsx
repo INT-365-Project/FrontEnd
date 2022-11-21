@@ -299,12 +299,19 @@ const Chat = () => {
     const userId = localStorage.getItem('userId');
     var payloadData = JSON.parse(payload.body);
     console.log('payload = ',payloadData)
+    let displayNameUser = ""
+    console.log('historyList',historyList)
+
     if(historyList){
       for (let history of historyList) {
+        if(history.chatId === payloadData.message.chatId){
+          displayNameUser = history.displayName
+        }
         if (history) {
           privateChats.set(history.chatId,history.chatHistory)
         }
       }
+      console.log('displayNameUser',displayNameUser)
       let list = [];
       list = payloadData.history.map((items)=>{
         let data = {
@@ -315,7 +322,7 @@ const Chat = () => {
           message: items.message,
           date: items.sentDate,
           status: "MESSAGE",
-          displayName: payloadData.message.displayName,
+          displayName: displayNameUser  ,
           isRead: chatId == payloadData.message.chatId ? true : (items.isRead == 0 ? false : true),
           originalContentUrl : items.originalContentUrl,
           previewImageUrl : items.previewImageUrl
