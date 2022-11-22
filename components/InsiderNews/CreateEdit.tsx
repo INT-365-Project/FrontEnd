@@ -37,7 +37,7 @@ const CreateEdit = ({ setIsOpen, isOpen, editData, setIsEdit, isEdit }) => {
       // console.log(file.name.slice(file.name.length-3,file.name.length))
       setSelectedImage(true);
       setBase64img(endCode64);
-      console.log(endCode64)
+      // console.log(endCode64)
       
       register("thumbnailFile", {
         value: endCode64.slice(
@@ -45,7 +45,7 @@ const CreateEdit = ({ setIsOpen, isOpen, editData, setIsEdit, isEdit }) => {
           endCode64.length - 1
         ),
       });
-      console.log(endCode64)
+      // console.log(endCode64)
       register("thumbnailFileName", { value: file.name });
       // console.log(endCode64.slice(
       //   endCode64.indexOf(",") + 1,
@@ -96,10 +96,10 @@ const CreateEdit = ({ setIsOpen, isOpen, editData, setIsEdit, isEdit }) => {
   };
 
   const onSubmit = (data: FormData) => {
-     console.log('check base64',data)
+    //  console.log('check base64',data)
     setIsOpen(false);
     if (isEdit) {
-      console.log('data = ',data)
+      // console.log('data = ',data)
       Swal.fire({
         title: "ยืนยันการแก้ไขข่าว",
         text: "เมื่อทำการยืนยัน ระบบจะทำการเปลี่ยนแปลงข้อมูล",
@@ -125,7 +125,7 @@ const CreateEdit = ({ setIsOpen, isOpen, editData, setIsEdit, isEdit }) => {
                 console.log(err.response);
               });
           } else {
-            console.log('hi')
+            // console.log('hi')
             const editImg = {
               ...data,
               thumbnailPath: editData.thumbnailPath,

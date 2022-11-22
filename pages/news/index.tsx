@@ -62,7 +62,6 @@ const News = () => {
       const res = await axios.post(`${api}/api/viewFileByPath`, {
         filePath: n.thumbnailPath,
       });
-      console.log(res.data.responseData)
       var byteCharacters = atob(res.data.responseData.base64);
       var byteNumbers = new Array(byteCharacters.length);
       for (var i = 0; i < byteCharacters.length; i++) {
@@ -107,7 +106,6 @@ const News = () => {
           .indexOf(filters.s.toLowerCase()) >= 0
     );
     if(filters.sort=='asc' || filters.sort=='desc' ){
-      console.log('hi')
       useData.sort((a,b)=>{
         new Date(a.createDate).getTime() - new Date(b.createDate).getTime()
         const diff = new Date(a.createDate).getTime() - new Date(b.createDate).getTime()
