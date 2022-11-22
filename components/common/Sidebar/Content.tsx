@@ -1,84 +1,68 @@
 import React, { useContext, useEffect } from "react";
 import { useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCoffee,
-  faMagnifyingGlass,
-  faLockOpen,
-  faLock,
-  faLightbulb,
-  faAddressBook,
-  faAlignJustify,
-  faRightFromBracket,
-  faComment,
-  faNewspaper,
-  faFlag
-} from "@fortawesome/free-solid-svg-icons";
-import { useNavContext } from "../Layout";
 import Link from "next/link";
-import Image from "next/image";
 import { useAppContext } from "../../../pages/_app";
 import { useRouter } from "next/router";
 
-const Content = ({ isOpen, setIsOpen, style, image }) => {
-  const [isTop, setIsTop] = useState<boolean>(true);
+const Content = ({ isOpen, setIsOpen }) => {
   const { adminUser, isLogin, setIsLogin } = useAppContext();
+  const [openDes, setOpenDes] = useState(false);
+  const [openLogout,setOpenLogout] = useState(false);
+  const [count, setCount] = useState(0);
   const router = useRouter();
   const menu = isLogin
     ? [
         {
           label: "Dashboard",
           href: "/",
-          icon:faAddressBook,
+          icon: "home.svg",
+          des: "แดชบอร์ด",
         },
         {
           label: "News",
           href: "/news",
-          icon:faNewspaper
+          icon: "news.svg",
+          des: "ข่าว",
         },
         {
           label: "Chat",
           href: "/chat",
-          icon:faComment
+          icon: "chat.svg",
+          des: "สอบถาม",
+        },
+        {
+          label: "Intents",
+          href: "/intents",
+          icon: "intent.svg",
+          des: "ตั้งค่าบอท",
         },
         {
           label: "Report",
           href: "/report",
-          icon:faFlag
+          icon: "report.svg",
+          des: "แจ้งปัญหา",
         },
       ]
     : [
         {
           label: "News",
           href: "/news",
-          icon:faNewspaper
+          icon: "news.svg",
+          des: "ข่าว",
         },
         {
           label: "Chat",
           href: "/chat",
-          icon:faComment
+          icon: "chat.svg",
+          des: "ติดต่อ",
         },
         {
           label: "Report",
           href: "/report",
-          icon:faFlag
+          icon: "report.svg",
+          des: "แจ้งปัญหา",
         },
       ];
-  useEffect(() => {
-    let listener = () => {
-      let scrolled = document?.scrollingElement?.scrollTop;
-      if (scrolled && scrolled >= 100) {
-        setIsTop(false);
-      } else {
-        setIsTop(true);
-      }
-    };
-    window.addEventListener("scroll", listener);
-    listener();
-    return () => {
-      document.removeEventListener("scroll", listener);
-    };
-  }, []);
 
   const handleLogOff = () => {
     localStorage.removeItem("accessToken");
@@ -86,149 +70,193 @@ const Content = ({ isOpen, setIsOpen, style, image }) => {
     setIsLogin(false);
     window.location.href = "/";
   };
-
   return (
     <>
-      <div
-        id={`${isOpen ? "navbar" : "navClick"}`}
-        onClick={() => {
-          setIsOpen(false);
-        }}
-      >
+      <div id="navbar">
         <div
-          className={`${
-            isOpen ? "block" : "hidden"
-          } text-center flex justify-center px-[20px] items-center `}
+          onClick={() => router.push("/")}
+          className="text-center flex justify-center bg-[#336699] w-[72px] items-center "
         >
-          <FontAwesomeIcon
-            icon={faCoffee}
-            className="text-[#fff] h-[30px]"
-          ></FontAwesomeIcon>
-          <h1
-            className={` pl-[10px] text-[#fff] text-[20px] font-semibold cursor-pointer`}
-          >
-            SIT-ChatBot
-          </h1>
+          <img src="/images/logo.png" alt="" />
         </div>
-        <div
-          className={`${
-            isOpen ? "block" : "hidden"
-          } flex justify-center items-center`}
-          onClick={() => {
-            setIsOpen(false);
-          }}
-        >
-          <FontAwesomeIcon
-            icon={faAlignJustify}
-            className="text-[#fff] h-[20px] pr-[20px] "
-          ></FontAwesomeIcon>
-        </div>
+        <div className="flex md:hidden ">
+        {menu.map((m, index) => {
+            return (
+              <Link key={index} href={m.href} passHref>
+                <div
+                  className={
+                    router.pathname == m.href
+                      ? "flex justify-center cursor-pointer items-center h-[50px] w-[50px] bg-[#336699] relative  rounded-full mx-auto my-auto"
+                      : "flex justify-center cursor-pointer items-center h-[50px] w-[50px] relative  rounded-full mx-auto my-auto"
+                  }
+                  onMouseEnter={() => {
+                    // setOpenDes(true);
+                    setCount(index);
+                  }}
+                  onMouseLeave={() => {
+                    setOpenDes(false);
+                    setCount(0);
+                  }}
+                >
+                  {router.pathname == m.href ? (
+                    <img
+                      src={`/images/${m.icon}`}
+                      className="iconic"
+                      alt={m.icon}
+                      style={{
+                        filter:
+                          "invert(100%) sepia(30%) saturate(100%) hue-rotate(356deg) brightness(96%) contrast(111%)",
+                      }}
+                    />
+                  ) : (
+                    <img
+                      src={`/images/${m.icon}`}
+                      className="iconic"
+                      alt={m.icon}
+                      style={{
+                        filter:
+                          "invert(50%) sepia(30%) saturate(100%) hue-rotate(356deg) brightness(96%) contrast(111%)",
+                      }}
+                    />
+                  )}
+                </div>
+              </Link>
+            );
+          })}
+          </div>
       </div>
       <div
         id={`${isOpen ? "sidebar" : "sidebarMobile"}`}
         className={`${!isOpen ? "block" : "hidden"}'`}
       >
-        <div onClick={()=>router.push("/news")} className="text-center flex justify-center pt-[30px] items-center ">
-          <FontAwesomeIcon
-            icon={faCoffee}
-            className="text-[#fff] h-[30px]"
-          ></FontAwesomeIcon>
-          <h1
-            style={style}
-            className="pl-[10px] text-[#fff] text-[20px] font-semibold cursor-pointer"
-          >
-            SIT-ChatBot
-          </h1>
-        </div>
-        <div
-          onClick={() => router.push("signin")}
-          className="text-center flex flex-col justify-center w-[50%] mx-auto mt-[30px] py-[10px] hover:bg-[#ee96fe] rounded-xl cursor-pointer"
-        >
-          <img
+        <div className="text-center flex flex-col justify-center w-[50%] mx-auto mt-[70px] py-[10px] "></div>
+        <div className="w-[80%] mx-auto mt-[40px] text-black text-[16px] font-normal space-y-[40px] ">
+          {menu.map((m, index) => {
+            if(m.href == '/'){
+              return  (  
+              <Link key={index} href={m.href} passHref>
+                <div
+                  className={
+                    router.pathname == m.href
+                      ? "flex justify-center cursor-pointer items-center h-[56px] bg-[#336699] relative  rounded-full "
+                      : "flex justify-center cursor-pointer items-center h-[56px] relative  rounded-full "
+                  }
+                  onMouseEnter={() => {
+                    setOpenDes(true);
+                    setCount(index);
+                  }}
+                  onMouseLeave={() => {
+                    setOpenDes(false);
+                    setCount(0);
+                  }}
+                >
+                  {router.pathname == m.href ? (
+                    <img
+                      src={`/images/${m.icon}`}
+                      className="iconic"
+                      alt={m.icon}
+                      style={{
+                        filter:
+                          "invert(100%) sepia(30%) saturate(100%) hue-rotate(356deg) brightness(96%) contrast(111%)",
+                      }}
+                    />
+                  ) : (
+                    <img
+                      src={`/images/${m.icon}`}
+                      className="iconic"
+                      alt={m.icon}
+                      style={{
+                        filter:
+                          "invert(50%) sepia(30%) saturate(100%) hue-rotate(356deg) brightness(96%) contrast(111%)",
+                      }}
+                    />
+                  )}
+                  {openDes && count == index && (
+                    <div className="absolute truncate w-[80px] rounded-[6px]  bg-white py-[8px] left-[80px] text-center">
+                      <img
+                        src="/images/poly.png"
+                        className="absolute left-[-10px] top-2 z-20"
+                        alt=""
+                      />
+                      {m.des}
+                    </div>
+                  )}
+                </div>
+              </Link>)
+            }else {return (
+              <Link key={index} href={m.href} passHref>
+                <div
+                  className={
+                    router.pathname == m.href
+                      ? "flex justify-center cursor-pointer items-center h-[56px] bg-[#336699] relative  rounded-full "
+                      : "flex justify-center cursor-pointer items-center h-[56px] relative  rounded-full "
+                  }
+                  onMouseEnter={() => {
+                    setOpenDes(true);
+                    setCount(index);
+                  }}
+                  onMouseLeave={() => {
+                    setOpenDes(false);
+                    setCount(0);
+                  }}
+                >
+                  {router.pathname == m.href ? (
+                    <img
+                      src={`/images/${m.icon}`}
+                      className="iconic"
+                      alt={m.icon}
+                      style={{
+                        filter:
+                          "invert(100%) sepia(30%) saturate(100%) hue-rotate(356deg) brightness(96%) contrast(111%)",
+                      }}
+                    />
+                  ) : (
+                    <img
+                      src={`/images/${m.icon}`}
+                      className="iconic"
+                      alt={m.icon}
+                      style={{
+                        filter:
+                          "invert(50%) sepia(30%) saturate(100%) hue-rotate(356deg) brightness(96%) contrast(111%)",
+                      }}
+                    />
+                  )}
+                  {openDes && count == index && (
+                    <div className="absolute truncate w-[80px] rounded-[6px]  bg-white py-[8px] left-[80px] text-center">
+                      <img
+                        src="/images/poly.png"
+                        className="absolute left-[-10px] top-2 z-20"
+                        alt=""
+                      />
+                      {m.des}
+                    </div>
+                  )}
+                </div>
+              </Link>
+            )};
+          })}
+            <div
+                 onMouseEnter={() => {
+                  setOpenLogout(true)
+                }}
+                onMouseLeave={() => {
+                  setOpenLogout(false)
+                }}
+                className="flex px-[20px] cursor-pointer items-center h-[56px] lg:border-t-[2px] "
+              >
+                <img
             src="/images/default.png"
             alt="mock-user"
-            className="bg-white mx-auto rounded-full"
-            style={image}
+            className=" w-[60px]"
           />
-          {adminUser && (
-            <p className="text-[14px] font-medium text-[#fff]" style={style}>
-              {adminUser.fullName}
-            </p>
-          )}
-        </div>
-        <div className="flex space-x-4 justify-center items-center mt-[10px] py-[10px]  h-[60px]">
-          <FontAwesomeIcon
-            icon={faMagnifyingGlass}
-            className="text-[#fff] h-[16px] cursor-pointer"
-            style={style}
-          ></FontAwesomeIcon>
-          <FontAwesomeIcon
-            icon={faLockOpen}
-            className="text-[#fff] h-[16px] cursor-pointer"
-            style={style}
-          ></FontAwesomeIcon>
-          <FontAwesomeIcon
-            icon={faLightbulb}
-            className="text-[#fff] h-[16px] cursor-pointer"
-            style={style}
-          ></FontAwesomeIcon>
-          {/* <FontAwesomeIcon icon={ faLock} className="text-[#fff] h-[16px]"></FontAwesomeIcon> */}
-        </div>
-        <div className="w-[80%] mx-auto mt-[40px] text-[#fff] font-medium space-y-4 ">
-          {menu.map((m, index) => {
-            if (m.label == "Dashboard") {
-              return (
-                <Link href="/" passHref>
-                  <div
-                    key={index}
-                    className="flex px-[20px] cursor-pointer items-center rounded-lg h-[50px] relative hover:bg-[#ee96fe]"
-                  >
-                    <FontAwesomeIcon
-                      icon={m.icon}
-                      className="text-[#fff] h-[16px]"
-                    ></FontAwesomeIcon>
-                    <h1 className="text-[14px] pl-[20px]" style={style}>
-                      {m.label}
-                    </h1>
-                  </div>
-                </Link>
-              );
-            } else {
-              return (
-                <Link href={m.href} passHref>
-                  <div
-                    key={index}
-                    className={` flex px-[20px] cursor-pointer items-center rounded-lg h-[50px] relative hover:bg-[#ee96fe]`}
-                  >
-                    <FontAwesomeIcon
-                      icon={m.icon}
-                      className="text-[#fff] h-[16px]"
-                    ></FontAwesomeIcon>
-                    <h1 className="text-[14px] pl-[20px]" style={style}>
-                      {m.label}
-                    </h1>
-                    {/* <span className='rotate-90 absolute right-4 text-[12px] cursor-pointer' style={style}>^</span> */}
-                  </div>
-                </Link>
-              );
-            }
-          })}
-          <div>
-            {isLogin && (
-              <div
-                onClick={() => handleLogOff()}
-                className="flex px-[20px] cursor-pointer items-center rounded-lg h-[50px] relative bg-[#78068c] hover:bg-red-600"
-              >
-                <FontAwesomeIcon
-                  icon={faRightFromBracket}
-                  className="text-[#fff] h-[16px]"
-                ></FontAwesomeIcon>
-                <h1 className="text-[14px] pl-[20px]" style={style}>
-                  Log out
-                </h1>
+          {openLogout&&<div className="truncate rounded-[10px] py-[12px] left-[60px] absolute w-[140px] bg-white drop-shadow-md flex " onClick={() => handleLogOff()}>
+                <img src="/images/logout.svg" className="pl-[8px] pr-[8px]" alt="" style={{
+                        filter:
+                          "invert(50%) sepia(30%) saturate(100%) hue-rotate(356deg) brightness(96%) contrast(111%)",
+                      }}/>
+                ออกจากระบบ
+          </div>}
               </div>
-            )}
-          </div>
         </div>
       </div>
     </>
