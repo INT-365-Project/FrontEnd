@@ -147,7 +147,7 @@ const CreateEdit = ({ setIsOpen, isOpen, editData, setIsEdit, isEdit }) => {
     } else {
       NewsServices.storeNews(data)
         .then((res) => {
-          // successAlert();
+          successAlert();
         })
         .catch((err) => {
           console.log(err.response);
