@@ -964,7 +964,7 @@ const Intents = () => {
             )}
             <div className="min-h-[40px] mx-[20px]  md:mx-[40px] border border-[#919191] mt-[20px] ">
               <div className="w-full h-[46px] bg-[#EBEBEB] px-[24px] flex justify-between items-center">
-                {index == 1 && <p className="text-[16px]">Text Response</p>}
+                {index == 1 && <p className="text-[16px]">Text Response {response.length >=5 && <span className="text-red-500">(ข้อความตอบกลับไม่สามารถเพิ่มได้มากกว่า5นะคะ)</span>}</p>}
                 {index == 2 && <p className="text-[16px]">Custom Payload</p>}
                 {index == 2 && (
                   <button
@@ -1038,7 +1038,7 @@ const Intents = () => {
                           1
                         </span>
                         <input
-                          disabled={topic == ""}
+                          disabled={topic == "" || response.length >=5}
                           type="text"
                           className="pl-[10px] pt-[10px]  lg:w-[700px] appearance-none focus:outline-none focus:shadow-outline text-gray-900 "
                           placeholder="Enter Text response"
