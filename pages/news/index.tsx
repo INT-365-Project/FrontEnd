@@ -62,6 +62,7 @@ const News = () => {
       const res = await axios.post(`${api}/api/viewFileByPath`, {
         filePath: n.thumbnailPath,
       });
+      console.log(res.data.responseData)
       var byteCharacters = atob(res.data.responseData.base64);
       var byteNumbers = new Array(byteCharacters.length);
       for (var i = 0; i < byteCharacters.length; i++) {
@@ -84,7 +85,6 @@ const News = () => {
       setIsConvert(true);
     }
   };
-
   const getData = () =>{
     setFilteredData(useData)
   }

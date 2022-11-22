@@ -21,8 +21,13 @@ const CreateEdit = ({ setIsOpen, isOpen, editData, setIsEdit, isEdit }) => {
     formState: { errors },
   } = useForm<FormData>();
 
+  if(editData){
+    console.log(editData)
+  }
+
   const [selectedImage, setSelectedImage] = useState(false);
   const [imgSrc, setImgSrc] = useState(null);
+  const [edit,setEdit] = useState(null);
   const uploadProfile = (e: any) => {
     let file = e.target.files[0];
     let reader = new FileReader();
@@ -32,13 +37,20 @@ const CreateEdit = ({ setIsOpen, isOpen, editData, setIsEdit, isEdit }) => {
       // console.log(file.name.slice(file.name.length-3,file.name.length))
       setSelectedImage(true);
       setBase64img(endCode64);
+      console.log(endCode64)
+      
       register("thumbnailFile", {
         value: endCode64.slice(
           endCode64.indexOf(",") + 1,
           endCode64.length - 1
         ),
       });
+      console.log(endCode64)
       register("thumbnailFileName", { value: file.name });
+      // console.log(endCode64.slice(
+      //   endCode64.indexOf(",") + 1,
+      //   endCode64.length - 1
+      // ),)
     };
     reader.readAsDataURL(file);
   };
@@ -84,9 +96,10 @@ const CreateEdit = ({ setIsOpen, isOpen, editData, setIsEdit, isEdit }) => {
   };
 
   const onSubmit = (data: FormData) => {
-    console.log(data)
+     console.log('check base64',data)
     setIsOpen(false);
     if (isEdit) {
+      console.log('data = ',data)
       Swal.fire({
         title: "ยืนยันการแก้ไขข่าว",
         text: "เมื่อทำการยืนยัน ระบบจะทำการเปลี่ยนแปลงข้อมูล",
@@ -99,6 +112,7 @@ const CreateEdit = ({ setIsOpen, isOpen, editData, setIsEdit, isEdit }) => {
       }).then((result) => {
         if (result.isConfirmed) {
           if (!selectedImage) {
+            console.log('kuy')
             const oldImage = {
               ...data,
               thumbnailPath: editData.thumbnailPath,
@@ -111,11 +125,12 @@ const CreateEdit = ({ setIsOpen, isOpen, editData, setIsEdit, isEdit }) => {
                 console.log(err.response);
               });
           } else {
+            console.log('hi')
             const editImg = {
               ...data,
               thumbnailPath: editData.thumbnailPath,
             };
-            // console.log(editImg)
+            console.log(editImg)
             NewsServices.storeNews(editImg)
               .then((res) => {})
               .catch((err) => {
@@ -124,7 +139,7 @@ const CreateEdit = ({ setIsOpen, isOpen, editData, setIsEdit, isEdit }) => {
           }
           Swal.fire("Edited!", "Your news has been Edited.", "success");
           cancelForm();
-          location.reload();
+          // location.reload();
         } else if (result.isDismissed) {
           cancelForm();
         }
@@ -132,7 +147,7 @@ const CreateEdit = ({ setIsOpen, isOpen, editData, setIsEdit, isEdit }) => {
     } else {
       NewsServices.storeNews(data)
         .then((res) => {
-          successAlert();
+          // successAlert();
         })
         .catch((err) => {
           console.log(err.response);
