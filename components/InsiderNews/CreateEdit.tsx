@@ -21,9 +21,9 @@ const CreateEdit = ({ setIsOpen, isOpen, editData, setIsEdit, isEdit }) => {
     formState: { errors },
   } = useForm<FormData>();
 
-  if(editData){
-    console.log(editData)
-  }
+  // if(editData){
+  //   console.log(editData)
+  // }
 
   const [selectedImage, setSelectedImage] = useState(false);
   const [imgSrc, setImgSrc] = useState(null);
